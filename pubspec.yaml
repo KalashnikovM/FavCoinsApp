@@ -1,0 +1,44 @@
+name: crypto_tracker
+description: "crypto_tracker"
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  freezed_annotation:
+  get_it: ^7.6.4
+  injectable: ^2.3.2
+  auto_route: ^7.8.4
+  intl: any
+  flutter_localizations:
+    sdk: flutter
+  intl_utils: ^2.8.5
+  watch_it: ^1.1.0
+  shared_preferences: ^2.2.2
+  appwrite: ^11.0.1
+  device_info_plus: 9.0.2
+
+
+
+dev_dependencies:
+  freezed:
+  build_runner: ^2.4.8
+  injectable_generator:
+  auto_route_generator: ^7.3.2
+  flutter_lints: ^3.0.1
+  dart_code_metrics: ^5.7.6
+
+
+flutter:
+
+
+  uses-material-design: true
