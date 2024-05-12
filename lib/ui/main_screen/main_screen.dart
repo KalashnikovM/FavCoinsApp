@@ -23,7 +23,6 @@ class MainScreen extends StatelessWidget {
       ],
       transitionBuilder: (context,child,animation)=> FadeTransition(
         opacity: animation,
-        // the passed child is technically our animated selected-tab page
         child: child,
       ),
       builder: (context, child) {
