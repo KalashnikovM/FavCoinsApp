@@ -146,6 +146,8 @@ class CurrencyRepository extends ChangeNotifier {
 
       _top100StreamSubscription?.cancel();
       // testSubscription.close;
+      notifyListeners();
+
       debugPrint('_testStreamSubscription?.onDone');
     });
 
@@ -170,9 +172,9 @@ class CurrencyRepository extends ChangeNotifier {
         model.id == newModel.id ? newList.add(newModel) : newList.add(model);
       }
       top100ModelsList = newList;
+      notifyListeners();
 
     });
-    notifyListeners();
 
   }
 }
