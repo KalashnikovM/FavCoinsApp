@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../models/main_coin_model.dart';
 
@@ -21,72 +22,98 @@ class CoinPage extends StatelessWidget with WatchItMixin{
   Widget build(BuildContext context) {
 
 
+    DateTime utcDateTime = DateTime.parse(model.coinQuote.lastUpdated.toIso8601String());
+    DateTime dateTime = utcDateTime.toLocal();
 
+    String updatedDate = DateFormat('HH:mm dd MMMM yyyy').format(dateTime);
 
 
     return  Scaffold(
       appBar: AppBar(
-        title: Text("${model.coinDataModel.name}"),
+        title:                 Text('Updated: $updatedDate',),
+          titleTextStyle: TextStyle(
+              fontSize: 16, color: Colors.white
+
+          ),
       ),
          body: SafeArea(
 
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('${model.coinDataModel.symbol}', style: const TextStyle(fontSize: 24),),
-                        Text('${model.coinDataModel.name}', style: const TextStyle(fontSize: 16),),
-                        Text('Category: ${model.coinDataModel.category}'),
-                        Text('Price: ${model.coinQuote.price.toStringAsFixed(2)} USD'),
-                      ],
-                    ),
-                    const Expanded(
-                      child: SizedBox(),),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: SizedBox(
-                          height: 64,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${model.coinDataModel.symbol}', style: const TextStyle(fontSize: 24, color: Colors.white),),
+                      Text('${model.coinDataModel.name}', style: const TextStyle(fontSize: 16, color: Colors.white),),
+                      Text('Category: ${model.coinDataModel.category}'),
+                    ],
+                  ),
+                  const Expanded(
+                    child: SizedBox(),),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: SizedBox(
+                        height: 64,
+                        child: image),
+                  ),
+                ],
+              ),
+              Text('Price: ${model.coinQuote.price.toStringAsFixed(2)} USD',
+                style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.white
+                ),),
 
-                          child: image),
-                    ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Text('${model.coinDataModel.description}', style: TextStyle(
+                  fontSize: 16
+                ),),
+              ),
 
-                  ],
-                ),
+              priceWidget("Percent change 1h", model.coinQuote.percentChange1h),
+              const SizedBox(height: 4,),
 
+              priceWidget("Percent change 24h", model.coinQuote.percentChange24h),
+              const SizedBox(height: 4,),
 
+              priceWidget("Percent change 7d", model.coinQuote.percentChange7d),
+              const SizedBox(height: 4,),
 
+              priceWidget("Percent change 30d", model.coinQuote.percentChange30d),
+              const SizedBox(height: 4,),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0),
-                  child: Text('${model.coinDataModel.description}'),
-                ),
-                Text('MarketCap: ${model.coinQuote.marketCap}'),
-                Text('Volume24h: ${model.coinQuote.volume24h}'),
-                Text('Updated: ${model.coinQuote.lastUpdated.toIso8601String()}'),
-                priceWidget("PercentChange1h", model.coinQuote.percentChange1h),
-                priceWidget("PercentChange24h", model.coinQuote.percentChange24h),
-                priceWidget("PercentChange7d", model.coinQuote.percentChange7d),
-                priceWidget("PercentChange30d", model.coinQuote.percentChange30d),
-                priceWidget("PercentChange60d", model.coinQuote.percentChange60d),
-                priceWidget("PercentChange90d", model.coinQuote.percentChange90d),
-                priceWidget("VolumeChange24h", model.coinQuote.volumeChange24h),
+              priceWidget("Percent change 60d", model.coinQuote.percentChange60d),
+              const SizedBox(height: 4,),
 
-                Text('MarketCapDominance: ${model.coinQuote.marketCapDominance}'),
-                Text('Fully diluted market Cap: ${model.coinQuote.fullyDilutedMarketCap} USD'),
+              priceWidget("Percent change 90d", model.coinQuote.percentChange90d),
+              const SizedBox(height: 4,),
 
+              priceWidget("Volume change 24h", model.coinQuote.volumeChange24h),
+              const SizedBox(height: 4,),
 
+              Text('Market Cap dominance: ${model.coinQuote.marketCapDominance}'),
+              const SizedBox(height: 4,),
 
+              Text('Fully diluted market Cap: ${model.coinQuote.fullyDilutedMarketCap} USD'),
+              const SizedBox(height: 4,),
 
-              ]),
+              Text('Updated: $updatedDate'),
+              const SizedBox(height: 4,),
+              Text('MarketCap: ${model.coinQuote.marketCap}'),
+              const SizedBox(height: 4,),
+
+              Text('Volume24h: ${model.coinQuote.volume24h}'),
+              const SizedBox(height: 8,),
+            ],
+          ),
         ),
 
       ),
@@ -103,6 +130,7 @@ priceWidget (String text, double data) {
 
       Text("${data.toStringAsFixed(2)}%",
         style: TextStyle(
+          fontSize: 16,
           color: data.isNegative
               ? Colors.red
               :Colors.green,
@@ -110,8 +138,8 @@ priceWidget (String text, double data) {
 
         ),),
       data.isNegative
-      ? const Icon(Icons.arrow_drop_down, color: Colors.red,)
-      : const Icon(Icons.arrow_drop_up, color: Colors.green,),
+      ? const Icon(Icons.arrow_drop_down, color: Colors.red, size: 32,)
+      : const Icon(Icons.arrow_drop_up, color: Colors.green,size: 32,),
     ],
   );
 
@@ -121,3 +149,5 @@ priceWidget (String text, double data) {
 
 
 }
+
+
