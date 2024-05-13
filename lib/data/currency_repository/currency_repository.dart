@@ -13,18 +13,18 @@ import '../../services/appwrite_service.dart';
 
 class CurrencyRepository extends ChangeNotifier {
   final List<MainCoinModel> mainCoinModelList = [];
-  late List<MainCoinModel> testCoinModelList = [];
+  late List<MainCoinModel> top100ModelsList = [];
 
   var db = di<ApiClient>().database;
   var realtime = di<ApiClient>().realtime;
   late String collectionId;
   late RealtimeSubscription subscription;
   StreamSubscription<dynamic>? _streamSubscription;
-  late RealtimeSubscription testSubscription;
-  StreamSubscription<dynamic>? _testStreamSubscription;
+  late RealtimeSubscription top100Subscription;
+  StreamSubscription<dynamic>? _top100StreamSubscription;
   bool testStream = false;
 
-  get startTestStream => startTestCollectionStream();
+  get startTop100Stream => top100CollectionStream();
 
   get startStream => startAppCollectionsStream();
   get getLastRateList => getLastCurrencyRateList();
@@ -57,7 +57,6 @@ class CurrencyRepository extends ChangeNotifier {
     debugPrint("_acSubscription - start listen!!!!!");
 
     _streamSubscription?.onDone(() {
-      canselSubscription();
       debugPrint('_acSubscription?.onDone');
     });
 
@@ -86,16 +85,7 @@ class CurrencyRepository extends ChangeNotifier {
     });
   }
 
-  void canselSubscription() {
-    debugPrint('canselSubscription');
-    testStream = false;
-    _streamSubscription?.cancel();
-    subscription.close;
 
-    _testStreamSubscription?.cancel();
-    testSubscription.close;
-    notifyListeners();
-  }
 
   getLastCurrencyRateList() async {
     debugPrint('getLastCurrencyRateList');
@@ -111,7 +101,7 @@ class CurrencyRepository extends ChangeNotifier {
       await result.then((response) {
         DocumentList docs = response;
 
-        testCoinModelList.clear();
+        top100ModelsList.clear();
         debugPrint(
             'docs.documents.length: ${docs.documents.length.toString()}');
 
@@ -124,7 +114,7 @@ class CurrencyRepository extends ChangeNotifier {
           CoinQuote coinQuote = CoinQuote.fromJson(documentId, lastData["USD"]);
           MainCoinModel mainCoinModel =
               MainCoinModel.fromJson(documentId, coinData, coinQuote);
-          testCoinModelList.add(mainCoinModel);
+          top100ModelsList.add(mainCoinModel);
         }
       }).catchError((error) {
         debugPrint(error.toString());
@@ -137,29 +127,35 @@ class CurrencyRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> startTestCollectionStream() async {
+  Future<void> top100CollectionStream() async {
     debugPrint('startTestCollectionStream');
 
-    testSubscription = realtime.subscribe([
+    top100Subscription = realtime.subscribe([
       'databases.$databaseId.collections.$testStreamCollectionData.documents'
     ]);
-    _testStreamSubscription = testSubscription.stream.listen((response) async {
+    _top100StreamSubscription = top100Subscription.stream.listen((response) async {
       debugPrint(
           "_testStreamSubscription response.payload: ${response.payload.toString()}");
     });
 
     debugPrint("_testStreamSubscription - start listen!!!!!");
+    testStream = true;
 
-    _testStreamSubscription?.onDone(() {
-      _testStreamSubscription?.cancel();
-      testSubscription.close;
+    _top100StreamSubscription?.onDone(() {
+      testStream = false;
+
+      _top100StreamSubscription?.cancel();
+      // testSubscription.close;
       debugPrint('_testStreamSubscription?.onDone');
-      notifyListeners();
     });
 
-    _testStreamSubscription?.onData((data) async {
+    _top100StreamSubscription?.onData((data) async {
+      testStream = true;
+
+
+
       Map<String, dynamic> result = data.payload;
-      debugPrint('new ivent from  _testStreamSubscription${DateTime.now()}');
+      debugPrint('new ivent from  _testStreamSubscription. ${DateTime.now().toIso8601String()}');
 
       CoinDataModel coinData =
           CoinDataModel.fromJson(json.decode(result['Data']));
@@ -170,12 +166,13 @@ class CurrencyRepository extends ChangeNotifier {
       MainCoinModel newModel =
           MainCoinModel.fromJson(coinData.id.toString(), coinData, coinQuote);
       List<MainCoinModel> newList = [];
-      for (MainCoinModel model in testCoinModelList) {
+      for (MainCoinModel model in top100ModelsList) {
         model.id == newModel.id ? newList.add(newModel) : newList.add(model);
       }
-      testCoinModelList = newList;
+      top100ModelsList = newList;
 
-      notifyListeners();
     });
+    notifyListeners();
+
   }
 }

@@ -12,6 +12,24 @@ class HomePage extends StatelessWidget with WatchItMixin {
   const HomePage({super.key});
 
 
+
+  price (String text, double data) {
+    return Text("$text ${data.toStringAsFixed(2)}%",
+      style: TextStyle(
+        color: data.isNegative
+            ? Colors.red
+            :Colors.green,
+
+
+      ),);
+
+
+
+
+
+
+  }
+
   String countZerosAfterDecimal(double number) {
     String numberString = number.toString();
     int decimalIndex = numberString.indexOf('.');
@@ -38,21 +56,25 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
     return Scaffold(
       appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () => repo.startTestStream,
+        leading: repo.testStream
+        ? const Icon(Icons.circle, color: Colors.green,)
+        : GestureDetector(
+            onTap: () => {
+              repo.getLastRateList,
+              repo.startTop100Stream},
 
 
 
             child: const Icon(Icons.circle_outlined)),
-        title: const Text("Test list stream"),
+        title: const Text("Top 100 market cap."),
       ),
       body: SafeArea(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            itemCount: repo.testCoinModelList.length,
+            itemCount: repo.top100ModelsList.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              MainCoinModel item = repo.testCoinModelList[index];
+              MainCoinModel item = repo.top100ModelsList[index];
               Image image = Image.network(
                 item.coinDataModel.logo.toString(),
               );
@@ -72,34 +94,36 @@ class HomePage extends StatelessWidget with WatchItMixin {
                       Radius.circular(8),
                     ),
                   ),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Row(
+                      SizedBox(width: 36, child: image),
+                      const Expanded(
+                        flex: 1,
+                        child: SizedBox(),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(width: 36, child: image),
-                          const Expanded(
-                            flex: 1,
-                            child: SizedBox(),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(item.coinDataModel.symbol.toString(),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 17),),
-                              Text(item.coinDataModel.name.toString(),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),),
+                          Text(item.coinDataModel.symbol.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17),),
+                          Text(item.coinDataModel.name.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),),
 
-                            ],
-                          ),
-                          const Expanded(
-                            flex: 10,
-                            child: SizedBox(),
-                          ),
+                        ],
+                      ),
+                      const Expanded(
+                        flex: 10,
+                        child: SizedBox(),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+
+                        children: [
                           Text(
                             countZerosAfterDecimal(item.coinQuote.price),
                             style: const TextStyle(
@@ -107,8 +131,11 @@ class HomePage extends StatelessWidget with WatchItMixin {
                               color: Colors.white,
                             ),
                           ),
+                          price("1h change:", item.coinQuote.percentChange1h),
+
                         ],
                       ),
+
                     ],
                   ),
                 ),

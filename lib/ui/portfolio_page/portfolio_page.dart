@@ -46,7 +46,7 @@ class PortfolioPage extends StatelessWidget with WatchItMixin{
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-            onTap: () => repo.startTestStream,
+            onTap: () => repo.startTop100Stream,
 
 
 

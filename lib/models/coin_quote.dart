@@ -13,8 +13,8 @@ class CoinQuote {
   final double percentChange60d;
   final double percentChange90d;
   final double marketCap;
-  final double marketCapDominance;
-  final double fullyDilutedMarketCap;
+  final String marketCapDominance;
+  final String fullyDilutedMarketCap;
   final DateTime lastUpdated;
 
   CoinQuote({
@@ -51,8 +51,8 @@ class CoinQuote {
       percentChange60d: json['percent_change_60d'],
       percentChange90d: json['percent_change_90d'],
       marketCap: json['market_cap'],
-      marketCapDominance: json['market_cap_dominance'],
-      fullyDilutedMarketCap: json['fully_diluted_market_cap'],
+      marketCapDominance: json['market_cap_dominance'].toString(),
+      fullyDilutedMarketCap: json['fully_diluted_market_cap'].toString(),
       lastUpdated: DateTime.parse(json['last_updated']),
     );
   }

@@ -45,19 +45,17 @@ class MainScreen extends StatelessWidget {
             } ,
             items: const [
               BottomNavigationBarItem(
-                //   activeIcon: Icon(LBIcons.nav_house),
-                icon: Icon(Icons.list, size: 28, color: Colors.purple,),
+                activeIcon: Icon(Icons.circle, size: 28, color: Colors.purple,),
+                icon: Icon(Icons.circle_outlined, size: 28, color: Colors.purple,),
                 label: 'Top 100',),
               BottomNavigationBarItem(
-                //    activeIcon: Icon(Icons.circle),
-
-                icon: Icon(Icons.currency_bitcoin),
-                label: 'two',),
+                activeIcon: Icon(Icons.circle, size: 28, color: Colors.purple,),
+                icon: Icon(Icons.circle_outlined, size: 28, color: Colors.purple,),
+                label: 'Test',),
               BottomNavigationBarItem(
-                //  activeIcon: Icon(Icons.circle),
-
-                icon: Icon(Icons.currency_bitcoin),
-                label: 'three',),
+                activeIcon: Icon(Icons.circle, size: 28, color: Colors.purple,),
+                icon: Icon(Icons.circle_outlined, size: 28, color: Colors.purple,),
+                label: 'Test',),
 
             ],
           ),

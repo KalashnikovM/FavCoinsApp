@@ -2,8 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../models/main_coin_model.dart';
-import '../../router/router.dart';
-import '../../router/router.gr.dart';
+
 
 
 
@@ -27,7 +26,7 @@ class CoinPage extends StatelessWidget with WatchItMixin{
 
     return  Scaffold(
       appBar: AppBar(
-        title: Text('id: ${model.id}'),
+        title: Text("${model.coinDataModel.name}"),
       ),
          body: SafeArea(
 
@@ -44,8 +43,8 @@ class CoinPage extends StatelessWidget with WatchItMixin{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${model.coinDataModel.symbol}', style: TextStyle(fontSize: 24),),
-                        Text('${model.coinDataModel.name}', style: TextStyle(fontSize: 16),),
+                        Text('${model.coinDataModel.symbol}', style: const TextStyle(fontSize: 24),),
+                        Text('${model.coinDataModel.name}', style: const TextStyle(fontSize: 16),),
                         Text('Category: ${model.coinDataModel.category}'),
                         Text('Price: ${model.coinQuote.price.toStringAsFixed(2)} USD'),
                       ],
