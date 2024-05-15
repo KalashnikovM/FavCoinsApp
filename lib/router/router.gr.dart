@@ -36,7 +36,6 @@ abstract class $AppRouter extends _i7.RootStackRouter {
         child: _i2.CoinPage(
           key: args.key,
           model: args.model,
-          image: args.image,
         ),
       );
     },
@@ -87,14 +86,12 @@ class CoinPage extends _i7.PageRouteInfo<CoinPageArgs> {
   CoinPage({
     _i8.Key? key,
     required _i9.MainCoinModel model,
-    required _i8.Image image,
     List<_i7.PageRouteInfo>? children,
   }) : super(
           CoinPage.name,
           args: CoinPageArgs(
             key: key,
             model: model,
-            image: image,
           ),
           initialChildren: children,
         );
@@ -109,18 +106,15 @@ class CoinPageArgs {
   const CoinPageArgs({
     this.key,
     required this.model,
-    required this.image,
   });
 
   final _i8.Key? key;
 
   final _i9.MainCoinModel model;
 
-  final _i8.Image image;
-
   @override
   String toString() {
-    return 'CoinPageArgs{key: $key, model: $model, image: $image}';
+    return 'CoinPageArgs{key: $key, model: $model}';
   }
 }
 

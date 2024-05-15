@@ -1,10 +1,13 @@
+import 'dart:typed_data';
+
 class CoinDataModel {
   final int id;
   final String? name;
   final String? symbol;
   final String? category;
   final String? description;
-  final String? logo;
+  final Uint8List logo;
+
 
 
 
@@ -14,12 +17,14 @@ class CoinDataModel {
      this.symbol,
      this.category,
      this.description,
-     this.logo
+    required this.logo,
 
   });
 
-  factory CoinDataModel.fromJson(Map<String, dynamic> json) {
+  factory CoinDataModel.fromJson(Map<String, dynamic> json, logo) {
 
+    List<int> intList = logo.whereType<int>().toList();
+    Uint8List logoData = Uint8List.fromList(intList);
 
     return CoinDataModel(
       id: json['id'],
@@ -27,7 +32,7 @@ class CoinDataModel {
       symbol: json['symbol'],
       category: json['category'],
       description: json['description'],
-      logo: json['logo'],
+      logo: logoData,
 
 
     );

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
@@ -48,6 +51,18 @@ class HomePage extends StatelessWidget with WatchItMixin {
     return "${number.toStringAsFixed(zeroCount)}\$";
   }
 
+   genImage(String data) {
+
+    List<int> list=utf8.encode(data);
+    Uint8List bytes = Uint8List.fromList(list);
+
+    return bytes;
+
+
+
+
+  }
+
 
   @override
 
@@ -60,7 +75,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
         ? const Icon(Icons.circle, color: Colors.green,)
         : GestureDetector(
             onTap: () => {
-              repo.getLastRateList,
+              repo.getLastCurrencyRateList(),
               repo.startTop100Stream},
 
 
@@ -75,12 +90,10 @@ class HomePage extends StatelessWidget with WatchItMixin {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               MainCoinModel item = repo.top100ModelsList[index];
-              Image image = Image.network(
-                item.coinDataModel.logo.toString(),
-              );
+              Image image = Image.memory(item.coinDataModel.logo);
               return GestureDetector(
                 onTap: () =>
-                    di<AppRouter>().push(CoinPage(model: item, image: image)),
+                    di<AppRouter>().push(CoinPage(model: item,)),
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,10 +13,9 @@ import '../../models/main_coin_model.dart';
 @RoutePage(name: 'CoinPage')
 
 class CoinPage extends StatelessWidget with WatchItMixin{
-  const CoinPage({super.key, required this.model, required this.image});
+  const CoinPage({super.key, required this.model});
 
   final MainCoinModel model;
-  final Image image;
 
 
 
@@ -27,11 +28,10 @@ class CoinPage extends StatelessWidget with WatchItMixin{
 
     String updatedDate = DateFormat('HH:mm dd MMMM yyyy').format(dateTime);
 
-
     return  Scaffold(
       appBar: AppBar(
         title:                 Text('Updated: $updatedDate',),
-          titleTextStyle: TextStyle(
+          titleTextStyle: const TextStyle(
               fontSize: 16, color: Colors.white
 
           ),
@@ -61,7 +61,7 @@ class CoinPage extends StatelessWidget with WatchItMixin{
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: SizedBox(
                         height: 64,
-                        child: image),
+                        child: Image.memory(model.coinDataModel.logo)),
                   ),
                 ],
               ),
@@ -73,7 +73,7 @@ class CoinPage extends StatelessWidget with WatchItMixin{
 
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text('${model.coinDataModel.description}', style: TextStyle(
+                child: Text('${model.coinDataModel.description}', style: const TextStyle(
                   fontSize: 16
                 ),),
               ),
@@ -112,6 +112,8 @@ class CoinPage extends StatelessWidget with WatchItMixin{
 
               Text('Volume24h: ${model.coinQuote.volume24h}'),
               const SizedBox(height: 8,),
+
+
             ],
           ),
         ),

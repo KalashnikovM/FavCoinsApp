@@ -9,7 +9,6 @@ void main() {
 
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
-  di<CurrencyRepository>().getLastRateList;
   di<CurrencyRepository>().startTop100Stream;
 
 
