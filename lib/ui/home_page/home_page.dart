@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-
 import '../../data/currency_repository/currency_repository.dart';
 import '../../models/main_coin_model.dart';
 import '../../router/router.dart';

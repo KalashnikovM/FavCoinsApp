@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:crypto_tracker/models/coin_quote.dart';
