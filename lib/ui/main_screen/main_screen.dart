@@ -12,7 +12,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('Widget build MainScreen');
-
+Color color = Color(0xFF9b5bf3);
 
     return AutoTabsRouter(
       routes: const [
@@ -43,18 +43,18 @@ class MainScreen extends StatelessWidget {
             onTap: (value) {
               itemsRouter.setActiveIndex(value);
             } ,
-            items: const [
+            items:  [
               BottomNavigationBarItem(
-                activeIcon: Icon(Icons.circle, size: 28, color: Colors.purple,),
-                icon: Icon(Icons.circle_outlined, size: 28, color: Colors.purple,),
+                activeIcon: Icon(Icons.circle, size: 28, color: color),
+                icon: Icon(Icons.circle_outlined, size: 28, color: color),
                 label: 'Top 100',),
               BottomNavigationBarItem(
-                activeIcon: Icon(Icons.circle, size: 28, color: Colors.purple,),
-                icon: Icon(Icons.circle_outlined, size: 28, color: Colors.purple,),
+                activeIcon: Icon(Icons.circle, size: 28, color: color),
+                icon: Icon(Icons.circle_outlined, size: 28, color:color),
                 label: 'Test',),
               BottomNavigationBarItem(
-                activeIcon: Icon(Icons.circle, size: 28, color: Colors.purple,),
-                icon: Icon(Icons.circle_outlined, size: 28, color: Colors.purple,),
+                activeIcon: Icon(Icons.circle, size: 28, color: color),
+                icon: Icon(Icons.circle_outlined, size: 28, color: color),
                 label: 'Test',),
 
             ],
