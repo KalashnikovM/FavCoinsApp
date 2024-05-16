@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:auto_route/annotations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
@@ -38,7 +39,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
       }
     }
     zeroCount = zeroCount + 2;
-    return "${number.toStringAsFixed(zeroCount)}\$";
+    return "${number.toStringAsFixed(zeroCount)} \$";
   }
 
 
@@ -50,6 +51,14 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: IconButton(
+              onPressed: () {},
+                icon: const Icon(Icons.search)),
+          ),
+        ],
         leading: repo.testStream
         ? const Icon(Icons.circle, color: Colors.green,)
         : GestureDetector(
@@ -57,6 +66,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
             child: const Icon(Icons.circle_outlined)),
         title: const Text("Top 100 market cap."),
+
       ),
       body: RefreshIndicator(
         color: Colors.purple,
@@ -75,7 +85,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
                         di<AppRouter>().push(CoinPage(model: item,)),
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       decoration: const BoxDecoration(
                         // border: Border.all(
                         //   // color: Colors.purple,
@@ -88,6 +98,12 @@ class HomePage extends StatelessWidget with WatchItMixin {
                       ),
                       child: Row(
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text("${index+1}", style: const TextStyle(
+                              fontSize: 20,
+                            ),),
+                          ),
                           SizedBox(width: 36, child: image),
                           const Expanded(
                             flex: 1,
@@ -96,11 +112,31 @@ class HomePage extends StatelessWidget with WatchItMixin {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(item.coinDataModel.symbol.toString(),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 17),),
+                              RichText(
+                                text: TextSpan(text: "${item.coinDataModel.symbol}",
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 17),
+                                children: const [
+                                    TextSpan(text: "/USD",
+                                    style: TextStyle(
+                                        color: Colors.white54,
+                                     //   fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    ),],
+
+                              ),),
+
+
+                              //
+                              //
+                              // Text("${item.coinDataModel.symbol}/USD",
+                              //   style: const TextStyle(
+                              //       color: Colors.white,
+                              //       fontWeight: FontWeight.w400,
+                              //       fontSize: 17),),
+
                               Text(item.coinDataModel.name.toString(),
                                 style: const TextStyle(
                                     color: Colors.white,
@@ -123,17 +159,15 @@ class HomePage extends StatelessWidget with WatchItMixin {
                                 ),
                               ),
                               price("1h change:", item.coinQuote.percentChange1h),
-
                             ],
                           ),
-
                         ],
                       ),
                     ),
                   );
                 },
               ),
-        if(repo.status == UpdateStatus.updating)
+                   if(repo.status == UpdateStatus.updating)
                       Container(
                         color: const Color(0xFF3e3e3e).withOpacity(0.3),
                         child: const Center(
@@ -149,3 +183,6 @@ class HomePage extends StatelessWidget with WatchItMixin {
     );
   }
 }
+
+
+

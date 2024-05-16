@@ -21,7 +21,6 @@ enum UpdateStatus {
 
 
 class CurrencyRepository extends ChangeNotifier {
-  final List<MainCoinModel> mainCoinModelList = [];
   List<MainCoinModel> top100ModelsList = [];
 
   final db = di<ApiClient>().database;
@@ -34,6 +33,17 @@ class CurrencyRepository extends ChangeNotifier {
   CurrencyRepository() {
     getLastCurrencyRateList();
     startTop100Stream();
+  }
+
+
+
+
+  Future<void> searchCoin () async {
+
+
+
+
+
   }
 
 
@@ -74,6 +84,7 @@ class CurrencyRepository extends ChangeNotifier {
 
   Future<void> startTop100Stream() async {
     debugPrint('startTop100Stream');
+    top100StreamSubscription?.cancel();
 
     top100Subscription = realtime.subscribe([
       'databases.$databaseId.collections.$coinDataCollection.documents'
