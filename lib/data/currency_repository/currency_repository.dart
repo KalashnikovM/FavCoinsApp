@@ -12,7 +12,7 @@ import '../../models/main_coin_model.dart';
 import '../../services/appwrite_service.dart';
 
 
-enum UpdateStatus {
+enum CurrencyRepositoryStatus {
   init,
   updated,
   updating,
@@ -21,15 +21,17 @@ enum UpdateStatus {
 
 
 class CurrencyRepository extends ChangeNotifier {
+
   List<MainCoinModel> top100ModelsList = [];
+  List<MainCoinModel> foundElementsList = [];
 
   final db = di<ApiClient>().database;
   final realtime = di<ApiClient>().realtime;
   late RealtimeSubscription top100Subscription;
   StreamSubscription<dynamic>? top100StreamSubscription;
-  UpdateStatus status = UpdateStatus.init;
+  CurrencyRepositoryStatus status = CurrencyRepositoryStatus.init;
   bool testStream = false;
-
+  String error = '';
   CurrencyRepository() {
     getLastCurrencyRateList();
     startTop100Stream();
@@ -38,19 +40,30 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
-  Future<void> searchCoin () async {
+  Future<bool> searchCoin (String name) async {
+    debugPrint('searchCoin');
+    debugPrint(name);
+    bool res = false;
+    top100ModelsList.isNotEmpty
 
+        ? top100ModelsList.forEach((element) {
+        if(element.coinDataModel.symbol == name.toUpperCase()) {
+          foundElementsList.add(element);
+          res = true;
+        }})
 
+        : {res = false,
+            foundElementsList = []};
+    debugPrint("$res");
 
-
-
+    return res;
   }
 
 
 
   Future<void> getLastCurrencyRateList() async {
     debugPrint('getLastCurrencyRateList');
-    status = UpdateStatus.updating;
+    status = CurrencyRepositoryStatus.updating;
     notifyListeners();
 
     try {
@@ -72,17 +85,19 @@ class CurrencyRepository extends ChangeNotifier {
         final MainCoinModel mainCoinModel = MainCoinModel.fromJson(document.$id, coinData, coinQuote);
         top100ModelsList.add(mainCoinModel);
       }
-      status = UpdateStatus.updated;
+      status = CurrencyRepositoryStatus.updated;
 
       notifyListeners();
     } catch (e) {
-      status = UpdateStatus.error;
+      status = CurrencyRepositoryStatus.error;
+      error = "getLastCurrencyRateList Error: $e";
 
       debugPrint('Error fetching last currency rate list: $e');
     }
   }
 
   Future<void> startTop100Stream() async {
+    error = "Ok";
     debugPrint('startTop100Stream');
     top100StreamSubscription?.cancel();
 
@@ -93,15 +108,11 @@ class CurrencyRepository extends ChangeNotifier {
     top100StreamSubscription = top100Subscription.stream.listen((response) async {
       debugPrint("top100StreamSubscription response.payload: ${response.payload}");
     });
+
+
+
+
     testStream = true;
-
-    top100StreamSubscription?.onDone(() {
-      testStream = false;
-      top100StreamSubscription?.cancel();
-      notifyListeners();
-      debugPrint('Top100 Stream Subscription Done');
-    });
-
     top100StreamSubscription?.onData((data) async {
       final Map<String, dynamic> result = data.payload;
       debugPrint('New event from top100StreamSubscription: ${DateTime.now().toIso8601String()}');
@@ -114,9 +125,45 @@ class CurrencyRepository extends ChangeNotifier {
       top100ModelsList = top100ModelsList.map((model) {
         return model.id == newModel.id ? newModel : model;
       }).toList();
-
+      testStream = true;
       notifyListeners();
     });
+
+
+
+
+
+    top100StreamSubscription?.onDone(() {
+      testStream = false;
+      top100StreamSubscription?.cancel();
+      error = "Top100 Stream Subscription onDone";
+
+      notifyListeners();
+
+      debugPrint('Top100 Stream Subscription Done');
+    });
+
+
+
+
+    top100StreamSubscription?.onError((handleError) {
+
+      debugPrint('Top100 Stream Subscription handleError \n $handleError');
+      error = "Top100 Stream Subscription handleError: $handleError";
+      testStream = false;
+      notifyListeners();
+
+
+
+    });
+
+
+
+
+
+
+
+
   }
 
 

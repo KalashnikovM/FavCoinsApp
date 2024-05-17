@@ -1,12 +1,8 @@
 import 'package:auto_route/annotations.dart';
-
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-
 import '../../data/currency_repository/currency_repository.dart';
-import '../../models/main_coin_model.dart';
-import '../../router/router.dart';
-import '../../router/router.gr.dart';
+
 
 
 
@@ -46,15 +42,20 @@ class PortfolioPage extends StatelessWidget with WatchItMixin{
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-            onTap: () => repo.startTop100Stream,
+            onTap: () => {},
 
 
 
             child: const Icon(Icons.circle_outlined)),
         title: const Text("Test list stream"),
       ),
-      body: const SafeArea(
-          child: Center(child: Text("test"),))
+      body: SafeArea(
+          child: Column(
+            children: [
+              const Center(child: Text("test"),),
+              Text(repo.error),
+            ],
+          ))
 
 
 

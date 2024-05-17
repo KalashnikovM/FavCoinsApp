@@ -1,7 +1,5 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:auto_route/annotations.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:crypto_tracker/ui/home_page/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
@@ -20,7 +18,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
       style: TextStyle(
         color: data.isNegative
             ? Colors.red
-            :Colors.green,
+            : Colors.green,
       ),);
   }
 
@@ -55,14 +53,25 @@ class HomePage extends StatelessWidget with WatchItMixin {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: IconButton(
-              onPressed: () {},
-                icon: const Icon(Icons.search)),
+              onPressed: () {
+                showModalBottomSheet(
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) =>
+                  const SearchPage(),
+                );
+
+
+
+              },
+                icon: const Icon(Icons.search, color: Color(0xFF9b5bf3),)),
           ),
         ],
         leading: repo.testStream
         ? const Icon(Icons.circle, color: Colors.green,)
         : GestureDetector(
-            onTap: () => repo.startTop100Stream,
+            onTap: () => repo.startTop100Stream(),
 
             child: const Icon(Icons.circle_outlined)),
         title: const Text("Top 100 market cap."),
@@ -73,7 +82,8 @@ class HomePage extends StatelessWidget with WatchItMixin {
         onRefresh: () async { repo.getLastCurrencyRateList();},
         child: SafeArea(
             child: Stack(
-              children: [ ListView.builder(
+              children: [
+                ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 itemCount: repo.top100ModelsList.length,
                 shrinkWrap: true,
@@ -91,7 +101,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
                         //   // color: Colors.purple,
                         //   width: 0.5,
                         // ),
-                        color: Color(0xFF3e3e3e),
+                        color: Color(0xFF2e2e2e),
                         borderRadius: BorderRadius.all(
                           Radius.circular(8),
                         ),
@@ -129,14 +139,6 @@ class HomePage extends StatelessWidget with WatchItMixin {
                               ),),
 
 
-                              //
-                              //
-                              // Text("${item.coinDataModel.symbol}/USD",
-                              //   style: const TextStyle(
-                              //       color: Colors.white,
-                              //       fontWeight: FontWeight.w400,
-                              //       fontSize: 17),),
-
                               Text(item.coinDataModel.name.toString(),
                                 style: const TextStyle(
                                     color: Colors.white,
@@ -159,6 +161,29 @@ class HomePage extends StatelessWidget with WatchItMixin {
                                 ),
                               ),
                               price("1h change:", item.coinQuote.percentChange1h),
+                              // Container(
+                              //   margin: const EdgeInsets.all(2),
+                              //   decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //       color: item.coinQuote.percentChange1h.isNegative
+                              //           ? Colors.red
+                              //           : Colors.green,
+                              //       width: 0.5,
+                              //     ),
+                              //     color: item.coinQuote.percentChange1h.isNegative
+                              //         ? Color(0xFF2F2727)
+                              //         : Color(0xFF272F28),
+                              //     borderRadius: const BorderRadius.all(
+                              //       Radius.circular(4),
+                              //     ),
+                              //   ),
+                              //   child:  Padding(
+                              //     padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              //     child: price("1h change:", item.coinQuote.percentChange1h),
+                              //   ),
+                              //
+                              // )
+
                             ],
                           ),
                         ],
@@ -167,9 +192,10 @@ class HomePage extends StatelessWidget with WatchItMixin {
                   );
                 },
               ),
-                   if(repo.status == UpdateStatus.updating)
+                   if(repo.status == CurrencyRepositoryStatus.updating)
                       Container(
-                        color: const Color(0xFF3e3e3e).withOpacity(0.3),
+
+                        color: const Color(0xFF3e3e3e).withOpacity(0.15),
                         child: const Center(
                           child: CircularProgressIndicator(
                             color: Color(0xFF9b5bf3),
