@@ -37,6 +37,8 @@ class CurrencyRepository extends ChangeNotifier {
     startTop100Stream();
   }
 
+  get resList => foundElementsList.clear();
+
 
 
 

@@ -111,8 +111,35 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
-            const Center(
-              child: Text("Search page"),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  const Center(
+                    child: Text("Search page"),
+                  ),
+                  const Expanded(child: SizedBox(),),
+
+
+                  SizedBox(
+                    height: 24,
+                    child: ElevatedButton(
+                      onPressed: () {
+
+
+                        setState(() {
+
+
+                          repo.resList;
+
+
+                        });
+
+                      },
+                      child:  const Text("Clear search history"),),
+                  ),
+                ],
+              ),
             ),
 
             ListView.builder(
