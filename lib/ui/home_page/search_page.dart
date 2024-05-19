@@ -79,6 +79,21 @@ class _SearchPageState extends State<SearchPage> {
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
           children: [
+            SizedBox(height: 8,),
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(10),
+                      // border: Border.all(
+                      //              color: Colors.purple,
+                      //             width: 0.5,
+                      //           ),
+                    ),
+                width: 60,
+                height: 8,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
@@ -103,7 +118,7 @@ class _SearchPageState extends State<SearchPage> {
 
                   filled: true,
                   fillColor: Colors.white12,
-                  labelText: "  Enter coin name",
+                  labelText: "  Enter coin symbol.",
                    labelStyle: const TextStyle(
                      color: Color(0xFFcecece),
                    ),
@@ -115,28 +130,33 @@ class _SearchPageState extends State<SearchPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
+                  const Expanded(
+                  child: SizedBox(),
+                  flex: 3,),
+
                   const Center(
-                    child: Text("Search page"),
+                    child: Text("Search history"),
                   ),
-                  const Expanded(child: SizedBox(),),
+                  const Expanded(
+                    flex: 2,
+                    child: SizedBox(),),
 
 
-                  SizedBox(
-                    height: 24,
-                    child: ElevatedButton(
-                      onPressed: () {
+                  IconButton(
+                    onPressed: () {
 
 
-                        setState(() {
+                      setState(() {
 
 
-                          repo.resList;
+                        repo.resList;
 
 
-                        });
+                      });
 
-                      },
-                      child:  const Text("Clear search history"),),
+                    },
+                    icon: Icon(Icons.clear),
+                    // child:  const Text("Clear search history"),
                   ),
                 ],
               ),
@@ -213,13 +233,13 @@ class _SearchPageState extends State<SearchPage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              countZerosAfterDecimal(item.coinQuote.price),
+                            item.coinQuote.price,
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,
                               ),
                             ),
-                            price("1h change:", item.coinQuote.percentChange1h),
+                            Text("1h change:${item.coinQuote.percentChange1h}"),
                           ],
                         ),
                       ],

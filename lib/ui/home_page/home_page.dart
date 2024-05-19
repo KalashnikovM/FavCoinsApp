@@ -257,21 +257,21 @@ class HomePage extends StatelessWidget with WatchItMixin {
                                       child: SizedBox(),
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
                                         Text(
-                                          countZerosAfterDecimal(
-                                              item.coinQuote.price),
+                                    item.coinQuote.price,
                                           style: const TextStyle(
                                             fontSize: 18,
                                             color: Colors.white,
                                           ),
                                         ),
-                                        price(
-                                          "1h change:",
-                                          item.coinQuote.percentChange1h,
-                                        ),
+                                        Text("1h change: ${item.coinQuote.percentChange1h}",
+                                          style: TextStyle(
+                                            color: item.coinQuote.percentChange1h.startsWith("-")
+                                                ? Colors.red
+                                                : Colors.green,),),
+
                                       ],
                                     ),
                                   ],

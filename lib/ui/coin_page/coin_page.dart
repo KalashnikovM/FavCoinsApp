@@ -65,7 +65,7 @@ class CoinPage extends StatelessWidget with WatchItMixin{
                   ),
                 ],
               ),
-              Text('Price: ${model.coinQuote.price.toStringAsFixed(2)} USD',
+              Text('Price: ${model.coinQuote.price} USD',
                 style: const TextStyle(
                     fontSize: 20,
                     color: Colors.white
@@ -124,22 +124,22 @@ class CoinPage extends StatelessWidget with WatchItMixin{
 }
 
 
-priceWidget (String text, double data) {
+priceWidget (String text, String data) {
   return Row(
     children: [
       Text(text, ),
       const Expanded(child: SizedBox(),),
 
-      Text("${data.toStringAsFixed(2)}%",
+      Text("$data%",
         style: TextStyle(
           fontSize: 16,
-          color: data.isNegative
+          color: data.startsWith("-")
               ? Colors.red
               :Colors.green,
 
 
         ),),
-      data.isNegative
+      data.startsWith("-")
       ? const Icon(Icons.arrow_drop_down, color: Colors.red, size: 32,)
       : const Icon(Icons.arrow_drop_up, color: Colors.green,size: 32,),
     ],

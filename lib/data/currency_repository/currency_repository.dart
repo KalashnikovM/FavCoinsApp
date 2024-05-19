@@ -74,26 +74,18 @@ class CurrencyRepository extends ChangeNotifier {
         collectionId: coinDataCollection,
         queries: [Query.limit(100)],
       );
-
       final DocumentList docs = response;
       top100ModelsList.clear();
-
       debugPrint('docs.documents.length: ${docs.documents.length}');
-
       for (final Document document in docs.documents) {
-        final CoinDataModel coinData = CoinDataModel.fromJson(json.decode(document.data['Data']), document.data["Logo"]);
-        final Map<String, dynamic> lastData = json.decode(document.data['Quote']);
-        final CoinQuote coinQuote = CoinQuote.fromJson(document.$id, lastData["USD"]);
-        final MainCoinModel mainCoinModel = MainCoinModel.fromJson(document.$id, coinData, coinQuote);
-        top100ModelsList.add(mainCoinModel);
+        MainCoinModel test = await parseData(document.data);
+        top100ModelsList.add(test);
       }
       status = CurrencyRepositoryStatus.updated;
-
       notifyListeners();
     } catch (e) {
       status = CurrencyRepositoryStatus.error;
       error = "getLastCurrencyRateList Error: $e";
-
       debugPrint('Error fetching last currency rate list: $e');
     }
   }
@@ -111,22 +103,14 @@ class CurrencyRepository extends ChangeNotifier {
       debugPrint("top100StreamSubscription response.payload: ${response.payload}");
     });
 
-
-
-
     testStream = true;
     top100StreamSubscription?.onData((data) async {
-      final Map<String, dynamic> result = data.payload;
       debugPrint('New event from top100StreamSubscription: ${DateTime.now().toIso8601String()}');
-      var logoString = result["Logo"];
-      final CoinDataModel coinData = CoinDataModel.fromJson(json.decode(result['Data']), logoString);
-      final Map<String, dynamic> coinQuote = json.decode(result["Quote"]);
-      final CoinQuote quote = CoinQuote.fromJson(coinData.id.toString(), coinQuote["USD"]);
-      final MainCoinModel newModel = MainCoinModel.fromJson(coinData.id.toString(), coinData, quote);
-
+      MainCoinModel test = await parseData(data.payload);
       top100ModelsList = top100ModelsList.map((model) {
-        return model.id == newModel.id ? newModel : model;
+        return model.id == test.id ? test : model;
       }).toList();
+
       testStream = true;
       notifyListeners();
     });
@@ -139,17 +123,14 @@ class CurrencyRepository extends ChangeNotifier {
       testStream = false;
       top100StreamSubscription?.cancel();
       error = "Top100 Stream Subscription onDone";
-
       notifyListeners();
-
       debugPrint('Top100 Stream Subscription Done');
+      debugPrint('restart: startTop100Stream()');
+      startTop100Stream();
     });
 
 
-
-
     top100StreamSubscription?.onError((handleError) {
-
       debugPrint('Top100 Stream Subscription handleError \n $handleError');
       error = "Top100 Stream Subscription handleError: $handleError";
       testStream = false;
@@ -159,13 +140,17 @@ class CurrencyRepository extends ChangeNotifier {
 
     });
 
+  }
 
 
 
 
-
-
-
+  Future<MainCoinModel>parseData(Map<String, dynamic> data) async {
+    final CoinDataModel coinData = CoinDataModel.fromJson(json.decode(data['Data']), data["Logo"]);
+    final Map<String, dynamic> lastData = json.decode(data['Quote']);
+    final CoinQuote coinQuote = CoinQuote.fromJson(coinData.id.toString(), lastData["USD"]);
+    final MainCoinModel mainCoinModel = MainCoinModel.fromJson(coinData.id.toString(), coinData, coinQuote);
+    return mainCoinModel;
   }
 
 
