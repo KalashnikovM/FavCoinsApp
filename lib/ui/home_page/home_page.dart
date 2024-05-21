@@ -92,7 +92,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
                             ),
                           ),
                         ],
-                        leading: repo.testStream
+                        leading: repo.top100Stream
                             ? const Icon(Icons.circle, color: Color(0xFF9b5bf3))
                             : GestureDetector(
                           onTap: () => repo.startTop100Stream(),
@@ -100,11 +100,6 @@ class HomePage extends StatelessWidget with WatchItMixin {
                         ),
                         title: const Text("Top 100 market cap."),
                       ),
-
-
-
-
-
 
 
                       SliverToBoxAdapter(
@@ -124,50 +119,9 @@ class HomePage extends StatelessWidget with WatchItMixin {
                                   child: SizedBox(),),
 
 
-
-
-                            //
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //     border: Border.all(
-                            //                  color: Colors.purple,
-                            //                 width: 0.5,
-                            //               ),
-                            //   ),
-                            //   width: 78,
-                            //   height: 20,
-                            //   child: Center(child: const Text("Price  \$", style: style,)),
-                            // ),
-
-
-
-
                                 ElevatedButton(
                                   onPressed: () {},
                                   child:  const Text("Price  \$", style: style,),),
-
-                            // Container(
-                            //       decoration: BoxDecoration(
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //       ),
-                            //
-                            //
-                            //       child: ElevatedButton(
-                            //           onPressed: () {},
-                            //           child:  const Text("Price  \$", style: style,),),
-                            //     )
-
-
-
-
-
-
-
 
                               ],
                             ),
@@ -285,7 +239,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
                     ],
                   ),
                 ),
-                if (repo.status == CurrencyRepositoryStatus.updating)
+                if (repo.top100PageStatus == CurrencyRepositoryStatus.updating)
                   Container(
                     color: const Color(0xFF3e3e3e).withOpacity(0.15),
                     child: const Center(

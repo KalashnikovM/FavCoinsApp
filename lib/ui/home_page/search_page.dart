@@ -79,7 +79,7 @@ class _SearchPageState extends State<SearchPage> {
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
           children: [
-            SizedBox(height: 8,),
+            const SizedBox(height: 8,),
             Center(
               child: Container(
                 decoration: BoxDecoration(
@@ -131,8 +131,8 @@ class _SearchPageState extends State<SearchPage> {
               child: Row(
                 children: [
                   const Expanded(
-                  child: SizedBox(),
-                  flex: 3,),
+                     flex: 3,
+                     child: SizedBox(),),
 
                   const Center(
                     child: Text("Search history"),
@@ -155,7 +155,7 @@ class _SearchPageState extends State<SearchPage> {
                       });
 
                     },
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                     // child:  const Text("Clear search history"),
                   ),
                 ],

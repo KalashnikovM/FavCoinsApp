@@ -24,17 +24,32 @@ class CurrencyRepository extends ChangeNotifier {
 
   List<MainCoinModel> top100ModelsList = [];
   List<MainCoinModel> foundElementsList = [];
+  List<MainCoinModel> testElementsList = [];
+
 
   final db = di<ApiClient>().database;
   final realtime = di<ApiClient>().realtime;
   late RealtimeSubscription top100Subscription;
   StreamSubscription<dynamic>? top100StreamSubscription;
-  CurrencyRepositoryStatus status = CurrencyRepositoryStatus.init;
+  late RealtimeSubscription testSubscription;
+  StreamSubscription<dynamic>? testStreamSubscription;
+  CurrencyRepositoryStatus top100PageStatus = CurrencyRepositoryStatus.init;
+  CurrencyRepositoryStatus mainListPageStatus = CurrencyRepositoryStatus.init;
+
+  bool top100Stream = false;
   bool testStream = false;
-  String error = '';
+
+  get trigger => getTestList();
+
+
+  Map<String, String> error = {};
   CurrencyRepository() {
+    error[DateTime.now().toLocal().toString()] = "CurrencyRepository.init";
+
     getLastCurrencyRateList();
+    getTestList();
     startTop100Stream();
+    startTestStream();
   }
 
   get resList => foundElementsList.clear();
@@ -63,9 +78,114 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
+
+
+
+  Future<void> getTestList() async {
+    debugPrint('getTestList');
+
+
+    try {
+      mainListPageStatus = CurrencyRepositoryStatus.updating;
+      notifyListeners();
+      final response = await db.listDocuments(
+        databaseId: databaseId,
+        collectionId: testCollection,
+        queries: [Query.limit(100), Query.offset(0+testElementsList.length)],
+      );
+      final DocumentList docs = response;
+      debugPrint('docs.documents.length: ${docs.documents.length}');
+      for (final Document document in docs.documents) {
+        MainCoinModel mainModel = await parseData(document.data);
+        testElementsList.add(mainModel);
+      }
+      mainListPageStatus = CurrencyRepositoryStatus.updated;
+      notifyListeners();
+    } catch (e) {
+      mainListPageStatus = CurrencyRepositoryStatus.error;
+      error[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
+      debugPrint('Error fetching last currency rate list: $e');
+      notifyListeners();
+
+    }
+  }
+
+
+
+  Future<void> startTestStream() async {
+
+    debugPrint('startTestStream');
+    testStreamSubscription?.cancel();
+
+    testSubscription = realtime.subscribe([
+      'databases.$databaseId.collections.$mainCollection.documents'
+    ]);
+
+    testStreamSubscription = top100Subscription.stream.listen((response) async {
+      debugPrint("startTestStream response.payload: ${response.payload}");
+    });
+    testStream = true;
+
+    testStreamSubscription?.onData((data) async {
+      debugPrint('New event from startTestStream: ${DateTime.now().toIso8601String()}');
+      MainCoinModel mainModel = await parseData(data.payload);
+      // testElementsList.add(mainModel);
+      testStream = true;
+
+
+
+
+      testElementsList = testElementsList.map((model) {
+        return model.id == mainModel.id ? mainModel : model;
+      }).toList();
+
+      notifyListeners();
+    });
+
+
+
+
+
+    testStreamSubscription?.onDone(() {
+      testStream = false;
+      testStreamSubscription?.cancel();
+      error[DateTime.now().toLocal().toString()] = "startTestStream Subscription onDone";
+
+      notifyListeners();
+      debugPrint('startTestStream Subscription Done');
+      debugPrint('restart: startTestStream()');
+      startTestStream();
+    });
+
+
+    testStreamSubscription?.onError((handleError) {
+      debugPrint('startTestStreamSubscription handleError \n $handleError');
+      error[DateTime.now().toLocal().toString()] = "startTestStreamSubscription handleError: $handleError";
+      testStream = false;
+
+      notifyListeners();
+
+
+
+    });
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
   Future<void> getLastCurrencyRateList() async {
     debugPrint('getLastCurrencyRateList');
-    status = CurrencyRepositoryStatus.updating;
+    top100PageStatus = CurrencyRepositoryStatus.updating;
     notifyListeners();
 
     try {
@@ -78,20 +198,21 @@ class CurrencyRepository extends ChangeNotifier {
       top100ModelsList.clear();
       debugPrint('docs.documents.length: ${docs.documents.length}');
       for (final Document document in docs.documents) {
-        MainCoinModel test = await parseData(document.data);
-        top100ModelsList.add(test);
+        MainCoinModel mainModel = await parseData(document.data);
+        top100ModelsList.add(mainModel);
       }
-      status = CurrencyRepositoryStatus.updated;
+      top100PageStatus = CurrencyRepositoryStatus.updated;
       notifyListeners();
     } catch (e) {
-      status = CurrencyRepositoryStatus.error;
-      error = "getLastCurrencyRateList Error: $e";
+      top100PageStatus = CurrencyRepositoryStatus.error;
+      error[DateTime.now().toLocal().toString()] = "getLastCurrencyRateList Error: $e";
       debugPrint('Error fetching last currency rate list: $e');
     }
   }
 
   Future<void> startTop100Stream() async {
-    error = "Ok";
+    error[DateTime.now().toLocal().toString()] = "Ok";
+
     debugPrint('startTop100Stream');
     top100StreamSubscription?.cancel();
 
@@ -103,15 +224,15 @@ class CurrencyRepository extends ChangeNotifier {
       debugPrint("top100StreamSubscription response.payload: ${response.payload}");
     });
 
-    testStream = true;
+    top100Stream = true;
     top100StreamSubscription?.onData((data) async {
       debugPrint('New event from top100StreamSubscription: ${DateTime.now().toIso8601String()}');
-      MainCoinModel test = await parseData(data.payload);
+      MainCoinModel mainModel = await parseData(data.payload);
       top100ModelsList = top100ModelsList.map((model) {
-        return model.id == test.id ? test : model;
+        return model.id == mainModel.id ? mainModel : model;
       }).toList();
 
-      testStream = true;
+      top100Stream = true;
       notifyListeners();
     });
 
@@ -120,9 +241,9 @@ class CurrencyRepository extends ChangeNotifier {
 
 
     top100StreamSubscription?.onDone(() {
-      testStream = false;
+      top100Stream = false;
       top100StreamSubscription?.cancel();
-      error = "Top100 Stream Subscription onDone";
+      error[DateTime.now().toLocal().toString()] = "Top100 Stream Subscription onDone";
       notifyListeners();
       debugPrint('Top100 Stream Subscription Done');
       debugPrint('restart: startTop100Stream()');
@@ -132,8 +253,8 @@ class CurrencyRepository extends ChangeNotifier {
 
     top100StreamSubscription?.onError((handleError) {
       debugPrint('Top100 Stream Subscription handleError \n $handleError');
-      error = "Top100 Stream Subscription handleError: $handleError";
-      testStream = false;
+      error[DateTime.now().toLocal().toString()] = "Top100 Stream Subscription handleError: $handleError";
+      top100Stream = false;
       notifyListeners();
 
 
@@ -158,6 +279,7 @@ class CurrencyRepository extends ChangeNotifier {
   @override
   void dispose() {
     top100StreamSubscription?.cancel();
+    testStreamSubscription?.cancel();
     super.dispose();
   }
 }
