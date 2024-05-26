@@ -6,7 +6,7 @@ class CoinDataModel {
   final String? symbol;
   final String? category;
   final String? description;
-  final Uint8List logo;
+  final Uint8List? logo;
 
 
 
@@ -17,7 +17,7 @@ class CoinDataModel {
      this.symbol,
      this.category,
      this.description,
-    required this.logo,
+     this.logo,
 
   });
 

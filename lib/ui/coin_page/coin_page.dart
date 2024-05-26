@@ -27,6 +27,7 @@ class CoinPage extends StatelessWidget with WatchItMixin{
     DateTime dateTime = utcDateTime.toLocal();
 
     String updatedDate = DateFormat('HH:mm dd MMMM yyyy').format(dateTime);
+    var logo = model.coinDataModel.logo;
 
     return  Scaffold(
       appBar: AppBar(
@@ -59,9 +60,12 @@ class CoinPage extends StatelessWidget with WatchItMixin{
                     child: SizedBox(),),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SizedBox(
-                        height: 64,
-                        child: Image.memory(model.coinDataModel.logo)),
+                    child: SizedBox(width: 36,
+                      child:
+                      logo != null
+                          ? Image.memory(logo)
+                          : const CircularProgressIndicator(),
+                    ),
                   ),
                 ],
               ),

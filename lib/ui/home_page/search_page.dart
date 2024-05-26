@@ -1,4 +1,5 @@
 import 'package:crypto_tracker/data/currency_repository/currency_repository.dart';
+import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -102,13 +103,17 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 controller: _searchController,
                 onChanged: (value) async {
-                 bool res = await repo.searchCoin(_searchController.text);
+
+                  if(value.length > 1) {
+
+
+                 bool res = await repo.getFunc(_searchController.text);
                  res
                      ? setState(() {
 
                  })
                       : null;
-                },
+                }},
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   border: OutlineInputBorder(
@@ -167,86 +172,10 @@ class _SearchPageState extends State<SearchPage> {
               itemCount: repo.foundElementsList.length,
               shrinkWrap: true,
               itemBuilder: (BuildContext context, int index) {
-                MainCoinModel item = repo.foundElementsList[index];
-                Image image = Image.memory(item.coinDataModel.logo);
-                return GestureDetector(
-                  onTap: () =>
-                      di<AppRouter>().push(CoinPage(model: item,)),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    decoration: const BoxDecoration(
-                      // border: Border.all(
-                      //   // color: Colors.purple,
-                      //   width: 0.5,
-                      // ),
-                      color: Color(0xFF2e2e2e),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Text("${index+1}", style: const TextStyle(
-                            fontSize: 20,
-                          ),),
-                        ),
-                        SizedBox(width: 36, child: image),
-                        const Expanded(
-                          flex: 1,
-                          child: SizedBox(),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(
-                              text: TextSpan(text: "${item.coinDataModel.symbol}",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 17),
-                                children: const [
-                                  TextSpan(text: "/USD",
-                                    style: TextStyle(
-                                        color: Colors.white54,
-                                        //   fontWeight: FontWeight.w300,
-                                        fontSize: 15),
-                                  ),],
-
-                              ),),
-
-
-                            Text(item.coinDataModel.name.toString(),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),),
-
-                          ],
-                        ),
-                        const Expanded(
-                          flex: 10,
-                          child: SizedBox(),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                            item.coinQuote.price,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text("1h change:${item.coinQuote.percentChange1h}"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                return CoinCard(
+                  model: repo.foundElementsList[index],
+                  index: index,);
+                },
             ),
 
 

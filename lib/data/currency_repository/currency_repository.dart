@@ -24,11 +24,13 @@ class CurrencyRepository extends ChangeNotifier {
 
   List<MainCoinModel> top100ModelsList = [];
   List<MainCoinModel> foundElementsList = [];
-  List<MainCoinModel> testElementsList = [];
+  List<MainCoinModel> mainCoinsList = [];
 
 
   final db = di<ApiClient>().database;
   final realtime = di<ApiClient>().realtime;
+  final functions = di<ApiClient>().functions;
+
   late RealtimeSubscription top100Subscription;
   StreamSubscription<dynamic>? top100StreamSubscription;
   late RealtimeSubscription testSubscription;
@@ -39,7 +41,7 @@ class CurrencyRepository extends ChangeNotifier {
   bool top100Stream = false;
   bool testStream = false;
 
-  get trigger => getTestList();
+  get trigger => updateMainList();
 
 
   Map<String, String> error = {};
@@ -47,9 +49,9 @@ class CurrencyRepository extends ChangeNotifier {
     error[DateTime.now().toLocal().toString()] = "CurrencyRepository.init";
 
     getLastCurrencyRateList();
-    getTestList();
+    updateMainList();
     startTop100Stream();
-    startTestStream();
+    // startTestStream();
   }
 
   get resList => foundElementsList.clear();
@@ -76,12 +78,66 @@ class CurrencyRepository extends ChangeNotifier {
     return res;
   }
 
+Future<bool> getFunc(String symbol) async{
+  bool res = false;
+
+  debugPrint('result functions.createExecution();');
+  Execution result = await functions.createExecution(
+    functionId: '65f96862ad619d34eadf',
+      body: symbol, // optional
+    // xasync: false, // optional
+    // path: '/', // optional
+     // method: "GET", // optional
+    // headers: headers, // optional
+  );
+
+  if(result.responseStatusCode == 200)
+       {
+    Map<String, dynamic> body = jsonDecode(result.responseBody);
+    final Map<String, dynamic> bodyBata = body['data'];
+    var data = bodyBata[symbol.toUpperCase()];
+           debugPrint('${data.runtimeType}\data: $data');
+        for(var item in data) {
+          debugPrint('quote: ${item["quote"]}');
+
+          try {
+
+            final response = await db.getDocument(
+              databaseId: databaseId,
+              collectionId: testCollection,
+              documentId: item["id"].toString(),
+            );
+            CoinQuote quote = CoinQuote.fromJson(item["id"].toString(),item["quote"]["USD"]);
+            final Document doc = response;
+            MainCoinModel mainModel = await parseData(doc.data);
+            MainCoinModel foundedModel = MainCoinModel(
+                id: mainModel.id,
+                coinDataModel: mainModel.coinDataModel,
+                coinQuote: quote);
+
+            foundElementsList.add(foundedModel);
+            debugPrint(foundedModel.id);
+            res = true;
+          } catch (e) {
+            res = false;
+            error[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
+            debugPrint('Error fetching last currency rate list: $e');
+          }}}
+        else {
+    debugPrint('result responseStatusCode() ${result.responseStatusCode}');
+    res = false;
+
+  }
+
+  debugPrint('result status() ${result.status}');
+        return res;
+
+}
 
 
 
 
-
-  Future<void> getTestList() async {
+  Future<void> updateMainList() async {
     debugPrint('getTestList');
 
 
@@ -91,13 +147,13 @@ class CurrencyRepository extends ChangeNotifier {
       final response = await db.listDocuments(
         databaseId: databaseId,
         collectionId: testCollection,
-        queries: [Query.limit(100), Query.offset(0+testElementsList.length)],
+        queries: [Query.limit(100), Query.offset(0+mainCoinsList.length)],
       );
       final DocumentList docs = response;
       debugPrint('docs.documents.length: ${docs.documents.length}');
       for (final Document document in docs.documents) {
         MainCoinModel mainModel = await parseData(document.data);
-        testElementsList.add(mainModel);
+        mainCoinsList.add(mainModel);
       }
       mainListPageStatus = CurrencyRepositoryStatus.updated;
       notifyListeners();
@@ -112,74 +168,64 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
-  Future<void> startTestStream() async {
-
-    debugPrint('startTestStream');
-    testStreamSubscription?.cancel();
-
-    testSubscription = realtime.subscribe([
-      'databases.$databaseId.collections.$mainCollection.documents'
-    ]);
-
-    testStreamSubscription = top100Subscription.stream.listen((response) async {
-      debugPrint("startTestStream response.payload: ${response.payload}");
-    });
-    testStream = true;
-
-    testStreamSubscription?.onData((data) async {
-      debugPrint('New event from startTestStream: ${DateTime.now().toIso8601String()}');
-      MainCoinModel mainModel = await parseData(data.payload);
-      // testElementsList.add(mainModel);
-      testStream = true;
-
-
-
-
-      testElementsList = testElementsList.map((model) {
-        return model.id == mainModel.id ? mainModel : model;
-      }).toList();
-
-      notifyListeners();
-    });
-
-
-
-
-
-    testStreamSubscription?.onDone(() {
-      testStream = false;
-      testStreamSubscription?.cancel();
-      error[DateTime.now().toLocal().toString()] = "startTestStream Subscription onDone";
-
-      notifyListeners();
-      debugPrint('startTestStream Subscription Done');
-      debugPrint('restart: startTestStream()');
-      startTestStream();
-    });
-
-
-    testStreamSubscription?.onError((handleError) {
-      debugPrint('startTestStreamSubscription handleError \n $handleError');
-      error[DateTime.now().toLocal().toString()] = "startTestStreamSubscription handleError: $handleError";
-      testStream = false;
-
-      notifyListeners();
-
-
-
-    });
-
-  }
-
-
-
-
-
-
-
-
-
-
+  // Future<void> startTestStream() async {
+  //
+  //   debugPrint('startTestStream');
+  //   testStreamSubscription?.cancel();
+  //
+  //   testSubscription = realtime.subscribe([
+  //     'databases.$databaseId.collections.$mainCollection.documents'
+  //   ]);
+  //
+  //   testStreamSubscription = top100Subscription.stream.listen((response) async {
+  //     debugPrint("startTestStream response.payload: ${response.payload}");
+  //   });
+  //   testStream = true;
+  //
+  //   testStreamSubscription?.onData((data) async {
+  //     debugPrint('New event from startTestStream: ${DateTime.now().toIso8601String()}');
+  //     MainCoinModel mainModel = await parseData(data.payload);
+  //     // testElementsList.add(mainModel);
+  //     testStream = true;
+  //
+  //
+  //
+  //
+  //     testElementsList = testElementsList.map((model) {
+  //       return model.id == mainModel.id ? mainModel : model;
+  //     }).toList();
+  //
+  //     notifyListeners();
+  //   });
+  //
+  //
+  //
+  //
+  //
+  //   testStreamSubscription?.onDone(() {
+  //     testStream = false;
+  //     testStreamSubscription?.cancel();
+  //     error[DateTime.now().toLocal().toString()] = "startTestStream Subscription onDone";
+  //
+  //     notifyListeners();
+  //     debugPrint('startTestStream Subscription Done');
+  //     debugPrint('restart: startTestStream()');
+  //     startTestStream();
+  //   });
+  //
+  //
+  //   testStreamSubscription?.onError((handleError) {
+  //     debugPrint('startTestStreamSubscription handleError \n $handleError');
+  //     error[DateTime.now().toLocal().toString()] = "startTestStreamSubscription handleError: $handleError";
+  //     testStream = false;
+  //
+  //     notifyListeners();
+  //
+  //
+  //
+  //   });
+  //
+  // }
 
 
 
@@ -191,7 +237,7 @@ class CurrencyRepository extends ChangeNotifier {
     try {
       final response = await db.listDocuments(
         databaseId: databaseId,
-        collectionId: coinDataCollection,
+        collectionId: top100coinDataCollection,
         queries: [Query.limit(100)],
       );
       final DocumentList docs = response;
@@ -217,7 +263,7 @@ class CurrencyRepository extends ChangeNotifier {
     top100StreamSubscription?.cancel();
 
     top100Subscription = realtime.subscribe([
-      'databases.$databaseId.collections.$coinDataCollection.documents'
+      'databases.$databaseId.collections.$top100coinDataCollection.documents'
     ]);
 
     top100StreamSubscription = top100Subscription.stream.listen((response) async {
