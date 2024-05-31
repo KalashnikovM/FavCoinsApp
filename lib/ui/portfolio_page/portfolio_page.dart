@@ -3,9 +3,6 @@ import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
-import '../../models/main_coin_model.dart';
-import '../../router/router.dart';
-import '../../router/router.gr.dart';
 import '../home_page/search_page.dart';
 
 
@@ -50,10 +47,7 @@ class PortfolioPage extends StatelessWidget with WatchItMixin{
 
     return Scaffold(
       appBar: AppBar(
-        // leading: GestureDetector(
-        //     onTap: () => repo.testStream ? null : repo.startTestStream(),
-        //     child: Icon(repo.testStream ? Icons.circle : Icons.circle_outlined)),
-        title: Text("Test list stream. ${repo.mainCoinsList.length}"),
+        title: const Text("Global coin list"),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(

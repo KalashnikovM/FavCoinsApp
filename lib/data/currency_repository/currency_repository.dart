@@ -25,6 +25,7 @@ class CurrencyRepository extends ChangeNotifier {
   List<MainCoinModel> top100ModelsList = [];
   List<MainCoinModel> foundElementsList = [];
   List<MainCoinModel> mainCoinsList = [];
+  Map<String, dynamic> coinMapList = {};
 
 
   final db = di<ApiClient>().database;
@@ -33,13 +34,20 @@ class CurrencyRepository extends ChangeNotifier {
 
   late RealtimeSubscription top100Subscription;
   StreamSubscription<dynamic>? top100StreamSubscription;
-  late RealtimeSubscription testSubscription;
-  StreamSubscription<dynamic>? testStreamSubscription;
+  // late RealtimeSubscription testSubscription;
+  // StreamSubscription<dynamic>? testStreamSubscription;
   CurrencyRepositoryStatus top100PageStatus = CurrencyRepositoryStatus.init;
   CurrencyRepositoryStatus mainListPageStatus = CurrencyRepositoryStatus.init;
 
+
   bool top100Stream = false;
   bool testStream = false;
+
+  int current = 0;
+
+
+
+  get test => _updateCoinMapList();
 
   get trigger => updateMainList();
 
@@ -51,6 +59,7 @@ class CurrencyRepository extends ChangeNotifier {
     getLastCurrencyRateList();
     updateMainList();
     startTop100Stream();
+    _updateCoinMapList();
     // startTestStream();
   }
 
@@ -58,8 +67,83 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
+  Future<bool> searchByPartialNameAndSymbol(String searchString) async {
+    debugPrint("start searchByPartialNameAndSymbol().searchString# $searchString");
+    bool found = false;
 
-  Future<bool> searchCoin (String name) async {
+    for (var id in coinMapList.keys) {
+      var coinData = coinMapList[id];
+
+      for (var name in coinData.keys) {
+        var symbol = coinData[name];
+
+        if (name == searchString || symbol == searchString) {
+          try {
+            Document response = await db.getDocument(
+              databaseId: databaseId,
+              collectionId: coinDataCollection,
+              documentId: id,
+            );
+            MainCoinModel foundedModel = await parseData(response.data);
+
+            foundElementsList.add(foundedModel);
+            debugPrint(foundedModel.id);
+            found = true;
+          } catch (e) {
+            error[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
+            debugPrint('Error fetching last currency rate list: $e');
+          }
+        }
+      }
+    }
+
+    debugPrint('found: $found');
+    return found;
+  }
+
+
+
+
+
+    _updateCoinMapList () async {
+      debugPrint("start _updateCoinMapList()");
+      current += 2000;
+      final DocumentList docs = await db.listDocuments(
+        databaseId: databaseId,
+        collectionId: coinMapCollection,
+        queries: [
+          Query.limit(current),
+           Query.offset(0+coinMapList.length),
+        ],
+
+      );
+      for (var document in docs.documents) {
+        Map<String, dynamic> data = document.data;
+        coinMapList[document.$id] = {
+          data["Name"]: data["Symbol"]};
+      }
+
+      if(current < docs.total){
+        _updateCoinMapList();
+      }
+
+      debugPrint("coinMapList length : ${coinMapList.length}");
+      notifyListeners();
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+   searchCoin (String name) {
     debugPrint('searchCoin');
     debugPrint(name);
     bool res = false;
@@ -77,6 +161,14 @@ class CurrencyRepository extends ChangeNotifier {
 
     return res;
   }
+
+
+
+
+
+
+
+
 
 Future<bool> getFunc(String symbol) async{
   bool res = false;
@@ -104,19 +196,15 @@ Future<bool> getFunc(String symbol) async{
 
             final response = await db.getDocument(
               databaseId: databaseId,
-              collectionId: testCollection,
+              collectionId: coinDataCollection,
               documentId: item["id"].toString(),
             );
-            CoinQuote quote = CoinQuote.fromJson(item["id"].toString(),item["quote"]["USD"]);
             final Document doc = response;
             MainCoinModel mainModel = await parseData(doc.data);
-            MainCoinModel foundedModel = MainCoinModel(
-                id: mainModel.id,
-                coinDataModel: mainModel.coinDataModel,
-                coinQuote: quote);
 
-            foundElementsList.add(foundedModel);
-            debugPrint(foundedModel.id);
+
+            foundElementsList.add(mainModel);
+            debugPrint(mainModel.id);
             res = true;
           } catch (e) {
             res = false;
@@ -144,12 +232,11 @@ Future<bool> getFunc(String symbol) async{
     try {
       mainListPageStatus = CurrencyRepositoryStatus.updating;
       notifyListeners();
-      final response = await db.listDocuments(
+      final DocumentList docs = await db.listDocuments(
         databaseId: databaseId,
-        collectionId: testCollection,
+        collectionId: coinDataCollection,
         queries: [Query.limit(100), Query.offset(0+mainCoinsList.length)],
       );
-      final DocumentList docs = response;
       debugPrint('docs.documents.length: ${docs.documents.length}');
       for (final Document document in docs.documents) {
         MainCoinModel mainModel = await parseData(document.data);
@@ -325,7 +412,7 @@ Future<bool> getFunc(String symbol) async{
   @override
   void dispose() {
     top100StreamSubscription?.cancel();
-    testStreamSubscription?.cancel();
+    // testStreamSubscription?.cancel();
     super.dispose();
   }
 }

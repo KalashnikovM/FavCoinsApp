@@ -17,6 +17,9 @@ class CoinListPage extends StatelessWidget with WatchItMixin{
     CurrencyRepository repo = watchIt<CurrencyRepository>();
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('${repo.coinMapList.length}'),
+      ),
       body: SafeArea(
         child: ListView(
           children: _widgets(repo.error),
@@ -33,7 +36,7 @@ class CoinListPage extends StatelessWidget with WatchItMixin{
 
   _widgets (Map<String, String> error) {
 
-    List<Widget> widgets = [TextButton(onPressed: () => di<CurrencyRepository>().getFunc("BTC"), child: const Text("ExFunc"),),];
+    List<Widget> widgets = [TextButton(onPressed: () {}, child: const Text("ExFunc"),),];
 
       error.forEach((key, value) {
 

@@ -43,7 +43,7 @@ class UserDataRepo extends ChangeNotifier{
       Future result =
       _database.createDocument(
           databaseId: databaseId,
-          collectionId: testCollection,
+          collectionId: coinDataCollection,
           documentId: documentId,
           data: { 'device': 'Iphone'},
       );
@@ -88,7 +88,7 @@ class UserDataRepo extends ChangeNotifier{
 
       Future result = _database.getDocument(
           databaseId: databaseId,
-          collectionId: testCollection,
+          collectionId: coinDataCollection,
           documentId: documentId);
 
 

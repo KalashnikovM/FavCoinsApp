@@ -3,9 +3,6 @@ import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../models/main_coin_model.dart';
-import '../../router/router.dart';
-import '../../router/router.gr.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,8 +13,9 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
-
+  static const Color color = Color(0xFF9b5bf3);
   late TextEditingController _searchController;
+  bool searching = false;
 
   price (String text, double data) {
     return Text("$text ${data.toStringAsFixed(2)}%",
@@ -61,6 +59,25 @@ class _SearchPageState extends State<SearchPage> {
 
 
 
+  Future<void> _search(String query) async {
+    setState(() {
+      searching = true;
+    });
+
+    try {
+      CurrencyRepository repo = di<CurrencyRepository>(); // Assuming di is a dependency injection method
+      await repo.searchByPartialNameAndSymbol(query);
+    } finally {
+      setState(() {
+        searching = false;
+      });
+    }
+  }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,24 +115,16 @@ class _SearchPageState extends State<SearchPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
+
                 style: const TextStyle(
                   fontSize: 20
                 ),
                 controller: _searchController,
-                onChanged: (value) async {
-
-                  if(value.length > 1) {
-
-
-                 bool res = await repo.getFunc(_searchController.text);
-                 res
-                     ? setState(() {
-
-                 })
-                      : null;
-                }},
+                onChanged: (value) {
+                      _search(value);
+                },
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.zero,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10),
@@ -123,11 +132,36 @@ class _SearchPageState extends State<SearchPage> {
 
                   filled: true,
                   fillColor: Colors.white12,
-                  labelText: "  Enter coin symbol.",
+                  labelText: "  Enter coin symbol or name.",
                    labelStyle: const TextStyle(
                      color: Color(0xFFcecece),
                    ),
-
+                  suffix: searching
+                  ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: color,
+                    ),
+                  )
+                  // : IconButton(
+                  //   padding: EdgeInsets.zero,
+                  //   onPressed: () {
+                  //
+                  //
+                  //     setState(() {
+                  //
+                  //
+                  //       _searchController.clear();
+                  //
+                  //     });
+                  //
+                  //   },
+                  //   icon: const Icon(Icons.clear),
+                  //   // child:  const Text("Clear search history"),
+                  // ),
+                    : null,
                 ),
               ),
             ),
@@ -167,15 +201,18 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
 
-            ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: repo.foundElementsList.length,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index) {
-                return CoinCard(
-                  model: repo.foundElementsList[index],
-                  index: index,);
-                },
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemCount: repo.foundElementsList.length,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  return CoinCard(
+                    model: repo.foundElementsList[index],
+                    index: index,);
+                  },
+              ),
             ),
 
 

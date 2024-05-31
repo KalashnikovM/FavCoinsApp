@@ -1,21 +1,24 @@
 import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:crypto_tracker/ui/home_page/search_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
-import '../../models/main_coin_model.dart';
-import '../../router/router.dart';
-import '../../router/router.gr.dart';
+
+
+
+
+
+
+
+
 
 @RoutePage(name: 'HomePage')
 class HomePage extends StatelessWidget with WatchItMixin {
   const HomePage({super.key});
 
   static ScrollController scrollController = ScrollController();
-
+  static const Color color = Color(0xFF9b5bf3);
   price(String text, double data) {
     return Text(
       "$text ${data.toStringAsFixed(2)}%",
@@ -45,7 +48,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
 
   static const TextStyle style = TextStyle(
-      color: Color(0xFF9b5bf3),
+      color: color,
       fontWeight: FontWeight.w500,
       fontSize: 16
   );
@@ -59,7 +62,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
     return Scaffold(
       body: RefreshIndicator(
-          color: Colors.purple,
+          color: color,
           onRefresh: () async {
             await repo.getLastCurrencyRateList();
           },
@@ -79,26 +82,27 @@ class HomePage extends StatelessWidget with WatchItMixin {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8.0),
                             child: IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  backgroundColor: Colors.transparent,
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                  const SearchPage(),
-                                );
-                              },
+                              onPressed: () {},
+
+
+                              // {
+                              //   showModalBottomSheet(
+                              //     backgroundColor: Colors.transparent,
+                              //     isScrollControlled: true,
+                              //     context: context,
+                              //     builder: (BuildContext context) =>
+                              //     const SearchPage(),
+                              //   );
+                              // },
                               icon: const Icon(Icons.search,
-                                  color: Color(0xFF9b5bf3)),
+                                  color: color,
+                              ),
                             ),
                           ),
                         ],
                         leading: repo.top100Stream
-                            ? const Icon(Icons.circle, color: Color(0xFF9b5bf3))
-                            : GestureDetector(
-                          onTap: () => repo.startTop100Stream(),
-                             child: const Icon(Icons.circle_outlined),
-                        ),
+                            ? const Icon(Icons.circle, color: color)
+                            : const Icon(Icons.circle_outlined),
                         title: const Text("Top 100 market cap."),
                       ),
 
