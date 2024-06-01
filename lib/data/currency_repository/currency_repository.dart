@@ -150,7 +150,7 @@ class CurrencyRepository extends ChangeNotifier {
     top100ModelsList.isNotEmpty
 
         ? top100ModelsList.forEach((element) {
-        if(element.coinDataModel.symbol == name.toUpperCase()) {
+        if(element.coinDataModel?.symbol == name.toUpperCase()) {
           foundElementsList.add(element);
           res = true;
         }})

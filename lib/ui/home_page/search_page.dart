@@ -120,8 +120,8 @@ class _SearchPageState extends State<SearchPage> {
                   fontSize: 20
                 ),
                 controller: _searchController,
-                onChanged: (value) {
-                      _search(value);
+                onChanged: (value) async {
+                      await _search(value);
                 },
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),

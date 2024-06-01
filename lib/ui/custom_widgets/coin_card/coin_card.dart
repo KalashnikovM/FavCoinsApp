@@ -5,25 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 class CoinCard extends StatelessWidget {
-
   const CoinCard({super.key, required this.model, required this.index});
 
   final int index;
   final MainCoinModel model;
-  
-  
+
   @override
   Widget build(BuildContext context) {
-    var logo = model.coinDataModel.logo;
+    var logo = model.coinDataModel?.logo;
+
     return GestureDetector(
-      onTap: () =>
-          di<AppRouter>().push(
-            CoinPage(model: model),
-          ),
+      onTap: () => di<AppRouter>().push(
+        CoinPage(model: model),
+      ),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 12, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: const BoxDecoration(
           color: Color(0xFF2e2e2e),
           borderRadius: BorderRadius.all(
@@ -33,8 +30,7 @@ class CoinCard extends StatelessWidget {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                  right: 8.0),
+              padding: const EdgeInsets.only(right: 8.0),
               child: Text(
                 "${index + 1}",
                 style: const TextStyle(
@@ -42,25 +38,22 @@ class CoinCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 36,
-              child:
-              logo != null
+            SizedBox(
+              width: 36,
+              child: logo != null
                   ? Image.memory(logo)
                   : const CircularProgressIndicator(),
-
             ),
             const Expanded(
               flex: 1,
               child: SizedBox(),
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment
-                  .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
                   text: TextSpan(
-                    text: "${model.coinDataModel
-                        .symbol}",
+                    text: model.coinDataModel?.symbol ?? 'N/A',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w400,
@@ -78,7 +71,7 @@ class CoinCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  model.coinDataModel.name.toString(),
+                  model.coinDataModel?.name ?? 'N/A',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -94,18 +87,20 @@ class CoinCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  model.coinQuote.price,
+                  model.coinQuote?.price?.toString() ?? 'N/A',
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.white,
                   ),
                 ),
-                Text("1h: ${model.coinQuote.percentChange1h}",
+                Text(
+                  "1h: ${model.coinQuote?.percentChange1h?.toString() ?? 'N/A'}",
                   style: TextStyle(
-                    color: model.coinQuote.percentChange1h.startsWith("-")
+                    color: model.coinQuote?.percentChange1h?.startsWith("-") ?? false
                         ? Colors.red
-                        : Colors.green,),),
-
+                        : Colors.green,
+                  ),
+                ),
               ],
             ),
           ],

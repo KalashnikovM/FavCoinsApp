@@ -5,8 +5,8 @@ import 'coin_quote.dart';
 
 class MainCoinModel {
   final String id;
-  final CoinDataModel coinDataModel;
-  final CoinQuote coinQuote;
+  final CoinDataModel? coinDataModel;
+  final CoinQuote? coinQuote;
 
 
   MainCoinModel({
