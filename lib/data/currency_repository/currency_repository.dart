@@ -170,7 +170,7 @@ Future<bool> getFunc(String symbol) async{
   debugPrint('result functions.createExecution();');
   Execution result = await functions.createExecution(
     functionId: '65f96862ad619d34eadf',
-      body: symbol, // optional
+      body: symbol,
   );
 
   if(result.responseStatusCode == 200)

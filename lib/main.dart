@@ -9,7 +9,6 @@ void main() {
 
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
-  di<CurrencyRepository>().startTop100Stream;
 
 
   runApp(const App());

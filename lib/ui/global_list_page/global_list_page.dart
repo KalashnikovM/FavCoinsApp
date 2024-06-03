@@ -45,36 +45,37 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
   Widget build(BuildContext context) {
     CurrencyRepository repo = watchIt<CurrencyRepository>();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Global coin list"),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8.0),
-            child: IconButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  backgroundColor: Colors.transparent,
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (BuildContext context) =>
-                  const SearchPage(),
-                );
-              },
-              icon: const Icon(Icons.search),
+    return RefreshIndicator.adaptive(
+      color: Colors.transparent,
+
+      onRefresh: () async {
+        await repo.updateMainList();
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              title: const Text("Global coin list"),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0),
+                  child: IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (BuildContext context) =>
+                        const SearchPage(),
+                      );
+                    },
+                    icon: const Icon(Icons.search),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-      body: RefreshIndicator.adaptive(
-        color: Colors.transparent,
-        onRefresh: () async {
-          await repo.updateMainList();
-        },
-        child: Stack(
-          children: [
-            SafeArea(
+            body: SafeArea(
                 child:
                 ListView(
                  children: <Widget>[
@@ -110,21 +111,23 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
                  ],
                )),
 
-            if (repo.mainListPageStatus == CurrencyRepositoryStatus.updating)
-              Container(
-                color: const Color(0xFF3e3e3e).withOpacity(0.15),
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF9b5bf3),
-                  ),
+          ),
+
+
+          if (repo.mainListPageStatus == CurrencyRepositoryStatus.updating)
+            Container(
+              color: const Color(0xFF3e3e3e).withOpacity(0.2),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0xFFFA2D48),
                 ),
               ),
+            ),
 
 
-          ],
-        ),
+        ],
       ),
-
     );
   }
 }

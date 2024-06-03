@@ -4,12 +4,13 @@
 import 'dart:async';
 
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../constants.dart';
 import '../services/appwrite_service.dart';
-
+import 'package:flutter_udid/flutter_udid.dart';
 class FavoritesRepository extends ChangeNotifier {
 
 
@@ -28,6 +29,35 @@ FavoritesRepository() {
   startFavoritesStream();
   // startTestStream();
 }
+
+
+
+
+
+  addToFavorites(String id) async {
+    String udid = await FlutterUdid.udid;
+
+    try {
+
+      Document doc = await db.createDocument(
+        databaseId: databaseId,
+        collectionId: userCollection,
+        documentId: udid,
+        data: {},
+      );
+
+      debugPrint(doc.data.toString());
+    } catch (e) {
+      error[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
+      debugPrint('Error fetching last currency rate list: $e');
+    }
+
+
+
+
+  }
+
+
 
 
 Future<void> startFavoritesStream() async {

@@ -9,6 +9,6 @@ const coinDataCollection = '663c4a66a0217ea5ea6b';
 const coinMapCollection = '6655b29000316bca9530';
 const userCollection = '664c52ab0021665568a1';
 
-// const coinIdMapCollection = '65f91fd03737a916b3d7';
+const userDocumentId = '65f91fd03737a916b3d7';
 // const mainDocumentId = '662f3e23002741f29efa';
 // const mainCollectionAttribute = 'appCollection';
