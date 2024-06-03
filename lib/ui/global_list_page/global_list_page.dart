@@ -67,7 +67,8 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
           ),
         ],
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
+        color: Colors.transparent,
         onRefresh: () async {
           await repo.updateMainList();
         },

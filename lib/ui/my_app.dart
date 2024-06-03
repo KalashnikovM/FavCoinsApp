@@ -48,18 +48,3 @@ class App extends StatelessWidget {
 }
 
 
-
-
-
-
-
-
-
-//https://pro.coinmarketcap.com/account
-// // 0a6b4ad3-c373-4e67-8cae-2aaf4d951ce0
-// 961fe869-42f5-4d39-8afe-9f0846b24fe6
-// // startup_1st_month_free
-// hobbyist_1st_month_free
-
-
-// 65f7c7d944dc8aac6251 Project ID

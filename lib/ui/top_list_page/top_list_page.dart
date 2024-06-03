@@ -55,8 +55,8 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
     CurrencyRepository repo = watchIt<CurrencyRepository>();
 
     return Scaffold(
-      body: RefreshIndicator(
-          // color: color,
+      body: RefreshIndicator.adaptive(
+           color: Colors.transparent,
           onRefresh: () async {
             await repo.getLastCurrencyRateList();
           },
