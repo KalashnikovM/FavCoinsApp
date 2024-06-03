@@ -90,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
         height: MediaQuery.of(context).size.height * 0.93,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: const Color(0xFF2e2e2e),
+          color: const Color(0xFF000000),
         ),
 
         child: Column(
@@ -145,22 +145,6 @@ class _SearchPageState extends State<SearchPage> {
                       color: color,
                     ),
                   )
-                  // : IconButton(
-                  //   padding: EdgeInsets.zero,
-                  //   onPressed: () {
-                  //
-                  //
-                  //     setState(() {
-                  //
-                  //
-                  //       _searchController.clear();
-                  //
-                  //     });
-                  //
-                  //   },
-                  //   icon: const Icon(Icons.clear),
-                  //   // child:  const Text("Clear search history"),
-                  // ),
                     : null,
                 ),
               ),

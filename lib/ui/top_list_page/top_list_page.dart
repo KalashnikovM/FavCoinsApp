@@ -1,6 +1,5 @@
 import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
-import 'package:crypto_tracker/ui/home_page/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
@@ -10,15 +9,11 @@ import '../../data/currency_repository/currency_repository.dart';
 
 
 
-
-
-
-@RoutePage(name: 'HomePage')
-class HomePage extends StatelessWidget with WatchItMixin {
-  const HomePage({super.key});
+@RoutePage(name: 'Top100ListPage')
+class Top100ListPage extends StatelessWidget with WatchItMixin {
+  const Top100ListPage({super.key});
 
   static ScrollController scrollController = ScrollController();
-  static const Color color = Color(0xFF9b5bf3);
   price(String text, double data) {
     return Text(
       "$text ${data.toStringAsFixed(2)}%",
@@ -48,7 +43,6 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
 
   static const TextStyle style = TextStyle(
-      color: color,
       fontWeight: FontWeight.w500,
       fontSize: 16
   );
@@ -62,7 +56,7 @@ class HomePage extends StatelessWidget with WatchItMixin {
 
     return Scaffold(
       body: RefreshIndicator(
-          color: color,
+          // color: color,
           onRefresh: () async {
             await repo.getLastCurrencyRateList();
           },
@@ -76,7 +70,6 @@ class HomePage extends StatelessWidget with WatchItMixin {
                         floating: true,
                          snap: false,
                         pinned: true,
-
                         actions: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -95,13 +88,12 @@ class HomePage extends StatelessWidget with WatchItMixin {
                               //   );
                               // },
                               icon: const Icon(Icons.search,
-                                  color: color,
                               ),
                             ),
                           ),
                         ],
                         leading: repo.top100Stream
-                            ? const Icon(Icons.circle, color: color)
+                            ? const Icon(Icons.circle, )
                             : const Icon(Icons.circle_outlined),
                         title: const Text("Top 100 market cap."),
                       ),

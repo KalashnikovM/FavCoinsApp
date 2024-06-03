@@ -1,8 +1,6 @@
 
 class CoinQuote {
   final String id;
-  // final String name;
-  // final String symbol;
   final String price;
   final String volume24h;
   final String volumeChange24h;
@@ -19,8 +17,6 @@ class CoinQuote {
 
   CoinQuote({
     required this.id,
-    // required this.name,
-    // required this.symbol,
     required this.price,
     required this.volume24h,
     required this.volumeChange24h,
@@ -39,8 +35,6 @@ class CoinQuote {
   factory CoinQuote.fromJson(String id, Map<String, dynamic> json) {
     return CoinQuote(
       id: id,
-      // name: json['name'],
-      // symbol: json['symbol'],
       price: convert(json['price'].toDouble(),),
       volume24h: convert(json['volume_24h'].toDouble(),),
       volumeChange24h: convert(json['volume_change_24h'].toDouble(),),
@@ -75,5 +69,5 @@ String convert(double number) {
     }
   }
   zeroCount = zeroCount + 2;
-  return "${number.toStringAsFixed(zeroCount)} \$";
+  return number.toStringAsFixed(zeroCount);
 }

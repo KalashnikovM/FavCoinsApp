@@ -7,10 +7,10 @@ import '../../data/currency_repository/currency_repository.dart';
 
 
 
-@RoutePage(name: 'CoinListPage')
+@RoutePage(name: 'FavoritesPage')
 
-class CoinListPage extends StatelessWidget with WatchItMixin{
-  const CoinListPage({super.key});
+class FavoritesPage extends StatelessWidget with WatchItMixin{
+  const FavoritesPage({super.key});
 
   @override
   Widget build(BuildContext context) {

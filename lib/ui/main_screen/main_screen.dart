@@ -12,14 +12,13 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('Widget build MainScreen');
-Color color = const Color(0xFF9b5bf3);
+Color color = const Color(0xFFFA2D48);
 
     return AutoTabsRouter(
       routes: const [
-        HomePage(),
-        PortfolioPage(),
-        CoinListPage(),
-
+        Top100ListPage(),
+        GlobalListPage(),
+        FavoritesPage(),
       ],
       transitionBuilder: (context,child,animation)=> FadeTransition(
         opacity: animation,
@@ -51,7 +50,7 @@ Color color = const Color(0xFF9b5bf3);
               const BottomNavigationBarItem(
                 activeIcon: Icon(Icons.circle, size: 28,),
                 icon: Icon(Icons.circle_outlined, size: 28,),
-                label: 'Test',),
+                label: 'Global list',),
               BottomNavigationBarItem(
                 activeIcon: Icon(Icons.circle, size: 28, color: color),
                 icon: Icon(Icons.circle_outlined, size: 28, color: color),

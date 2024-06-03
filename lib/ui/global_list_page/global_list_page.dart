@@ -2,8 +2,8 @@ import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-import '../../data/currency_repository/currency_repository.dart';
-import '../home_page/search_page.dart';
+import 'package:crypto_tracker/data/currency_repository/currency_repository.dart';
+import 'package:crypto_tracker/ui/top_list_page/search_page.dart';
 
 
 
@@ -11,10 +11,10 @@ import '../home_page/search_page.dart';
 
 
 
-@RoutePage(name: 'PortfolioPage')
+@RoutePage(name: 'GlobalListPage')
 
-class PortfolioPage extends StatelessWidget with WatchItMixin{
-  const PortfolioPage({super.key});
+class GlobalListPage extends StatelessWidget with WatchItMixin{
+  const GlobalListPage({super.key});
 
   final int nextPageTrigger = 20;
 
@@ -97,7 +97,7 @@ class PortfolioPage extends StatelessWidget with WatchItMixin{
                          foregroundColor:const Color(0xFF9b5bf3),
                       elevation: 0,
                       //   backgroundColor: Colors.purple,
-                         disabledBackgroundColor: Colors.red,
+                         disabledBackgroundColor:  const Color(0xFFFA2D48),
                          // shape: const CircleBorder(),
                          // fixedSize: const Size(44,44)
                      ),

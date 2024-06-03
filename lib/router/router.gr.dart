@@ -10,12 +10,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i7;
 import 'package:crypto_tracker/models/main_coin_model.dart' as _i9;
-import 'package:crypto_tracker/ui/coin_list_page/coin_list_page.dart' as _i1;
-import 'package:crypto_tracker/ui/coin_page/coin_page.dart' as _i2;
-import 'package:crypto_tracker/ui/home_page/home_page.dart' as _i3;
+import 'package:crypto_tracker/ui/coin_page/coin_page.dart' as _i1;
+import 'package:crypto_tracker/ui/favorites_page/favorites_page.dart' as _i2;
+import 'package:crypto_tracker/ui/global_list_page/global_list_page.dart'
+    as _i3;
 import 'package:crypto_tracker/ui/main_screen/main_screen.dart' as _i4;
-import 'package:crypto_tracker/ui/portfolio_page/portfolio_page.dart' as _i5;
-import 'package:crypto_tracker/ui/splash_screen/splash_screen.dart' as _i6;
+import 'package:crypto_tracker/ui/splash_screen/splash_screen.dart' as _i5;
+import 'package:crypto_tracker/ui/top_list_page/top_list_page.dart' as _i6;
 import 'package:flutter/material.dart' as _i8;
 
 abstract class $AppRouter extends _i7.RootStackRouter {
@@ -23,26 +24,26 @@ abstract class $AppRouter extends _i7.RootStackRouter {
 
   @override
   final Map<String, _i7.PageFactory> pagesMap = {
-    CoinListPage.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i1.CoinListPage(),
-      );
-    },
     CoinPage.name: (routeData) {
       final args = routeData.argsAs<CoinPageArgs>();
       return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i2.CoinPage(
+        child: _i1.CoinPage(
           key: args.key,
           model: args.model,
         ),
       );
     },
-    HomePage.name: (routeData) {
+    FavoritesPage.name: (routeData) {
       return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i3.HomePage(),
+        child: const _i2.FavoritesPage(),
+      );
+    },
+    GlobalListPage.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i3.GlobalListPage(),
       );
     },
     MainScreenRoute.name: (routeData) {
@@ -51,37 +52,23 @@ abstract class $AppRouter extends _i7.RootStackRouter {
         child: const _i4.MainScreen(),
       );
     },
-    PortfolioPage.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i5.PortfolioPage(),
-      );
-    },
     SplashRoute.name: (routeData) {
       return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i6.SplashScreen(),
+        child: const _i5.SplashScreen(),
+      );
+    },
+    Top100ListPage.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i6.Top100ListPage(),
       );
     },
   };
 }
 
 /// generated route for
-/// [_i1.CoinListPage]
-class CoinListPage extends _i7.PageRouteInfo<void> {
-  const CoinListPage({List<_i7.PageRouteInfo>? children})
-      : super(
-          CoinListPage.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'CoinListPage';
-
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i2.CoinPage]
+/// [_i1.CoinPage]
 class CoinPage extends _i7.PageRouteInfo<CoinPageArgs> {
   CoinPage({
     _i8.Key? key,
@@ -119,15 +106,29 @@ class CoinPageArgs {
 }
 
 /// generated route for
-/// [_i3.HomePage]
-class HomePage extends _i7.PageRouteInfo<void> {
-  const HomePage({List<_i7.PageRouteInfo>? children})
+/// [_i2.FavoritesPage]
+class FavoritesPage extends _i7.PageRouteInfo<void> {
+  const FavoritesPage({List<_i7.PageRouteInfo>? children})
       : super(
-          HomePage.name,
+          FavoritesPage.name,
           initialChildren: children,
         );
 
-  static const String name = 'HomePage';
+  static const String name = 'FavoritesPage';
+
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i3.GlobalListPage]
+class GlobalListPage extends _i7.PageRouteInfo<void> {
+  const GlobalListPage({List<_i7.PageRouteInfo>? children})
+      : super(
+          GlobalListPage.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'GlobalListPage';
 
   static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }
@@ -147,21 +148,7 @@ class MainScreenRoute extends _i7.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i5.PortfolioPage]
-class PortfolioPage extends _i7.PageRouteInfo<void> {
-  const PortfolioPage({List<_i7.PageRouteInfo>? children})
-      : super(
-          PortfolioPage.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'PortfolioPage';
-
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i6.SplashScreen]
+/// [_i5.SplashScreen]
 class SplashRoute extends _i7.PageRouteInfo<void> {
   const SplashRoute({List<_i7.PageRouteInfo>? children})
       : super(
@@ -170,6 +157,20 @@ class SplashRoute extends _i7.PageRouteInfo<void> {
         );
 
   static const String name = 'SplashRoute';
+
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i6.Top100ListPage]
+class Top100ListPage extends _i7.PageRouteInfo<void> {
+  const Top100ListPage({List<_i7.PageRouteInfo>? children})
+      : super(
+          Top100ListPage.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'Top100ListPage';
 
   static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }

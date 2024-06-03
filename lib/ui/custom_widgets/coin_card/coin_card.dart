@@ -20,9 +20,9 @@ class CoinCard extends StatelessWidget {
       ),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
         decoration: const BoxDecoration(
-          color: Color(0xFF2e2e2e),
+          color: Color(0xFF000000),
           borderRadius: BorderRadius.all(
             Radius.circular(8),
           ),
@@ -71,7 +71,13 @@ class CoinCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  model.coinDataModel?.name ?? 'N/A',
+                  model.coinDataModel != null
+                      ? (model.coinDataModel?.name != null && model.coinDataModel!.name!.length > 15
+                      ? '${model.coinDataModel?.name?.substring(0, 15)}...'
+                      : model.coinDataModel?.name ?? 'N/A')
+                      : 'N/A',
+
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -87,18 +93,18 @@ class CoinCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  model.coinQuote?.price?.toString() ?? 'N/A',
+                  "${model.coinQuote?.price ?? "N/A"}\$",
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  "1h: ${model.coinQuote?.percentChange1h?.toString() ?? 'N/A'}",
+                  "1h: ${model.coinQuote?.percentChange1h ?? 'N/A'} %",
                   style: TextStyle(
-                    color: model.coinQuote?.percentChange1h?.startsWith("-") ?? false
-                        ? Colors.red
-                        : Colors.green,
+                    color: model.coinQuote?.percentChange1h.startsWith("-") ?? false
+                        ?  const Color(0xFFFA2D48)
+                        : const Color(0xFF76CD26),
                   ),
                 ),
               ],

@@ -34,8 +34,6 @@ class CurrencyRepository extends ChangeNotifier {
 
   late RealtimeSubscription top100Subscription;
   StreamSubscription<dynamic>? top100StreamSubscription;
-  // late RealtimeSubscription testSubscription;
-  // StreamSubscription<dynamic>? testStreamSubscription;
   CurrencyRepositoryStatus top100PageStatus = CurrencyRepositoryStatus.init;
   CurrencyRepositoryStatus mainListPageStatus = CurrencyRepositoryStatus.init;
 
@@ -139,10 +137,6 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
-
-
-
-
    searchCoin (String name) {
     debugPrint('searchCoin');
     debugPrint(name);
@@ -177,10 +171,6 @@ Future<bool> getFunc(String symbol) async{
   Execution result = await functions.createExecution(
     functionId: '65f96862ad619d34eadf',
       body: symbol, // optional
-    // xasync: false, // optional
-    // path: '/', // optional
-     // method: "GET", // optional
-    // headers: headers, // optional
   );
 
   if(result.responseStatusCode == 200)
@@ -226,7 +216,7 @@ Future<bool> getFunc(String symbol) async{
 
 
   Future<void> updateMainList() async {
-    debugPrint('getTestList');
+    debugPrint('updateMainList');
 
 
     try {
@@ -252,68 +242,6 @@ Future<bool> getFunc(String symbol) async{
 
     }
   }
-
-
-
-  // Future<void> startTestStream() async {
-  //
-  //   debugPrint('startTestStream');
-  //   testStreamSubscription?.cancel();
-  //
-  //   testSubscription = realtime.subscribe([
-  //     'databases.$databaseId.collections.$mainCollection.documents'
-  //   ]);
-  //
-  //   testStreamSubscription = top100Subscription.stream.listen((response) async {
-  //     debugPrint("startTestStream response.payload: ${response.payload}");
-  //   });
-  //   testStream = true;
-  //
-  //   testStreamSubscription?.onData((data) async {
-  //     debugPrint('New event from startTestStream: ${DateTime.now().toIso8601String()}');
-  //     MainCoinModel mainModel = await parseData(data.payload);
-  //     // testElementsList.add(mainModel);
-  //     testStream = true;
-  //
-  //
-  //
-  //
-  //     testElementsList = testElementsList.map((model) {
-  //       return model.id == mainModel.id ? mainModel : model;
-  //     }).toList();
-  //
-  //     notifyListeners();
-  //   });
-  //
-  //
-  //
-  //
-  //
-  //   testStreamSubscription?.onDone(() {
-  //     testStream = false;
-  //     testStreamSubscription?.cancel();
-  //     error[DateTime.now().toLocal().toString()] = "startTestStream Subscription onDone";
-  //
-  //     notifyListeners();
-  //     debugPrint('startTestStream Subscription Done');
-  //     debugPrint('restart: startTestStream()');
-  //     startTestStream();
-  //   });
-  //
-  //
-  //   testStreamSubscription?.onError((handleError) {
-  //     debugPrint('startTestStreamSubscription handleError \n $handleError');
-  //     error[DateTime.now().toLocal().toString()] = "startTestStreamSubscription handleError: $handleError";
-  //     testStream = false;
-  //
-  //     notifyListeners();
-  //
-  //
-  //
-  //   });
-  //
-  // }
-
 
 
   Future<void> getLastCurrencyRateList() async {
@@ -390,8 +318,6 @@ Future<bool> getFunc(String symbol) async{
       top100Stream = false;
       notifyListeners();
 
-
-
     });
 
   }
@@ -412,7 +338,6 @@ Future<bool> getFunc(String symbol) async{
   @override
   void dispose() {
     top100StreamSubscription?.cancel();
-    // testStreamSubscription?.cancel();
     super.dispose();
   }
 }
