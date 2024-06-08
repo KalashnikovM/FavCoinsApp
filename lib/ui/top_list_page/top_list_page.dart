@@ -3,6 +3,7 @@ import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
+import '../custom_widgets/custom_refresh_indicator/custom_refresh_indicator.dart';
 
 
 
@@ -14,6 +15,7 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
   const Top100ListPage({super.key});
 
   static ScrollController scrollController = ScrollController();
+
   price(String text, double data) {
     return Text(
       "$text ${data.toStringAsFixed(2)}%",
@@ -56,8 +58,9 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
 
     return RefreshIndicator.adaptive(
       color: Colors.transparent,
+
       onRefresh: () async {
-        await repo.getLastCurrencyRateList();
+        repo.getLastCurrencyRateList();
       },
       child: Stack(
         children: [
@@ -76,17 +79,6 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
                             horizontal: 8.0),
                         child: IconButton(
                           onPressed: () {},
-
-
-                          // {
-                          //   showModalBottomSheet(
-                          //     backgroundColor: Colors.transparent,
-                          //     isScrollControlled: true,
-                          //     context: context,
-                          //     builder: (BuildContext context) =>
-                          //     const SearchPage(),
-                          //   );
-                          // },
                           icon: const Icon(Icons.search,
                           ),
                         ),
@@ -147,7 +139,8 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
               child: const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Color(0xFFFA2D48),                ),
+                  color: Color(0xFFFA2D48),
+                ),
               ),
             ),
         ],

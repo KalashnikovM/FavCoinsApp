@@ -1,5 +1,8 @@
 
 import 'package:auto_route/annotations.dart';
+import 'package:crypto_tracker/data/favorites_repository.dart';
+import 'package:crypto_tracker/data/user_repository/user_repository.dart';
+import 'package:crypto_tracker/ui/sign_screen/sign_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:watch_it/watch_it.dart';
@@ -25,6 +28,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
     }
 
     var logo = model.coinDataModel?.logo;
+    bool isFavorited = di<FavoritesRepository>().isFavorites(model.id);
     debugPrint(model.coinQuote?.percentChange1h);
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +42,20 @@ class CoinPage extends StatelessWidget with WatchItMixin {
           IconButton(
               onPressed: () {
 
-              }, icon: const Icon(Icons.star))
+                di<UserRepository>().status == UserStatus.login
+                ? di<FavoritesRepository>().addToFavorites(model.id)
+                :  showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) =>
+                  const SignScreen(),
+                );
+
+              }, icon: Icon(
+              isFavorited
+              ? Icons.star
+              : Icons.star_border,
+         color: const Color(0xFFFA2D48),),)
         ],
       ),
       body: SafeArea(

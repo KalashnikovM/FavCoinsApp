@@ -287,7 +287,7 @@ Future<bool> getFunc(String symbol) async{
 
     top100Stream = true;
     top100StreamSubscription?.onData((data) async {
-      debugPrint('New event from top100StreamSubscription: ${DateTime.now().toIso8601String()}');
+      // debugPrint('New event from top100StreamSubscription: ${DateTime.now().toIso8601String()}');
       MainCoinModel mainModel = await parseData(data.payload);
       top100ModelsList = top100ModelsList.map((model) {
         return model.id == mainModel.id ? mainModel : model;

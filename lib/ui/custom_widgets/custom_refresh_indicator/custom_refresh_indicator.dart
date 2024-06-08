@@ -15,40 +15,51 @@ class CustomRefreshIndicator extends StatefulWidget {
 }
 
 class _CustomRefreshIndicatorState extends State<CustomRefreshIndicator> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
-
+  double _dragOffset = 0.0;
   bool _isRefreshing = false;
-
-  Future<void> _refresh() async {
-    setState(() {
-      _isRefreshing = true;
-    });
-    await widget.onRefresh();
-    setState(() {
-      _isRefreshing = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification notification) {
-        if (notification is ScrollUpdateNotification &&
-            notification.metrics.pixels <= -100.0 &&
-            !_isRefreshing) {
-          _refreshIndicatorKey.currentState?.show();
-        }
-        return false;
+    return GestureDetector(
+      onVerticalDragUpdate: (details) {
+        setState(() {
+          _dragOffset += details.primaryDelta ?? 0.0;
+        });
+        debugPrint("Drag update: $_dragOffset");
       },
-      child: RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: _refresh,
-        displacement: 40.0,
-        child: widget.child,
-        color: Colors.blue, // Customize the color here
-        backgroundColor: Colors.transparent, // Customize the background color here
-        strokeWidth: 2.0, // Customize the stroke width here
+      onVerticalDragEnd: (details) async {
+        debugPrint("Drag end: $_dragOffset");
+        if (_dragOffset > 150 && !_isRefreshing) {
+          setState(() {
+            _isRefreshing = true;
+          });
+          debugPrint("Refreshing...");
+          await widget.onRefresh();
+          setState(() {
+            _isRefreshing = false;
+          });
+          debugPrint("Refresh complete");
+        }
+        setState(() {
+          _dragOffset = 0.0;
+        });
+      },
+      child: Stack(
+        children: [
+          widget.child,
+          if (_isRefreshing)
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

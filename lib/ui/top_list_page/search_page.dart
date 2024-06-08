@@ -90,6 +90,10 @@ class _SearchPageState extends State<SearchPage> {
         height: MediaQuery.of(context).size.height * 0.93,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
+          // border: Border.all(
+          //              color: Colors.purple,
+          //             width: 0.5,
+          //           ),
           color: const Color(0xFF000000),
         ),
 
