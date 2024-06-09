@@ -22,6 +22,7 @@ enum CurrencyRepositoryStatus {
 
 class CurrencyRepository extends ChangeNotifier {
 
+  List<MainCoinModel> favoritesList = [];
   List<MainCoinModel> top100ModelsList = [];
   List<MainCoinModel> foundElementsList = [];
   List<MainCoinModel> mainCoinsList = [];
@@ -56,7 +57,7 @@ class CurrencyRepository extends ChangeNotifier {
 
     getLastCurrencyRateList();
     updateMainList();
-    startTop100Stream();
+    initTop100Stream();
     _updateCoinMapList();
     // startTestStream();
   }
@@ -134,83 +135,29 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
+  updateFavoritesList (ids) async {
+    debugPrint('Start updateFavoritesList();');
+    List<MainCoinModel> temp = [];
+    for (String id in ids) {
 
-
-
-   searchCoin (String name) {
-    debugPrint('searchCoin');
-    debugPrint(name);
-    bool res = false;
-    top100ModelsList.isNotEmpty
-
-        ? top100ModelsList.forEach((element) {
-        if(element.coinDataModel?.symbol == name.toUpperCase()) {
-          foundElementsList.add(element);
-          res = true;
-        }})
-
-        : {res = false,
-            foundElementsList = []};
-    debugPrint("$res");
-
-    return res;
-  }
-
-
-
-
-
-
-
-
-
-Future<bool> getFunc(String symbol) async{
-  bool res = false;
-
-  debugPrint('result functions.createExecution();');
-  Execution result = await functions.createExecution(
-    functionId: '65f96862ad619d34eadf',
-      body: symbol,
-  );
-
-  if(result.responseStatusCode == 200)
-       {
-    Map<String, dynamic> body = jsonDecode(result.responseBody);
-    final Map<String, dynamic> bodyBata = body['data'];
-    var data = bodyBata[symbol.toUpperCase()];
-           debugPrint('${data.runtimeType}\data: $data');
-        for(var item in data) {
-          debugPrint('quote: ${item["quote"]}');
-
-          try {
-
-            final response = await db.getDocument(
-              databaseId: databaseId,
-              collectionId: coinDataCollection,
-              documentId: item["id"].toString(),
-            );
-            final Document doc = response;
-            MainCoinModel mainModel = await parseData(doc.data);
-
-
-            foundElementsList.add(mainModel);
-            debugPrint(mainModel.id);
-            res = true;
-          } catch (e) {
-            res = false;
-            error[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
-            debugPrint('Error fetching last currency rate list: $e');
-          }}}
-        else {
-    debugPrint('result responseStatusCode() ${result.responseStatusCode}');
-    res = false;
+      try {
+        Document doc = await db.getDocument(
+            databaseId: databaseId,
+            collectionId: coinDataCollection,
+            documentId: id);
+        MainCoinModel mainModel = await di<CurrencyRepository>().parseData(
+            doc.data);
+        temp.add(mainModel);
+        debugPrint('Document added to favorites()doc.data; ${doc.data}');
+      } catch (e) {
+        debugPrint('Error updateFavoritesList: $e');
+      }
+    }
+    if(temp.isNotEmpty)
+    {favoritesList = temp;}
+    notifyListeners();
 
   }
-
-  debugPrint('result status() ${result.status}');
-        return res;
-
-}
 
 
 
@@ -271,10 +218,10 @@ Future<bool> getFunc(String symbol) async{
     }
   }
 
-  Future<void> startTop100Stream() async {
+  Future<void> initTop100Stream() async {
     error[DateTime.now().toLocal().toString()] = "Ok";
 
-    debugPrint('startTop100Stream');
+    debugPrint('initTop100Stream');
     top100StreamSubscription?.cancel();
 
     top100Subscription = realtime.subscribe([
@@ -308,7 +255,7 @@ Future<bool> getFunc(String symbol) async{
       notifyListeners();
       debugPrint('Top100 Stream Subscription Done');
       debugPrint('restart: startTop100Stream()');
-      startTop100Stream();
+      initTop100Stream();
     });
 
 
@@ -341,3 +288,54 @@ Future<bool> getFunc(String symbol) async{
     super.dispose();
   }
 }
+
+
+
+
+// Future<bool> getFunc(String symbol) async{
+//   bool res = false;
+//
+//   debugPrint('result functions.createExecution();');
+//   Execution result = await functions.createExecution(
+//     functionId: '65f96862ad619d34eadf',
+//       body: symbol,
+//   );
+//
+//   if(result.responseStatusCode == 200)
+//        {
+//     Map<String, dynamic> body = jsonDecode(result.responseBody);
+//     final Map<String, dynamic> bodyBata = body['data'];
+//     var data = bodyBata[symbol.toUpperCase()];
+//            debugPrint('${data.runtimeType}\data: $data');
+//         for(var item in data) {
+//           debugPrint('quote: ${item["quote"]}');
+//
+//           try {
+//
+//             final response = await db.getDocument(
+//               databaseId: databaseId,
+//               collectionId: coinDataCollection,
+//               documentId: item["id"].toString(),
+//             );
+//             final Document doc = response;
+//             MainCoinModel mainModel = await parseData(doc.data);
+//
+//
+//             foundElementsList.add(mainModel);
+//             debugPrint(mainModel.id);
+//             res = true;
+//           } catch (e) {
+//             res = false;
+//             error[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
+//             debugPrint('Error fetching last currency rate list: $e');
+//           }}}
+//         else {
+//     debugPrint('result responseStatusCode() ${result.responseStatusCode}');
+//     res = false;
+//
+//   }
+//
+//   debugPrint('result status() ${result.status}');
+//         return res;
+//
+// }

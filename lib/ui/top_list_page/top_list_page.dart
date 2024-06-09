@@ -3,7 +3,6 @@ import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../data/currency_repository/currency_repository.dart';
-import '../custom_widgets/custom_refresh_indicator/custom_refresh_indicator.dart';
 
 
 
@@ -69,25 +68,25 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
               child: CustomScrollView(
                 controller: scrollController,
                 slivers: [
-                  SliverAppBar(
+                  const SliverAppBar(
                     floating: true,
                      snap: false,
                     pinned: true,
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.search,
-                          ),
-                        ),
-                      ),
-                    ],
-                    leading: repo.top100Stream
-                        ? const Icon(Icons.circle, )
-                        : const Icon(Icons.circle_outlined),
-                    title: const Text("Top 100 market cap."),
+                    // actions: [
+                    //   Padding(
+                    //     padding: const EdgeInsets.symmetric(
+                    //         horizontal: 8.0),
+                    //     child: IconButton(
+                    //       onPressed: () {},
+                    //       icon: const Icon(Icons.search,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ],
+                    // leading: repo.top100Stream
+                    //     ? const Icon(Icons.circle, )
+                    //     : const Icon(Icons.circle_outlined),
+                    title: Text("Top 100 market cap."),
                   ),
 
 
@@ -139,7 +138,7 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
               child: const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Color(0xFFFA2D48),
+                  color: Color(0xFF76CD26),
                 ),
               ),
             ),

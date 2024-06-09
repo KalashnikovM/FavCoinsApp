@@ -4,7 +4,6 @@ import 'package:crypto_tracker/router/router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:watch_it/watch_it.dart';
 import '../data/currency_repository/currency_repository.dart';
-import '../data/favorites_repository.dart';
 import '../services/appwrite_service.dart';
 
 @InjectableInit(
@@ -18,7 +17,6 @@ void configureDependencies() {
   di.registerSingleton<ApiClient>(ApiClient());
   di.registerSingleton<UserRepository>(UserRepository());
   di.registerSingleton<CurrencyRepository>(CurrencyRepository());
-  di.registerSingleton<FavoritesRepository>(FavoritesRepository());
 
 
 

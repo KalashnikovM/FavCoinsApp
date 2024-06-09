@@ -1,9 +1,9 @@
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:crypto_tracker/data/currency_repository/currency_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:watch_it/watch_it.dart';
-
 import '../../constants.dart';
 import '../../services/appwrite_service.dart';
 
@@ -22,35 +22,44 @@ class UserRepository extends ChangeNotifier {
   final _db = di<ApiClient>().database;
   User? user;
   late Session session;
+  late String error;
+  List<String> idsList = [];
+
+
+
 
   UserRepository() {
 
 
-    checkUser();
+    _checkUser();
 
 
   }
 
-  checkUser() async {
+  _checkUser() async {
     debugPrint('start checkUser()');
 
     try {
       user = await _account.get(
       );
-      status = UserStatus.login;
       debugPrint('user.status ${user?.status}');
       debugPrint('user.name} ${user?.name}');
       debugPrint('user.email ${user?.email}');
       debugPrint('user.emailVerification ${user?.emailVerification}');
+      getUserProfile();
+      status = UserStatus.login;
       notifyListeners();
 
-
     } on AppwriteException catch (e) {
-      debugPrint('Error registering user: $e');
+      if(e.code == 401)
+        {
+          status = UserStatus.guest;
+          debugPrint('checkUser(); UserStatus.guest');
 
-      loginUser(email: 'test@test.test', password: 'Qw!@34er');
+        }
+      debugPrint('Error checkUser: $e');
       status = UserStatus.error;
-      rethrow;
+      // rethrow;
     }
   }
 
@@ -65,18 +74,34 @@ class UserRepository extends ChangeNotifier {
     debugPrint('start registerUser()');
 
     try {
-       user = await _account.create(
+       var account = await _account.create(
         userId: 'unique()', // Automatically generate a unique ID
         email: email,
         password: password,
       );
-       status = UserStatus.login;
-       notifyListeners();
+       await _db.createDocument(
+           databaseId: databaseId,
+           collectionId: userCollection,
+         documentId: account.$id,
+           data: {"favorites_ids": idsList,},
+         permissions: [
+           Permission.write(Role.user(account.$id)),
+           Permission.read(Role.user(account.$id)),
+           Permission.update(Role.user(account.$id)),
+         ],);
+
+       await _checkUser();
+
+       // status = UserStatus.login;
+       // notifyListeners();
        return true;
     } on AppwriteException catch (e) {
       status = UserStatus.error;
       debugPrint('Error registering user: ${e.message}');
-      rethrow;
+      notifyListeners();
+      return false;
+
+      // rethrow;
     }
   }
 
@@ -94,61 +119,155 @@ class UserRepository extends ChangeNotifier {
         email: email,
         password: password,
       );
-       status = UserStatus.login;
-       notifyListeners();
+       // status = UserStatus.login;
+       await _checkUser();
+
+       // notifyListeners();
 
        return true;
     } on AppwriteException catch (e) {
       debugPrint('Error logging in user: ${e.message}');
-      rethrow;
+      status = UserStatus.error;
+      error = e.message ?? 'Login error. Check fields';
+      notifyListeners();
+      // rethrow;
+      return false;
+
+
     }
+
   }
 
 
-  Future<void> updateUserProfile({
-    required String userId,
-    required Map<String, dynamic> data,
-  }) async {
+
+  Future getUserProfile() async {
+    debugPrint('Start getUserProfile();');
+    String? userId = user?.$id;
+    if(userId != null) {
+      try {
+        var userDoc = await _db.getDocument(
+          databaseId: databaseId,
+          collectionId: userCollection,
+          documentId: userId,
+        );
+        debugPrint('userDoc.data; ${userDoc.data['favorites_ids']}');
+
+
+        parseData(userDoc);
+      } on AppwriteException catch (e) {
+        debugPrint('Error fetching user profile: ${e.message}');
+        // rethrow;
+      }
+    }
+
+
+  }
+
+
+
+
+  Future<void> addToFavorites(String id) async {
+
+    idsList.contains(id)
+        ? null
+        : {idsList.add(id),
+      _updateUserProfile()};
+
+  }
+
+  Future<void> removeFromFavorites(String id) async {
+
+    idsList.contains(id)
+        ? {idsList.remove(id),
+      _updateUserProfile()}
+        : null;
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Future<void> _updateUserProfile() async {
+
+    String? userId = user?.$id;
+    if(userId != null) {
+
+
     try {
-      await _db.updateDocument(
+      var userDoc = await _db.updateDocument(
         databaseId: databaseId,
         collectionId: userCollection,
         documentId: userId,
-        data: data,
+        data: {"favorites_ids": idsList,},
       );
+      parseData(userDoc);
+
     } on AppwriteException catch (e) {
       debugPrint('Error updating user profile: ${e.message}');
-      rethrow;
+      // rethrow;
+    }
+
     }
   }
 
-  // Future<Document> getUserProfile(String userId) async {
-  //   try {
-  //     final document = await _db.getDocument(
-  //       databaseId: databaseId,
-  //       collectionId: userCollection,
-  //       documentId: userId,
-  //     );
-  //     return document;
-  //   } on AppwriteException catch (e) {
-  //     debugPrint('Error fetching user profile: ${e.message}');
-  //     rethrow;
-  //   }
-  // }
+
 
 
   Future<void> logoutUser() async {
     try {
       await _account.deleteSession(sessionId: 'current');
       status = UserStatus.guest;
+      idsList.clear();
 
     } on AppwriteException catch (e) {
       debugPrint('Error logging out user: ${e.message}');
-      rethrow;
+      // rethrow;
     }
     notifyListeners();
 
   }
+
+
+
+
+  void parseData(Document userDoc) {
+    debugPrint('Start parseData();');
+
+    List<dynamic> parsedList = userDoc.data['favorites_ids'];
+    idsList = parsedList.map((e) => e.toString()).toList();
+    di<CurrencyRepository>().updateFavoritesList(idsList);
+
+    notifyListeners();
+
+  }
+
+
+
+
+  bool isFavorites(String id) {
+    bool res = false;
+    for (var model in idsList) {
+      if (model == id) {
+        res = true;
+        break;
+      }
+
+    }
+
+    return res;
+  }
+
+
 
 
 }

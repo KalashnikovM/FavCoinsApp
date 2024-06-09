@@ -17,9 +17,9 @@ class App extends StatelessWidget {
 
           useMaterial3: true,
           colorScheme: const ColorScheme(
-          primary:  Color(0xFF000000),
+          primary:  Color(0xFFcecece),
           secondary: Color(0xFFcecece),
-            onBackground: Colors.green,
+            onBackground: Color(0xFFcecece),
             background: Color(0xFF000000),
             onPrimary: Color(0xFF000000),
             brightness: Brightness.dark,

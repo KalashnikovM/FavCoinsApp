@@ -30,11 +30,11 @@ class CoinCard extends StatelessWidget {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.only(right: 12.0),
               child: Text(
                 "${index + 1}",
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                 ),
               ),
             ),

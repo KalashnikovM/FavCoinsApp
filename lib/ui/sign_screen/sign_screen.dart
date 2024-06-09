@@ -1,3 +1,4 @@
+import 'package:crypto_tracker/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
@@ -15,6 +16,7 @@ class _SignScreenState extends State<SignScreen> {
   bool isLogin = true;
   bool authorization = false;
   bool _passwordVisible = true;
+  bool hasError = false; // Add this variable to track error state
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
@@ -33,6 +35,61 @@ class _SignScreenState extends State<SignScreen> {
     super.dispose();
   }
 
+  login() async {
+    setState(() {
+      authorization = true;
+      hasError = false;
+      FocusScope.of(context).unfocus();
+    });
+
+    try {
+      if (isLogin) {
+        await di<UserRepository>().loginUser(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+      } else {
+        await di<UserRepository>().registerUser(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+      }
+      // If successful, navigate to the next screen or do something else
+
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() {
+        hasError = true;
+        String errorString = di<UserRepository>().error;
+
+        // Show CupertinoAlertDialog
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text('Error'),
+              content: Text(errorString),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('OK', style: TextStyle(color: Colors.white),),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      });
+    } finally {
+      setState(() {
+        authorization = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -42,65 +99,43 @@ class _SignScreenState extends State<SignScreen> {
         height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          // border: Border.all(
-          //              color: Colors.purple,
-          //             width: 0.5,
-          //           ),
           color: Colors.white10,
         ),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Center(
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white10,
                   borderRadius: BorderRadius.circular(10),
-                  // border: Border.all(
-                  //              color: Colors.purple,
-                  //             width: 0.5,
-                  //           ),
                 ),
                 width: 60,
                 height: 8,
               ),
             ),
-            const SizedBox(
-              height: 32,
-            ),
-
+            const Expanded(child: SizedBox(),),
             SizedBox(
               height: 52,
               child: TextFormField(
                 controller: _emailController,
-                keyboardType: TextInputType.visiblePassword,
+                keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(16),
                   labelText: 'Enter your email',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: Color(0xFFFA2D48),),
+                    borderSide: BorderSide(color: Color(0xFFFA2D48)),
                   ),
                   labelStyle: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
                   ),
-
                 ),
-                // validator: (value) => value!.isValidPassword
-                //     ? null
-                //     : (S.of(context).password_error),
               ),
             ),
-
-            const SizedBox(
-              height: 32,
-            ),
-
+            const SizedBox(height: 32),
             SizedBox(
               height: 52,
               child: TextFormField(
@@ -112,7 +147,7 @@ class _SignScreenState extends State<SignScreen> {
                   labelText: 'Enter your password',
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: Color(0xFFFA2D48),),
+                    borderSide: BorderSide(color: Color(0xFFFA2D48)),
                   ),
                   labelStyle: const TextStyle(
                     color: Colors.grey,
@@ -142,48 +177,28 @@ class _SignScreenState extends State<SignScreen> {
                 //     : (S.of(context).password_error),
               ),
             ),
+            const Expanded(child: SizedBox(),),
 
+            authorization
+                  ? const CircularProgressIndicator(
+                color: Color(0xFF76CD26),
+              strokeWidth: 2,
+              )
+                  : TextButton(
+                child: Text(
+                  isLogin ? 'Sign In' : 'Sign Up',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontFamily: 'SF Pro Text',
+                    color: Color(0xFF76CD26),
 
+                    // fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onPressed: () => login(),
+              ),
 
-
-            const SizedBox(
-              height: 16,
-            ),
-
-
-            ElevatedButton(
-
-              child: authorization
-                  ? const CircularProgressIndicator()
-                  : Text(
-                      isLogin ? 'SignIn' : 'SignUp',
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontFamily: 'SF Pro Text',
-                        // fontWeight: FontWeight.w600,
-                        color: Color(0xFF76CD26),
-                      ),
-                    ),
-              onPressed: () {
-                setState(() {
-                  authorization = true;
-                  FocusScope.of(context).unfocus();
-                  isLogin
-                  ?  di<UserRepository>().registerUser(
-                      email: _emailController.text,
-                      password: _passwordController.text)
-                  :  di<UserRepository>().loginUser(
-                  email: _emailController.text,
-                  password: _passwordController.text);
-                });
-
-
-                // di<AppRouter>().replace(const SplashRoute());
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
+            const Expanded(child: SizedBox(),),
             TextButton(
                 onPressed: () {
                   setState(() {
@@ -191,14 +206,16 @@ class _SignScreenState extends State<SignScreen> {
                   });
                 },
                 child: Text(
-                  isLogin ? 'SignUp' : 'SignIn',
+                  isLogin ? 'Sign Up' : 'Sign In',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontFamily: 'SF Pro Text',
-                    // fontWeight: FontWeight.w600,
                     color: Color(0xFF76CD26),
+                    // fontWeight: FontWeight.w600,
                   ),
                 )),
+            const Expanded(child: SizedBox(),),
+
           ],
         ),
       ),
