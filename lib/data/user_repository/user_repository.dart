@@ -90,7 +90,9 @@ class UserRepository extends ChangeNotifier {
            Permission.update(Role.user(account.$id)),
          ],);
 
-       await _checkUser();
+       await loginUser(
+           email: email,
+           password: password);
 
        // status = UserStatus.login;
        // notifyListeners();
@@ -129,7 +131,6 @@ class UserRepository extends ChangeNotifier {
       debugPrint('Error logging in user: ${e.message}');
       status = UserStatus.error;
       error = e.message ?? 'Login error. Check fields';
-      notifyListeners();
       // rethrow;
       return false;
 

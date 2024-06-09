@@ -35,7 +35,7 @@ class _SignScreenState extends State<SignScreen> {
     super.dispose();
   }
 
-  login() async {
+  login(context) async {
     setState(() {
       authorization = true;
       hasError = false;
@@ -56,8 +56,7 @@ class _SignScreenState extends State<SignScreen> {
         );
 
       }
-      // If successful, navigate to the next screen or do something else
-
+       Navigator.of(context).pop();
     } catch (error) {
       debugPrint(error.toString());
       setState(() {
@@ -195,7 +194,7 @@ class _SignScreenState extends State<SignScreen> {
                     // fontWeight: FontWeight.w600,
                   ),
                 ),
-                onPressed: () => login(),
+                onPressed: () { login(context); },
               ),
 
             const Expanded(child: SizedBox(),),
