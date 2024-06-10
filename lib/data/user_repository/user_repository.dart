@@ -79,20 +79,23 @@ class UserRepository extends ChangeNotifier {
         email: email,
         password: password,
       );
-       await _db.createDocument(
-           databaseId: databaseId,
-           collectionId: userCollection,
-         documentId: account.$id,
-           data: {"favorites_ids": idsList,},
-         permissions: [
-           Permission.write(Role.user(account.$id)),
-           Permission.read(Role.user(account.$id)),
-           Permission.update(Role.user(account.$id)),
-         ],);
+
 
        await loginUser(
            email: email,
            password: password);
+
+       await _db.createDocument(
+         databaseId: databaseId,
+         collectionId: userCollection,
+         documentId: account.$id,
+         data: {"favorites_ids": idsList,},
+         // permissions: [
+         //   Permission.write(Role.user(account.$id)),
+         //   Permission.read(Role.user(account.$id)),
+         //   Permission.update(Role.user(account.$id)),
+         // ],
+       );
 
        // status = UserStatus.login;
        // notifyListeners();
@@ -144,9 +147,10 @@ class UserRepository extends ChangeNotifier {
   Future getUserProfile() async {
     debugPrint('Start getUserProfile();');
     String? userId = user?.$id;
+    Document? userDoc;
     if(userId != null) {
       try {
-        var userDoc = await _db.getDocument(
+        userDoc = await _db.getDocument(
           databaseId: databaseId,
           collectionId: userCollection,
           documentId: userId,
@@ -154,14 +158,33 @@ class UserRepository extends ChangeNotifier {
         debugPrint('userDoc.data; ${userDoc.data['favorites_ids']}');
 
 
-        parseData(userDoc);
       } on AppwriteException catch (e) {
+        if(e.message == "Document with the requested ID could not be found.") {
+
+          userDoc = await _db.createDocument(
+            databaseId: databaseId,
+            collectionId: userCollection,
+            documentId: userId,
+            data: {"favorites_ids": idsList,},
+            // permissions: [
+            //   Permission.write(Role.user(account.$id)),
+            //   Permission.read(Role.user(account.$id)),
+            //   Permission.update(Role.user(account.$id)),
+            // ],
+          );
+
+        }
         debugPrint('Error fetching user profile: ${e.message}');
         // rethrow;
       }
+
+
+
     }
 
-
+    if(userDoc != null) {
+      parseData(userDoc);
+    }
   }
 
 
