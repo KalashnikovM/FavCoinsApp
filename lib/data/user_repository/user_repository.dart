@@ -1,11 +1,14 @@
 
+import 'dart:convert';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:crypto_tracker/data/currency_repository/currency_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../constants.dart';
+import '../../models/favorite_model.dart';
 import '../../services/appwrite_service.dart';
+import '../currency_repository/currency_repository.dart';
 
 
 enum UserStatus {
@@ -20,12 +23,11 @@ class UserRepository extends ChangeNotifier {
   UserStatus status = UserStatus.guest;
   final _account = di<ApiClient>().account;
   final _db = di<ApiClient>().database;
-  User? user;
+  User? _user;
   late Session session;
   late String error;
-  List<String> idsList = [];
-
-
+ List<FavoriteCoinModel> favList = [];
+  String? get userId  => _user?.$id;
 
 
   UserRepository() {
@@ -40,12 +42,12 @@ class UserRepository extends ChangeNotifier {
     debugPrint('start checkUser()');
 
     try {
-      user = await _account.get(
+      _user = await _account.get(
       );
-      debugPrint('user.status ${user?.status}');
-      debugPrint('user.name} ${user?.name}');
-      debugPrint('user.email ${user?.email}');
-      debugPrint('user.emailVerification ${user?.emailVerification}');
+      debugPrint('user.status ${_user?.status}');
+      debugPrint('user.name} ${_user?.name}');
+      debugPrint('user.email ${_user?.email}');
+      debugPrint('user.emailVerification ${_user?.emailVerification}');
       getUserProfile();
       status = UserStatus.login;
       notifyListeners();
@@ -61,6 +63,8 @@ class UserRepository extends ChangeNotifier {
       status = UserStatus.error;
       // rethrow;
     }
+    debugPrint('status(); $status');
+
   }
 
 
@@ -89,12 +93,7 @@ class UserRepository extends ChangeNotifier {
          databaseId: databaseId,
          collectionId: userCollection,
          documentId: account.$id,
-         data: {"favorites_ids": idsList,},
-         // permissions: [
-         //   Permission.write(Role.user(account.$id)),
-         //   Permission.read(Role.user(account.$id)),
-         //   Permission.update(Role.user(account.$id)),
-         // ],
+         data: {"favorites_ids": "idsList",}, ///  check!!!!
        );
 
        // status = UserStatus.login;
@@ -144,9 +143,12 @@ class UserRepository extends ChangeNotifier {
 
 
 
+
+
+
   Future getUserProfile() async {
     debugPrint('Start getUserProfile();');
-    String? userId = user?.$id;
+    String? userId = _user?.$id;
     Document? userDoc;
     if(userId != null) {
       try {
@@ -155,8 +157,7 @@ class UserRepository extends ChangeNotifier {
           collectionId: userCollection,
           documentId: userId,
         );
-        debugPrint('userDoc.data; ${userDoc.data['favorites_ids']}');
-
+        debugPrint('userDoc.data[favorites]; ${userDoc.data['favorites']}');
 
       } on AppwriteException catch (e) {
         if(e.message == "Document with the requested ID could not be found.") {
@@ -165,17 +166,11 @@ class UserRepository extends ChangeNotifier {
             databaseId: databaseId,
             collectionId: userCollection,
             documentId: userId,
-            data: {"favorites_ids": idsList,},
-            // permissions: [
-            //   Permission.write(Role.user(account.$id)),
-            //   Permission.read(Role.user(account.$id)),
-            //   Permission.update(Role.user(account.$id)),
-            // ],
+            data: {"favorites": []},    ///  check!!!!
           );
 
         }
         debugPrint('Error fetching user profile: ${e.message}');
-        // rethrow;
       }
 
 
@@ -190,60 +185,83 @@ class UserRepository extends ChangeNotifier {
 
 
 
-  Future<void> addToFavorites(String id) async {
 
-    idsList.contains(id)
-        ? null
-        : {idsList.add(id),
-      _updateUserProfile()};
 
+  Future<void> _updateUserProfile() async {
+    debugPrint('Start _updateUserProfile();');
+    List<String> favorites = [];
+    if(userId != null) {
+      for (var favModel in favList) {
+        favorites.add(json.encode({favModel.id: favModel.transactions}));
+      }
+      debugPrint(favorites.toString());
+      try {
+        var userDoc = await _db.updateDocument(
+          databaseId: databaseId,
+          collectionId: userCollection,
+          documentId: userId ?? "",
+          data: {"favorites": favorites,
+          },
+        );
+        parseData(userDoc);
+
+      } on AppwriteException catch (e) {
+        debugPrint('Error updating user profile: ${e.message}');
+        // rethrow;
+      }
+
+    }
   }
+
+
+
+
+
+  Future<void> addToFavorites({
+    required String value,
+    required String price,
+    required String id}) async {
+    debugPrint('start addToFavorites(); id $id');
+
+
+    favList.add(
+        FavoriteCoinModel(
+            id: id,
+            transactions: {price: value}));
+
+    // for (var v in favList) {
+    //   debugPrint('value: $v}');
+    //   v.id == id
+    //       ? null
+    //       : favList.add(
+    //       FavoriteCoinModel(
+    //           id: id,
+    //           transactions: {price: value}));
+    // }
+
+
+      _updateUserProfile();
+  }
+
+
 
   Future<void> removeFromFavorites(String id) async {
+    debugPrint('start removeFromFavorites(); id $id');
 
-    idsList.contains(id)
-        ? {idsList.remove(id),
-      _updateUserProfile()}
-        : null;
-
-  }
+     List<FavoriteCoinModel> toRemove = [];
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    Future<void> _updateUserProfile() async {
-
-    String? userId = user?.$id;
-    if(userId != null) {
-
-
-    try {
-      var userDoc = await _db.updateDocument(
-        databaseId: databaseId,
-        collectionId: userCollection,
-        documentId: userId,
-        data: {"favorites_ids": idsList,},
-      );
-      parseData(userDoc);
-
-    } on AppwriteException catch (e) {
-      debugPrint('Error updating user profile: ${e.message}');
-      // rethrow;
-    }
+    for (var v in favList) {
+      debugPrint('value: $v}');
+      if(v.id == id) {
+        toRemove.add(v);
+      }
 
     }
-  }
+    favList.removeWhere( (e) => toRemove.contains(e));
+     _updateUserProfile();
 
+  }
 
 
 
@@ -251,7 +269,7 @@ class UserRepository extends ChangeNotifier {
     try {
       await _account.deleteSession(sessionId: 'current');
       status = UserStatus.guest;
-      idsList.clear();
+      // idsList.clear();
 
     } on AppwriteException catch (e) {
       debugPrint('Error logging out user: ${e.message}');
@@ -267,12 +285,32 @@ class UserRepository extends ChangeNotifier {
   void parseData(Document userDoc) {
     debugPrint('Start parseData();');
 
-    List<dynamic> parsedList = userDoc.data['favorites_ids'];
-    idsList = parsedList.map((e) => e.toString()).toList();
-    di<CurrencyRepository>().updateFavoritesList(idsList);
+    favList.clear();
+    List <String> idsList = [];
+    try {
+      List<dynamic> favorites = userDoc.data['favorites'];
+      debugPrint('Favorites raw data: $favorites');
 
-    notifyListeners();
+      for (var value in favorites) {
+        var decodedValue = jsonDecode(value);
+        debugPrint(' value: $value');
+        debugPrint(' value.runtimeType: ${value.runtimeType}');
+        debugPrint('Decoded value: $decodedValue');
+        debugPrint('Decoded value.runtimeType: ${decodedValue.runtimeType}');
 
+          decodedValue.forEach((key, value) {
+            favList.add(FavoriteCoinModel.fromJson(key, value));
+            idsList.add(key);
+          });
+      }
+      debugPrint('favList: $favList');
+       di<CurrencyRepository>().updateFavoritesList(idsList);
+
+    } catch (e) {
+      debugPrint('Error parsing data: $e');
+    }
+
+    // notifyListeners();
   }
 
 
@@ -280,8 +318,8 @@ class UserRepository extends ChangeNotifier {
 
   bool isFavorites(String id) {
     bool res = false;
-    for (var model in idsList) {
-      if (model == id) {
+    for (FavoriteCoinModel model in favList) {
+      if (model.id == id) {
         res = true;
         break;
       }

@@ -1,4 +1,3 @@
-
 import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/data/user_repository/user_repository.dart';
 import 'package:crypto_tracker/ui/sign_screen/sign_screen.dart';
@@ -6,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../models/main_coin_model.dart';
+import '../custom_widgets/add_favorite_coin/add_favorite_coin.dart';
 
 @RoutePage(name: 'CoinPage')
 class CoinPage extends StatelessWidget with WatchItMixin {
   const CoinPage({super.key, required this.model});
 
   final MainCoinModel model;
+
+  get status => di<UserRepository>().status;
 
 
 
@@ -43,18 +45,52 @@ class CoinPage extends StatelessWidget with WatchItMixin {
           IconButton(
               onPressed: () {
 
-                di<UserRepository>().status == UserStatus.login
-                ? isFavorited
-                    ? di<UserRepository>().removeFromFavorites(model.id)
-                :   di<UserRepository>().addToFavorites(model.id)
-                :  showModalBottomSheet(
+                isFavorited
+                ? di<UserRepository>().removeFromFavorites(model.id)
+                : showModalBottomSheet(
                   isScrollControlled: true,
                   context: context,
                   builder: (BuildContext context) =>
-                  const SignScreen(),
+                  status != UserStatus.login
+                      ? const SignScreen()
+                      : AddFavoriteCoin(
+                    id: model.id,
+                    price: model.coinQuote?.price ?? "",
+
+
+
+                  ),
                 );
 
-              }, icon: Icon(
+
+                //
+                //
+                //
+                // showModalBottomSheet(
+                //   isScrollControlled: true,
+                //   context: context,
+                //   builder: (BuildContext context) => di<UserRepository>().status == UserStatus.login
+                //     ?
+                //   const SignScreen()
+                //   : const AddFavoriteCoin(),
+                // );
+                //
+                //
+                //
+                //
+                // di<UserRepository>().status == UserStatus.login
+                // ? isFavorited
+                //     ? di<UserRepository>().removeFromFavorites(model.id)
+                // :   di<UserRepository>().addToFavorites(model.id)
+                // :  showModalBottomSheet(
+                //   isScrollControlled: true,
+                //   context: context,
+                //   builder: (BuildContext context) =>
+                //   const SignScreen(),
+                // );
+
+              },
+            icon: Icon(
               isFavorited
               ? Icons.star
               : Icons.star_border,
@@ -62,93 +98,97 @@ class CoinPage extends StatelessWidget with WatchItMixin {
         ],
       ),
       body: SafeArea(
-        child: Stack(children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          model.coinDataModel?.symbol ?? 'N/A',
-                          style: const TextStyle(
-                              fontSize: 24, color: Colors.white),
-                        ),
-                        Text(
-                          model.coinDataModel?.name ?? 'N/A',
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.white),
-                        ),
-                        Text(
-                            'Category: ${model.coinDataModel?.category ?? 'N/A'}'),
-                      ],
-                    ),
-                    const Expanded(
-                      child: SizedBox(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: SizedBox(
-                        width: 46,
-                        child: logo != null
-                            ? Image.memory(logo)
-                            : const CircularProgressIndicator(),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        model.coinDataModel?.symbol ?? 'N/A',
+                        style: const TextStyle(
+                            fontSize: 24, color: Colors.white),
                       ),
+                      Text(
+                        model.coinDataModel?.name ?? 'N/A',
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.white),
+                      ),
+                      Text(
+                          'Category: ${model.coinDataModel?.category ?? 'N/A'}'),
+                    ],
+                  ),
+                  const Expanded(
+                    child: SizedBox(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: SizedBox(
+                      width: 46,
+                      child: logo != null
+                          ? Image.memory(logo)
+                          : const CircularProgressIndicator(),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              Text(
+                'Price: ${model.coinQuote?.price ?? 'N/A'} USD',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  model.coinDataModel?.description ?? 'N/A',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              if (model.coinQuote != null) ...[
+                priceWidget(
+                    "Percent change 1h", model.coinQuote!.percentChange1h),
+                const SizedBox(height: 4),
+                priceWidget(
+                    "Percent change 24h", model.coinQuote!.percentChange24h),
+                const SizedBox(height: 4),
+                priceWidget(
+                    "Percent change 7d", model.coinQuote!.percentChange7d),
+                const SizedBox(height: 4),
+                priceWidget(
+                    "Percent change 30d", model.coinQuote!.percentChange30d),
+                const SizedBox(height: 4),
+                priceWidget(
+                    "Percent change 60d", model.coinQuote!.percentChange60d),
+                const SizedBox(height: 4),
+                priceWidget(
+                    "Percent change 90d", model.coinQuote!.percentChange90d),
+                const SizedBox(height: 4),
+                priceWidget(
+                    "Volume change 24h", model.coinQuote!.volumeChange24h),
+                const SizedBox(height: 4),
                 Text(
-                  'Price: ${model.coinQuote?.price ?? 'N/A'} USD',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    model.coinDataModel?.description ?? 'N/A',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-                if (model.coinQuote != null) ...[
-                  priceWidget(
-                      "Percent change 1h", model.coinQuote!.percentChange1h),
-                  const SizedBox(height: 4),
-                  priceWidget(
-                      "Percent change 24h", model.coinQuote!.percentChange24h),
-                  const SizedBox(height: 4),
-                  priceWidget(
-                      "Percent change 7d", model.coinQuote!.percentChange7d),
-                  const SizedBox(height: 4),
-                  priceWidget(
-                      "Percent change 30d", model.coinQuote!.percentChange30d),
-                  const SizedBox(height: 4),
-                  priceWidget(
-                      "Percent change 60d", model.coinQuote!.percentChange60d),
-                  const SizedBox(height: 4),
-                  priceWidget(
-                      "Percent change 90d", model.coinQuote!.percentChange90d),
-                  const SizedBox(height: 4),
-                  priceWidget(
-                      "Volume change 24h", model.coinQuote!.volumeChange24h),
-                  const SizedBox(height: 4),
-                  Text(
-                      'Market Cap dominance: ${model.coinQuote!.marketCapDominance}'),
-                  const SizedBox(height: 4),
-                  Text(
-                      'Fully diluted market Cap: ${model.coinQuote!.fullyDilutedMarketCap}'),
-                ]
-              ],
-            ),
+                    'Market Cap dominance: ${model.coinQuote!.marketCapDominance} %'),
+                const SizedBox(height: 4),
+                Text(
+                    'Fully diluted market Cap: ${model.coinQuote!.fullyDilutedMarketCap}'),
+
+
+
+
+
+
+
+              ]
+            ],
           ),
-        ]),
+        ),
       ),
     );
   }

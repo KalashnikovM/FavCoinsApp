@@ -46,9 +46,6 @@ class CurrencyRepository extends ChangeNotifier {
 
 
 
-  get test => _updateCoinMapList();
-
-  get trigger => updateMainList();
 
 
   Map<String, String> error = {};
