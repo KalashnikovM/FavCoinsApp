@@ -284,14 +284,9 @@ class UserRepository extends ChangeNotifier {
     try {
       List<dynamic> favorites = userDoc.data['favorites'];
       debugPrint('Favorites raw data: $favorites');
-
       for (var value in favorites) {
         var decodedValue = jsonDecode(value);
         debugPrint(' value: $value');
-        debugPrint(' value.runtimeType: ${value.runtimeType}');
-        debugPrint('Decoded value: $decodedValue');
-        debugPrint('Decoded value.runtimeType: ${decodedValue.runtimeType}');
-
           decodedValue.forEach((key, value) {
             favList.add(FavoriteCoinModel.fromJson(key, value));
             idsList.add(key);

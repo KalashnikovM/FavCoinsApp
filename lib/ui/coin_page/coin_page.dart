@@ -13,12 +13,13 @@ class CoinPage extends StatelessWidget with WatchItMixin {
 
   final MainCoinModel model;
 
-  get status => di<UserRepository>().status;
 
 
 
   @override
   Widget build(BuildContext context) {
+    UserRepository repo = watchIt<UserRepository>();
+
     DateTime? utcDateTime;
     DateTime? dateTime;
     String updatedDate = '';
@@ -31,7 +32,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
     }
 
     var logo = model.coinDataModel?.logo;
-    bool isFavorited = watchIt<UserRepository>().isFavorites(model.id);
+    bool isFavorited = repo.isFavorites(model.id);
     debugPrint(model.coinQuote?.percentChange1h);
     return Scaffold(
       appBar: AppBar(
@@ -50,14 +51,15 @@ class CoinPage extends StatelessWidget with WatchItMixin {
                 : showModalBottomSheet(
                   isScrollControlled: true,
                   context: context,
-                  builder: (BuildContext context) =>
-                  status != UserStatus.login
+                  builder: (BuildContext context) {
+                    return repo.status != UserStatus.login
                       ? const SignScreen()
                       : AddFavoriteCoin(
                     id: model.id,
                     price: model.coinQuote?.price ?? "",
 
-                  ),
+                  );
+                  },
                 );
               },
             icon: Icon(

@@ -34,59 +34,106 @@ class _SignScreenState extends State<SignScreen> {
     super.dispose();
   }
 
+
+
+  alertDialog(context, errorString) {
+
+    return showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('Error'),
+          content: Text(errorString),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('OK', style: TextStyle(color: Colors.white),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+
+
+
+
+
+  }
+
   login(context) async {
     setState(() {
       authorization = true;
-      hasError = false;
       FocusScope.of(context).unfocus();
     });
 
-    try {
       if (isLogin) {
-        await di<UserRepository>().loginUser(
+        bool res = await di<UserRepository>().loginUser(
           email: _emailController.text,
           password: _passwordController.text,
         );
+        res ? Navigator.of(context).pop()
+            :  setState(() {
+          authorization = false;
+          alertDialog(context, di<UserRepository>().error);
+        });
 
-      } else {
-        await di<UserRepository>().registerUser(
+
+
+    } else {
+
+
+
+
+
+        bool res = await di<UserRepository>().registerUser(
           email: _emailController.text,
           password: _passwordController.text,
         );
+        res ? Navigator.of(context).pop()
+        :  setState(() {
+          authorization = false;
+          alertDialog(context, di<UserRepository>().error);
+        });
 
       }
-       Navigator.of(context).pop();
-    } catch (error) {
-      debugPrint(error.toString());
-      setState(() {
-        hasError = true;
-        String errorString = di<UserRepository>().error;
-
-        // Show CupertinoAlertDialog
-        showCupertinoDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: const Text('Error'),
-              content: Text(errorString),
-              actions: [
-                CupertinoDialogAction(
-                  child: const Text('OK', style: TextStyle(color: Colors.white),),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      });
-    } finally {
-      setState(() {
-        authorization = false;
-      });
+       // Navigator.of(context).pop();
     }
-  }
+
+
+    // catch (error) {
+    //   debugPrint(error.toString());
+    //   setState(() {
+    //     hasError = true;
+    //     String errorString = di<UserRepository>().error;
+    //
+    //     // Show CupertinoAlertDialog
+    //     showCupertinoDialog(
+    //       context: context,
+    //       builder: (BuildContext context) {
+    //         return CupertinoAlertDialog(
+    //           title: const Text('Error'),
+    //           content: Text(errorString),
+    //           actions: [
+    //             CupertinoDialogAction(
+    //               child: const Text('OK', style: TextStyle(color: Colors.white),),
+    //               onPressed: () {
+    //                 Navigator.of(context).pop();
+    //               },
+    //             ),
+    //           ],
+    //         );
+    //       },
+    //     );
+    //   });
+    // } finally {
+    //   setState(() {
+    //     authorization = false;
+    //   });
+    // }
+  //}
 
   @override
   Widget build(BuildContext context) {
