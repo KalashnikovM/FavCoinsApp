@@ -1,14 +1,12 @@
-
 import 'dart:convert';
-
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:crypto_tracker/data/currency_repository/favorites_repository/favorites_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../constants.dart';
 import '../../models/favorite_model.dart';
 import '../../services/appwrite_service.dart';
-import '../currency_repository/currency_repository.dart';
 
 
 enum UserStatus {
@@ -31,12 +29,12 @@ class UserRepository extends ChangeNotifier {
 
 
   UserRepository() {
-
-
     _checkUser();
 
-
   }
+
+
+
 
   _checkUser() async {
     debugPrint('start checkUser()');
@@ -60,12 +58,16 @@ class UserRepository extends ChangeNotifier {
 
         }
       debugPrint('Error checkUser: $e');
-      status = UserStatus.error;
+      status = UserStatus.guest;
+      notifyListeners();
+
       // rethrow;
     }
     debugPrint('status(); $status');
 
   }
+
+
 
 
 
@@ -93,7 +95,7 @@ class UserRepository extends ChangeNotifier {
          databaseId: databaseId,
          collectionId: userCollection,
          documentId: account.$id,
-         data: {"favorites_ids": "idsList",}, ///  check!!!!
+         data: {"favorites": []},
        );
 
        // status = UserStatus.login;
@@ -108,6 +110,8 @@ class UserRepository extends ChangeNotifier {
       // rethrow;
     }
   }
+
+
 
 
 
@@ -144,8 +148,6 @@ class UserRepository extends ChangeNotifier {
 
 
 
-
-
   Future getUserProfile() async {
     debugPrint('Start getUserProfile();');
     String? userId = _user?.$id;
@@ -161,14 +163,19 @@ class UserRepository extends ChangeNotifier {
 
       } on AppwriteException catch (e) {
         if(e.message == "Document with the requested ID could not be found.") {
-
+        try {
           userDoc = await _db.createDocument(
             databaseId: databaseId,
             collectionId: userCollection,
             documentId: userId,
-            data: {"favorites": []},    ///  check!!!!
+            data: {"favorites": []},
           );
+        }
+        catch (e) {
+          debugPrint('Error createDocument e.toString(): ${e.toString()}');
+          debugPrint('Error createDocument e.runtimeType: ${e.runtimeType}');
 
+        }
         }
         debugPrint('Error fetching user profile: ${e.message}');
       }
@@ -228,18 +235,6 @@ class UserRepository extends ChangeNotifier {
         FavoriteCoinModel(
             id: id,
             transactions: {price: value}));
-
-    // for (var v in favList) {
-    //   debugPrint('value: $v}');
-    //   v.id == id
-    //       ? null
-    //       : favList.add(
-    //       FavoriteCoinModel(
-    //           id: id,
-    //           transactions: {price: value}));
-    // }
-
-
       _updateUserProfile();
   }
 
@@ -249,7 +244,6 @@ class UserRepository extends ChangeNotifier {
     debugPrint('start removeFromFavorites(); id $id');
 
      List<FavoriteCoinModel> toRemove = [];
-
 
     for (var v in favList) {
       debugPrint('value: $v}');
@@ -269,13 +263,13 @@ class UserRepository extends ChangeNotifier {
     try {
       await _account.deleteSession(sessionId: 'current');
       status = UserStatus.guest;
-      // idsList.clear();
+      favList.clear();
+      _checkUser();
 
     } on AppwriteException catch (e) {
       debugPrint('Error logging out user: ${e.message}');
       // rethrow;
     }
-    notifyListeners();
 
   }
 
@@ -304,7 +298,7 @@ class UserRepository extends ChangeNotifier {
           });
       }
       debugPrint('favList: $favList');
-       di<CurrencyRepository>().updateFavoritesList(idsList);
+       di<FavoritesRepository>().updateFavoritesList(idsList);
 
     } catch (e) {
       debugPrint('Error parsing data: $e');

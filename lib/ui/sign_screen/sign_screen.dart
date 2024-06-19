@@ -1,4 +1,3 @@
-import 'package:crypto_tracker/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
@@ -91,6 +90,8 @@ class _SignScreenState extends State<SignScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('build SignScreen');
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(

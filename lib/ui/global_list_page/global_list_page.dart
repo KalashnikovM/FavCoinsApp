@@ -2,8 +2,9 @@ import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-import 'package:crypto_tracker/data/currency_repository/currency_repository.dart';
-import 'package:crypto_tracker/ui/top_list_page/search_page.dart';
+
+import '../../data/currency_repository/global_repository/global_repository.dart';
+import 'search_page.dart';
 
 
 
@@ -43,7 +44,9 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
   @override
 
   Widget build(BuildContext context) {
-    CurrencyRepository repo = watchIt<CurrencyRepository>();
+    debugPrint('build GlobalListPage');
+
+    GlobalListRepository repo = watchIt<GlobalListRepository>();
 
     return RefreshIndicator.adaptive(
       color: Colors.transparent,
@@ -93,7 +96,7 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
                     ),
 
 
-                   if(repo.mainListPageStatus == CurrencyRepositoryStatus.updated)
+                   if(repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updated)
                    TextButton(
                      style: ElevatedButton.styleFrom(
                          foregroundColor:const Color(0xFF9b5bf3),
@@ -114,7 +117,7 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
           ),
 
 
-          if (repo.mainListPageStatus == CurrencyRepositoryStatus.updating)
+          if (repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updating)
             Container(
               color: const Color(0xFF3e3e3e).withOpacity(0.2),
               child: const Center(

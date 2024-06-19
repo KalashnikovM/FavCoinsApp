@@ -2,7 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-import '../../data/currency_repository/currency_repository.dart';
+import '../../data/currency_repository/top_repository/top_repository.dart';
 
 
 
@@ -53,7 +53,9 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    CurrencyRepository repo = watchIt<CurrencyRepository>();
+    debugPrint('build Top100ListPage');
+
+    Top100Repository repo = watchIt<Top100Repository>();
 
     return RefreshIndicator.adaptive(
       color: Colors.transparent,
@@ -132,7 +134,7 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
               ),
             ),
           ),
-          if (repo.top100PageStatus == CurrencyRepositoryStatus.updating)
+          if (repo.top100RepositoryStatus == Top100RepositoryStatus.updating)
             Container(
               color: const Color(0xFF3e3e3e).withOpacity(0.2),
               child: const Center(

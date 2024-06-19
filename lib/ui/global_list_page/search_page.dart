@@ -1,7 +1,7 @@
-import 'package:crypto_tracker/data/currency_repository/currency_repository.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
+import '../../data/currency_repository/global_repository/global_repository.dart';
 
 
 class SearchPage extends StatefulWidget {
@@ -65,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
     });
 
     try {
-      CurrencyRepository repo = di<CurrencyRepository>(); // Assuming di is a dependency injection method
+      GlobalListRepository repo = di<GlobalListRepository>(); // Assuming di is a dependency injection method
       await repo.searchByPartialNameAndSymbol(query);
     } finally {
       setState(() {
@@ -81,8 +81,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('build SearchPage');
 
-    CurrencyRepository repo = di<CurrencyRepository>();
+    GlobalListRepository repo = di<GlobalListRepository>();
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

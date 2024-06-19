@@ -1,6 +1,7 @@
 import 'package:crypto_tracker/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../data/user_repository/user_repository.dart';
@@ -33,7 +34,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
   @override
   void initState() {
     _valueController = TextEditingController();
-    _priceController = TextEditingController();
+    _priceController = TextEditingController(text: widget.price);
 
     super.initState();
   }
@@ -78,7 +79,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: const Text('Error'),
-              content: Text("errorString"),
+              content: const Text("errorString"),
               actions: [
                 CupertinoDialogAction(
                   child: const Text('OK', style: TextStyle(color: Colors.white),),
@@ -100,6 +101,9 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(widget.price);
+    debugPrint('build AddFavoriteCoin');
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
@@ -107,7 +111,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
         height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.white10,
+          color: Colors.black,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -116,7 +120,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
             Center(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white10,
+                  color: Colors.white24,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 width: 60,
@@ -128,7 +132,10 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
               height: 52,
               child: TextFormField(
                 controller: _valueController,
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp('[0-9.]+')),
+                ],
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(16),
                   labelText: 'Enter value',
@@ -137,7 +144,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
                     borderSide: BorderSide(color: Color(0xFFFA2D48)),
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white54,
                     fontSize: 16,
                   ),
                 ),
@@ -148,10 +155,13 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
               height: 52,
               child: TextFormField(
                 controller: _priceController,
-                keyboardType: TextInputType.visiblePassword,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp('[0-9.]+')),
+                ],
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(16),
-                  labelText: 'Enter price',
+                  labelText: 'Price',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     borderSide: BorderSide(color: Color(0xFFFA2D48)),
@@ -174,19 +184,41 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
               color: Color(0xFF76CD26),
               strokeWidth: 2,
             )
-                : TextButton(
-                    child: const Text(
-                    'Add',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontFamily: 'SF Pro Text',
-                        color: Color(0xFF76CD26),
+                : ElevatedButton(
+              onPressed: () {
+                addToFavorites(context);
+              },
+                  // label: Text('Add'),
 
-                        // fontWeight: FontWeight.w600,
+              style: ElevatedButton.styleFrom(
+
+                foregroundColor: Color(0xFF76CD26),
+              //  backgroundColor: Colors.green, // Text color
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: const BorderSide(color: Color(0xFF76CD26),)
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               ),
-              onPressed: () { addToFavorites(context); },
+                  child: Text('ADD'),
+                //  const Icon(Icons.add),
             ),
+
+
+            //
+            // TextButton(
+            //         child: const Text(
+            //         'Add',
+            //           style: TextStyle(
+            //             fontSize: 24,
+            //             fontFamily: 'SF Pro Text',
+            //             color: Color(0xFF76CD26),
+            //
+            //             // fontWeight: FontWeight.w600,
+            //     ),
+            //   ),
+            //   onPressed: () { addToFavorites(context); },
+            // ),
 
             const Expanded(child: SizedBox(),),
 

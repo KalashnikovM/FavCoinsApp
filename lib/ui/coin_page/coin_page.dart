@@ -57,38 +57,8 @@ class CoinPage extends StatelessWidget with WatchItMixin {
                     id: model.id,
                     price: model.coinQuote?.price ?? "",
 
-
-
                   ),
                 );
-
-
-                //
-                //
-                //
-                // showModalBottomSheet(
-                //   isScrollControlled: true,
-                //   context: context,
-                //   builder: (BuildContext context) => di<UserRepository>().status == UserStatus.login
-                //     ?
-                //   const SignScreen()
-                //   : const AddFavoriteCoin(),
-                // );
-                //
-                //
-                //
-                //
-                // di<UserRepository>().status == UserStatus.login
-                // ? isFavorited
-                //     ? di<UserRepository>().removeFromFavorites(model.id)
-                // :   di<UserRepository>().addToFavorites(model.id)
-                // :  showModalBottomSheet(
-                //   isScrollControlled: true,
-                //   context: context,
-                //   builder: (BuildContext context) =>
-                //   const SignScreen(),
-                // );
-
               },
             icon: Icon(
               isFavorited
