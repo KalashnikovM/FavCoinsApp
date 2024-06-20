@@ -51,25 +51,15 @@ class CoinCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RichText(
-                  text: TextSpan(
-                    text: model.coinDataModel?.symbol ?? 'N/A',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 17,
-                    ),
-                    children: const [
-                      TextSpan(
-                        text: "/USD",
-                        style: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                Text(
+                  model.coinDataModel?.symbol ?? 'N/A',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 17,
+                  ),),
+
+
                 Text(
                   model.coinDataModel != null
                       ? (model.coinDataModel?.name != null && model.coinDataModel!.name!.length > 15
@@ -92,6 +82,7 @@ class CoinCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+
                 Text(
                   "${model.coinQuote?.price ?? "N/A"}\$",
                   style: const TextStyle(

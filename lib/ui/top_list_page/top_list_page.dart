@@ -92,7 +92,7 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
                   ),
 
 
-                  const SliverToBoxAdapter(
+                   const SliverToBoxAdapter(
                     child: SizedBox(
                       height: 20,
                       child: Padding(
@@ -104,12 +104,12 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
                               child: Text("Rate", style: style,),
                             ),
 
-                            Text("Pair", style: style,),
+                            Text("Ticker/Name", style: style,),
                             Expanded(
                               child: SizedBox(),),
 
 
-                            Text("Price  \$", style: style,),
+                            Text("Price  USD", style: style,),
 
                           ],
                         ),

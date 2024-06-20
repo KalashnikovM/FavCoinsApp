@@ -17,9 +17,11 @@ class FavoritesCoinCard extends StatelessWidget {
 
 
 
-  double _width() {
+  Map<String, dynamic> _parseData() {
     var userData = di<UserRepository>().favList;
     debugPrint(userData.toString());
+
+    Map<String, dynamic> data = {};
 
     double transactionCount = 0;
     double avgPurchasePrice = 0;
@@ -35,15 +37,19 @@ class FavoritesCoinCard extends StatelessWidget {
         transactionCount += 1;
         double price = double.parse(p);
         double value = double.parse(v);
-        totalPayed += price*value;
+        totalPayed += price * value;
         totalCoinValue += value;
         avgPurchasePrice += price;
       });
      }
     }
     avgPurchasePrice = avgPurchasePrice/transactionCount;
-
     double percentageChange = ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
+
+    data['avgPurchasePrice'] = avgPurchasePrice;
+    data['percentageChange'] = percentageChange;
+    data['totalPayed'] = totalPayed;
+    data['totalCoinValue'] = totalCoinValue;
 
 
 
@@ -70,24 +76,45 @@ class FavoritesCoinCard extends StatelessWidget {
 
     debugPrint(percentageChange.toString());
 
-    return percentageChange;
+    return data;
   }
 
-
+  String convert(double number) {
+    String numberString = number.toString();
+    int decimalIndex = numberString.indexOf('.');
+    int zeroCount = 0;
+    if (decimalIndex == -1) {
+      return number.toString();
+    }
+    for (int i = decimalIndex + 1; i < numberString.length; i++) {
+      if (numberString[i] == '0') {
+        zeroCount++;
+      } else {
+        break;
+      }
+    }
+    zeroCount = zeroCount + 2;
+    return number.toStringAsFixed(zeroCount);
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    // var logo = model.coinDataModel?.logo;
+
+    Map<String, dynamic> data = _parseData();
+    double percentageChange = data['percentageChange'];
+    double totalCoinValue = data['totalCoinValue'];
+    double avgPurchasePrice = data['avgPurchasePrice'];
+
 
     return GestureDetector(
-      onTap: () => _width(),
+      onTap: () => _parseData(),
         //   di<AppRouter>().push(
         // CoinPage(model: model),
       //),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
         decoration: const BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.all(
@@ -152,6 +179,30 @@ class FavoritesCoinCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+
+
+
+
+                    Row(
+                      children: [
+                        const Icon(Icons.account_balance_wallet, color: Colors.white38,size: 18,),
+                        Text(
+                          '  $totalCoinValue ${model.coinDataModel?.symbol}',
+
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+
+
+
+
+
                   ],
                 ),
                 const Expanded(
@@ -169,25 +220,43 @@ class FavoritesCoinCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "PnL: ${model.coinQuote?.percentChange1h ?? 'N/A'} %",
+                      "PnL: ${convert(percentageChange)} %",
                       style: TextStyle(
                         color: model.coinQuote?.percentChange1h.startsWith("-") ?? false
                             ?  const Color(0xFFFA2D48)
                             : const Color(0xFF76CD26),
                       ),
                     ),
+
+
+
+
+                    Text(
+                      '  $avgPurchasePrice \$',
+
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                      ),
+                    ),
+
                   ],
                 ),
               ],
             ),
 
              Row(
-
               children: [
                 SizedBox(
-                  width: _width(),
-                  height: 50,
-                  child: ColoredBox(color: Colors.red.withOpacity(0.3),),
+                  height: 64,
+                  width: percentageChange.abs(),
+                  child: ColoredBox(color: percentageChange.isNegative
+                      ?  const Color(0xFFFA2D48).withOpacity(0.3)
+                      : const Color(0xFF76CD26).withOpacity(0.3),
+
+                 ),
                 ),
                 const Expanded(child: SizedBox(),),
 
