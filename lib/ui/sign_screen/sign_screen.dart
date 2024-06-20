@@ -63,7 +63,7 @@ class _SignScreenState extends State<SignScreen> {
 
   }
 
-  login(context) async {
+  sign(context) async {
     setState(() {
       authorization = true;
       FocusScope.of(context).unfocus();
@@ -80,13 +80,7 @@ class _SignScreenState extends State<SignScreen> {
           alertDialog(context, di<UserRepository>().error);
         });
 
-
-
     } else {
-
-
-
-
 
         bool res = await di<UserRepository>().registerUser(
           email: _emailController.text,
@@ -97,43 +91,10 @@ class _SignScreenState extends State<SignScreen> {
           authorization = false;
           alertDialog(context, di<UserRepository>().error);
         });
-
       }
-       // Navigator.of(context).pop();
     }
 
 
-    // catch (error) {
-    //   debugPrint(error.toString());
-    //   setState(() {
-    //     hasError = true;
-    //     String errorString = di<UserRepository>().error;
-    //
-    //     // Show CupertinoAlertDialog
-    //     showCupertinoDialog(
-    //       context: context,
-    //       builder: (BuildContext context) {
-    //         return CupertinoAlertDialog(
-    //           title: const Text('Error'),
-    //           content: Text(errorString),
-    //           actions: [
-    //             CupertinoDialogAction(
-    //               child: const Text('OK', style: TextStyle(color: Colors.white),),
-    //               onPressed: () {
-    //                 Navigator.of(context).pop();
-    //               },
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     );
-    //   });
-    // } finally {
-    //   setState(() {
-    //     authorization = false;
-    //   });
-    // }
-  //}
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +203,7 @@ class _SignScreenState extends State<SignScreen> {
                     // fontWeight: FontWeight.w600,
                   ),
                 ),
-                onPressed: () { login(context); },
+                onPressed: () { sign(context); },
               ),
 
             const Expanded(child: SizedBox(),),

@@ -235,7 +235,7 @@ class UserRepository extends ChangeNotifier {
         FavoriteCoinModel(
             id: id,
             transactions: {price: value}));
-      _updateUserProfile();
+      await _updateUserProfile();
   }
 
 
@@ -253,7 +253,7 @@ class UserRepository extends ChangeNotifier {
 
     }
     favList.removeWhere( (e) => toRemove.contains(e));
-     _updateUserProfile();
+    await _updateUserProfile();
 
   }
 
@@ -286,7 +286,6 @@ class UserRepository extends ChangeNotifier {
       debugPrint('Favorites raw data: $favorites');
       for (var value in favorites) {
         var decodedValue = jsonDecode(value);
-        debugPrint(' value: $value');
           decodedValue.forEach((key, value) {
             favList.add(FavoriteCoinModel.fromJson(key, value));
             idsList.add(key);
@@ -299,7 +298,7 @@ class UserRepository extends ChangeNotifier {
       debugPrint('Error parsing data: $e');
     }
 
-    // notifyListeners();
+    notifyListeners();
   }
 
 

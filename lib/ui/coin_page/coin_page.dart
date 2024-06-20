@@ -4,6 +4,7 @@ import 'package:crypto_tracker/ui/sign_screen/sign_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:watch_it/watch_it.dart';
+import '../../models/favorite_model.dart';
 import '../../models/main_coin_model.dart';
 import '../custom_widgets/add_favorite_coin/add_favorite_coin.dart';
 
@@ -13,6 +14,13 @@ class CoinPage extends StatelessWidget with WatchItMixin {
 
   final MainCoinModel model;
 
+
+   bool isFavorites(String id) {
+     bool res = false;
+     res = di<UserRepository>().isFavorites(model.id);
+
+     return res;
+   }
 
 
 
@@ -59,6 +67,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
                     price: model.coinQuote?.price ?? "",
 
                   );
+
                   },
                 );
               },
@@ -66,7 +75,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
               isFavorited
               ? Icons.star
               : Icons.star_border,
-         color: const Color(0xFFFA2D48),),)
+         color: const Color(0xFFFA2D48),),),
         ],
       ),
       body: SafeArea(

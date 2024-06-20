@@ -18,7 +18,7 @@ class FavoritesCoinCard extends StatelessWidget {
     var userData = di<UserRepository>().favList;
 
 
-    // int screenWidth =
+    double changeBlock = screenWidth * model.;
 
 
 
@@ -138,7 +138,7 @@ class FavoritesCoinCard extends StatelessWidget {
                 SizedBox(
                   width: 15,
                   height: 50,
-                  child: ColoredBox(color: Colors.red.withOpacity(0.5),),
+                  child: ColoredBox(color: Colors.red.withOpacity(0.3),),
                 ),
                 const Expanded(child: SizedBox(),),
 
