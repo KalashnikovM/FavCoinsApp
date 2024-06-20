@@ -24,7 +24,7 @@ class UserRepository extends ChangeNotifier {
   User? _user;
   late Session session;
   late String error;
- List<FavoriteCoinModel> favList = [];
+   List<FavoriteCoinModel> favList = [];
   String? get userId  => _user?.$id;
 
 
@@ -285,8 +285,16 @@ class UserRepository extends ChangeNotifier {
       List<dynamic> favorites = userDoc.data['favorites'];
       debugPrint('Favorites raw data: $favorites');
       for (var value in favorites) {
-        var decodedValue = jsonDecode(value);
+        Map<String, dynamic> decodedValue = jsonDecode(value);
           decodedValue.forEach((key, value) {
+            value.forEach((k, v) {
+
+              debugPrint('k: $k');
+              debugPrint('v: $v');
+
+
+
+            });
             favList.add(FavoriteCoinModel.fromJson(key, value));
             idsList.add(key);
           });

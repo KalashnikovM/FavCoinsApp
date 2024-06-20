@@ -22,4 +22,11 @@ class FavoriteCoinModel {
 
     );
   }
+
+
+
+
+
+
+
 }

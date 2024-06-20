@@ -1,4 +1,5 @@
 import 'package:crypto_tracker/data/user_repository/user_repository.dart';
+import 'package:crypto_tracker/models/favorite_model.dart';
 import 'package:crypto_tracker/models/main_coin_model.dart';
 import 'package:crypto_tracker/router/router.dart';
 import 'package:crypto_tracker/router/router.gr.dart';
@@ -14,15 +15,62 @@ class FavoritesCoinCard extends StatelessWidget {
 
 
 
-  _width() {
+
+
+  double _width() {
     var userData = di<UserRepository>().favList;
+    debugPrint(userData.toString());
+
+    double transactionCount = 0;
+    double avgPurchasePrice = 0;
+    double totalPayed = 0;
+    double totalCoinValue = 0;
+    double currentPrice = double.parse(model.coinQuote?.price ?? '');
+
+    for (var item in userData) {
+
+      if(item.id == model.id){
+
+      item.transactions.forEach((p, v) {
+        transactionCount += 1;
+        double price = double.parse(p);
+        double value = double.parse(v);
+        totalPayed += price*value;
+        totalCoinValue += value;
+        avgPurchasePrice += price;
+      });
+     }
+    }
+    avgPurchasePrice = avgPurchasePrice/transactionCount;
+
+    double percentageChange = ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
 
 
-    double changeBlock = screenWidth * model.;
 
 
 
 
+
+    debugPrint("totalPayed");
+
+    debugPrint(totalPayed.toString());
+
+    debugPrint("totalCoinValue");
+
+    debugPrint(totalCoinValue.toString());
+
+    debugPrint("transactionCount");
+
+    debugPrint(transactionCount.toString());
+
+    debugPrint("avgPurchasePrice");
+
+    debugPrint(avgPurchasePrice.toString());
+    debugPrint("percentageChange");
+
+    debugPrint(percentageChange.toString());
+
+    return percentageChange;
   }
 
 
@@ -33,9 +81,10 @@ class FavoritesCoinCard extends StatelessWidget {
     // var logo = model.coinDataModel?.logo;
 
     return GestureDetector(
-      onTap: () => di<AppRouter>().push(
-        CoinPage(model: model),
-      ),
+      onTap: () => _width(),
+        //   di<AppRouter>().push(
+        // CoinPage(model: model),
+      //),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
@@ -136,7 +185,7 @@ class FavoritesCoinCard extends StatelessWidget {
 
               children: [
                 SizedBox(
-                  width: 15,
+                  width: _width(),
                   height: 50,
                   child: ColoredBox(color: Colors.red.withOpacity(0.3),),
                 ),
