@@ -17,7 +17,7 @@ import 'search_page.dart';
 class GlobalListPage extends StatelessWidget with WatchItMixin{
   const GlobalListPage({super.key});
 
-  final int nextPageTrigger = 20;
+  static ScrollController scrollController = ScrollController();
 
 
   String countZerosAfterDecimal(double number) {
@@ -39,7 +39,10 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
   }
 
 
-
+  static const TextStyle style = TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize: 16
+  );
 
   @override
 
@@ -57,63 +60,72 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
       child: Stack(
         children: [
           Scaffold(
-            appBar: AppBar(
-              title: const Text("Global coin list"),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0),
-                  child: IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (BuildContext context) =>
-                        const SearchPage(),
-                      );
-                    },
-                    icon: const Icon(Icons.search),
-                  ),
-                ),
-              ],
-            ),
             body: SafeArea(
-                child:
-                ListView(
-                 children: <Widget>[
-                   ListView.builder(
-                     physics: const ScrollPhysics(),
-                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                      itemCount: repo.mainCoinsList.length,
-                       shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index)  {
-                        return
-                          CoinCard(
-                            model: repo.mainCoinsList[index],
-                            index: index,);
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  const SliverAppBar(
+                    floating: true,
+                    snap: false,
+                    pinned: true,
+                    title: Text("Global coin list"),
+                  ),
+
+
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
+                        height: 20,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 32),
+                                child: Text("Rate", style: style,),
+                              ),
+
+                              Text("Ticker/Name", style: style,),
+                              Expanded(
+                                child: SizedBox(),),
+
+
+                              Text("Price  USD", style: style,),
+
+                            ],
+                          ),
+                        )
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        return CoinCard(
+                          model: repo.mainCoinsList[index],
+                          index: index,);
                       },
+                      childCount: repo.mainCoinsList.length,
+                    ),
+                  ),
+
+                  if(repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updated)
+                    SliverToBoxAdapter(
+                      child: TextButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor:const Color(0xFF9b5bf3),
+                          elevation: 0,
+                          //   backgroundColor: Colors.purple,
+                          disabledBackgroundColor:  const Color(0xFFFA2D48),
+                          // shape: const CircleBorder(),
+                          // fixedSize: const Size(44,44)
+                        ),
+                        onPressed: () => repo.updateMainList(),
+                        child: const Text("Load more"),
+                      ),
                     ),
 
-
-                   if(repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updated)
-                   TextButton(
-                     style: ElevatedButton.styleFrom(
-                         foregroundColor:const Color(0xFF9b5bf3),
-                      elevation: 0,
-                      //   backgroundColor: Colors.purple,
-                         disabledBackgroundColor:  const Color(0xFFFA2D48),
-                         // shape: const CircleBorder(),
-                         // fixedSize: const Size(44,44)
-                     ),
-                     onPressed: () => repo.updateMainList(),
-                     child: const Text("Load more"),
-                   ),
-
-
-                 ],
-               )),
-
+                ],
+              ),
+            ),
           ),
 
 

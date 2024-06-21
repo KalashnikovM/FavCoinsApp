@@ -74,20 +74,6 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
                     floating: true,
                      snap: false,
                     pinned: true,
-                    // actions: [
-                    //   Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //         horizontal: 8.0),
-                    //     child: IconButton(
-                    //       onPressed: () {},
-                    //       icon: const Icon(Icons.search,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ],
-                    // leading: repo.top100Stream
-                    //     ? const Icon(Icons.circle, )
-                    //     : const Icon(Icons.circle_outlined),
                     title: Text("Top 100 market cap."),
                   ),
 

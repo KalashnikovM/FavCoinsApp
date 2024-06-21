@@ -106,7 +106,6 @@ class FavoritesCoinCard extends StatelessWidget {
     double currentPriceOfAssets = data['currentPriceOfAssets'];
     double totalPriceChange = data['totalPriceChange'];
 
-
     return GestureDetector(
       onTap: () => _parseData(),
         //   di<AppRouter>().push(
@@ -130,10 +129,6 @@ class FavoritesCoinCard extends StatelessWidget {
 
             Row(
               children: [
-                const Expanded(
-                  flex: 1,
-                  child: SizedBox(),
-                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -169,8 +164,8 @@ class FavoritesCoinCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(
-                      height: 22,
+                    const SizedBox(
+                      height: 24,
                     ),
 
 
@@ -199,7 +194,6 @@ class FavoritesCoinCard extends StatelessWidget {
                   ],
                 ),
                 const Expanded(
-                  flex: 10,
                   child: SizedBox(),
                 ),
                 Column(
@@ -288,6 +282,7 @@ class FavoritesCoinCard extends StatelessWidget {
                   ? "- ${convert(percentageChange)} %"
                   : "+ ${convert(percentageChange)} %",
 
+              overflow: TextOverflow.ellipsis,
 
               style: TextStyle(
                 color: isNegative
@@ -303,6 +298,7 @@ class FavoritesCoinCard extends StatelessWidget {
                   ? "- ${convert(totalPriceChange)} USD"
                   : "+ ${convert(totalPriceChange)} USD",
 
+              overflow: TextOverflow.ellipsis,
 
               style: TextStyle(
                 color: isNegative
