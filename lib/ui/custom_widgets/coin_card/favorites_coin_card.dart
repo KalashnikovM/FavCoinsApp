@@ -27,6 +27,9 @@ class FavoritesCoinCard extends StatelessWidget {
     double avgPurchasePrice = 0;
     double totalPayed = 0;
     double totalCoinValue = 0;
+    double currentPriceOfAssets = 0;
+    double totalPriceChange = 0;
+
     double currentPrice = double.parse(model.coinQuote?.price ?? '');
 
     for (var item in userData) {
@@ -45,36 +48,32 @@ class FavoritesCoinCard extends StatelessWidget {
     }
     avgPurchasePrice = avgPurchasePrice/transactionCount;
     double percentageChange = ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
-
+    currentPriceOfAssets = totalCoinValue * currentPrice;
+    totalPriceChange = currentPriceOfAssets - totalPayed;
     data['avgPurchasePrice'] = avgPurchasePrice;
     data['percentageChange'] = percentageChange;
     data['totalPayed'] = totalPayed;
     data['totalCoinValue'] = totalCoinValue;
-
-
-
+    data['currentPriceOfAssets'] = currentPriceOfAssets;
+    data['totalPriceChange'] = totalPriceChange;
 
 
 
 
     debugPrint("totalPayed");
-
     debugPrint(totalPayed.toString());
-
     debugPrint("totalCoinValue");
-
     debugPrint(totalCoinValue.toString());
-
     debugPrint("transactionCount");
-
     debugPrint(transactionCount.toString());
-
     debugPrint("avgPurchasePrice");
-
     debugPrint(avgPurchasePrice.toString());
     debugPrint("percentageChange");
-
     debugPrint(percentageChange.toString());
+    debugPrint("currentPriceOfAssets");
+    debugPrint(currentPriceOfAssets.toString());
+    debugPrint("totalPriceChange");
+    debugPrint(totalPriceChange.toString());
 
     return data;
   }
@@ -104,7 +103,8 @@ class FavoritesCoinCard extends StatelessWidget {
     Map<String, dynamic> data = _parseData();
     double percentageChange = data['percentageChange'];
     double totalCoinValue = data['totalCoinValue'];
-    double avgPurchasePrice = data['avgPurchasePrice'];
+    double currentPriceOfAssets = data['currentPriceOfAssets'];
+    double totalPriceChange = data['totalPriceChange'];
 
 
     return GestureDetector(
@@ -114,7 +114,7 @@ class FavoritesCoinCard extends StatelessWidget {
       //),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         decoration: const BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.all(
@@ -130,16 +130,6 @@ class FavoritesCoinCard extends StatelessWidget {
 
             Row(
               children: [
-                // Padding(
-                //   padding: const EdgeInsets.only(right: 12.0),
-                //   child: Text(
-                //     "${index + 1}",
-                //     style: const TextStyle(
-                //       fontSize: 18,
-                //     ),
-                //   ),
-                // ),
-
                 const Expanded(
                   flex: 1,
                   child: SizedBox(),
@@ -179,6 +169,9 @@ class FavoritesCoinCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    SizedBox(
+                      height: 22,
+                    ),
 
 
 
@@ -213,26 +206,27 @@ class FavoritesCoinCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "${model.coinQuote?.price ?? "N/A"}\$",
+                      "${model.coinQuote?.price ?? "N/A"} USD",
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.white,
                       ),
                     ),
-                    Text(
-                      "PnL: ${convert(percentageChange)} %",
-                      style: TextStyle(
-                        color: model.coinQuote?.percentChange1h.startsWith("-") ?? false
-                            ?  const Color(0xFFFA2D48)
-                            : const Color(0xFF76CD26),
-                      ),
-                    ),
+                    pnlTextWidget(percentageChange, totalPriceChange),
+                    // Text(
+                    //   "PnL: ${convert(percentageChange)} % (${convert(totalPriceChange)} USD)",
+                    //   style: TextStyle(
+                    //     color: percentageChange.isNegative
+                    //         ?  const Color(0xFFFA2D48)
+                    //         : const Color(0xFF76CD26),
+                    //   ),
+                    // ),
 
 
 
 
                     Text(
-                      '  $avgPurchasePrice \$',
+                      '  $currentPriceOfAssets USD',
 
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -250,7 +244,7 @@ class FavoritesCoinCard extends StatelessWidget {
              Row(
               children: [
                 SizedBox(
-                  height: 64,
+                  height: 84,
                   width: percentageChange.abs(),
                   child: ColoredBox(color: percentageChange.isNegative
                       ?  const Color(0xFFFA2D48).withOpacity(0.3)
@@ -273,4 +267,74 @@ class FavoritesCoinCard extends StatelessWidget {
       ),
     );
   }
+
+
+  pnlTextWidget(percentageChange, totalPriceChange) {
+    bool isNegative = percentageChange.isNegative;
+
+
+
+    return Row(
+      children: [
+        // const Text('PnL:', style: TextStyle(
+        //   fontSize: 24
+        // ),),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+
+            Text(
+              isNegative
+                  ? "- ${convert(percentageChange)} %"
+                  : "+ ${convert(percentageChange)} %",
+
+
+              style: TextStyle(
+                color: isNegative
+                    ?  const Color(0xFFFA2D48)
+                    : const Color(0xFF76CD26),
+              ),
+            ),
+
+
+
+            Text(
+              isNegative
+                  ? "- ${convert(totalPriceChange)} USD"
+                  : "+ ${convert(totalPriceChange)} USD",
+
+
+              style: TextStyle(
+                color: isNegative
+                    ?  const Color(0xFFFA2D48)
+                    : const Color(0xFF76CD26),
+              ),
+            ),
+
+
+
+
+          ],
+
+        ),
+
+
+
+
+
+
+
+
+      ],
+    );
+
+
+
+
+  }
+
+
 }
+
+
+
