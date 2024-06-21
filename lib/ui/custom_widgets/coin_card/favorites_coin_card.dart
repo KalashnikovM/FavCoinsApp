@@ -239,10 +239,10 @@ class FavoritesCoinCard extends StatelessWidget {
               children: [
                 SizedBox(
                   height: 84,
-                  width: percentageChange.abs(),
+                  width: (screenWidth/100)*percentageChange.abs(),
                   child: ColoredBox(color: percentageChange.isNegative
-                      ?  const Color(0xFFFA2D48).withOpacity(0.3)
-                      : const Color(0xFF76CD26).withOpacity(0.3),
+                      ?  const Color(0xFFFA2D48).withOpacity(0.15)
+                      : const Color(0xFF76CD26).withOpacity(0.15),
 
                  ),
                 ),
@@ -278,9 +278,7 @@ class FavoritesCoinCard extends StatelessWidget {
           children: [
 
             Text(
-              isNegative
-                  ? "- ${convert(percentageChange)} %"
-                  : "+ ${convert(percentageChange)} %",
+              " ${convert(percentageChange)} %",
 
               overflow: TextOverflow.ellipsis,
 
@@ -294,11 +292,7 @@ class FavoritesCoinCard extends StatelessWidget {
 
 
             Text(
-              isNegative
-                  ? "- ${convert(totalPriceChange)} USD"
-                  : "+ ${convert(totalPriceChange)} USD",
-
-              overflow: TextOverflow.ellipsis,
+              " ${convert(totalPriceChange)} USD",
 
               style: TextStyle(
                 color: isNegative
