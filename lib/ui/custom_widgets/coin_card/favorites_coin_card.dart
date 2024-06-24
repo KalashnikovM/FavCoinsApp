@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 class FavoritesCoinCard extends StatelessWidget {
-  const FavoritesCoinCard({super.key, required this.model, required this.index, required this.screenWidth});
+  const FavoritesCoinCard(
+      {super.key,
+      required this.model,
+      required this.index,
+      required this.screenWidth});
 
   final int index;
   final MainCoinModel model;
   final double screenWidth;
-
-
-
-
 
   Map<String, dynamic> _parseData() {
     var userData = di<UserRepository>().favList;
@@ -29,25 +29,23 @@ class FavoritesCoinCard extends StatelessWidget {
     double totalCoinValue = 0;
     double currentPriceOfAssets = 0;
     double totalPriceChange = 0;
-
     double currentPrice = double.parse(model.coinQuote?.price ?? '');
 
     for (var item in userData) {
-
-      if(item.id == model.id){
-
-      item.transactions.forEach((p, v) {
-        transactionCount += 1;
-        double price = double.parse(p);
-        double value = double.parse(v);
-        totalPayed += price * value;
-        totalCoinValue += value;
-        avgPurchasePrice += price;
-      });
-     }
+      if (item.id == model.id) {
+        item.transactions.forEach((p, v) {
+          transactionCount += 1;
+          double price = double.parse(p);
+          double value = double.parse(v);
+          totalPayed += price * value;
+          totalCoinValue += value;
+          avgPurchasePrice += price;
+        });
+      }
     }
-    avgPurchasePrice = avgPurchasePrice/transactionCount;
-    double percentageChange = ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
+    avgPurchasePrice = avgPurchasePrice / transactionCount;
+    double percentageChange =
+        ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
     currentPriceOfAssets = totalCoinValue * currentPrice;
     totalPriceChange = currentPriceOfAssets - totalPayed;
     data['avgPurchasePrice'] = avgPurchasePrice;
@@ -56,9 +54,6 @@ class FavoritesCoinCard extends StatelessWidget {
     data['totalCoinValue'] = totalCoinValue;
     data['currentPriceOfAssets'] = currentPriceOfAssets;
     data['totalPriceChange'] = totalPriceChange;
-
-
-
 
     debugPrint("totalPayed");
     debugPrint(totalPayed.toString());
@@ -96,10 +91,18 @@ class FavoritesCoinCard extends StatelessWidget {
     return number.toStringAsFixed(zeroCount);
   }
 
+  double width(screenWidth, percentageChange) {
+    double width = 0;
+    double res = (screenWidth / 100) * percentageChange.abs();
+
+    screenWidth <= res
+        ? width = screenWidth - 24
+        : width = res;
+    return width;
+  }
 
   @override
   Widget build(BuildContext context) {
-
     Map<String, dynamic> data = _parseData();
     double percentageChange = data['percentageChange'];
     double totalCoinValue = data['totalCoinValue'];
@@ -108,8 +111,8 @@ class FavoritesCoinCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => _parseData(),
-        //   di<AppRouter>().push(
-        // CoinPage(model: model),
+      //   di<AppRouter>().push(
+      // CoinPage(model: model),
       //),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -122,11 +125,6 @@ class FavoritesCoinCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-
-
-
-
-
             Row(
               children: [
                 Column(
@@ -153,11 +151,11 @@ class FavoritesCoinCard extends StatelessWidget {
                     ),
                     Text(
                       model.coinDataModel != null
-                          ? (model.coinDataModel?.name != null && model.coinDataModel!.name!.length > 15
-                          ? '${model.coinDataModel?.name?.substring(0, 15)}...'
-                          : model.coinDataModel?.name ?? 'N/A')
+                          ? (model.coinDataModel?.name != null &&
+                                  model.coinDataModel!.name!.length > 15
+                              ? '${model.coinDataModel?.name?.substring(0, 15)}...'
+                              : model.coinDataModel?.name ?? 'N/A')
                           : 'N/A',
-
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
@@ -167,16 +165,15 @@ class FavoritesCoinCard extends StatelessWidget {
                     const SizedBox(
                       height: 24,
                     ),
-
-
-
-
                     Row(
                       children: [
-                        const Icon(Icons.account_balance_wallet, color: Colors.white38,size: 18,),
+                        const Icon(
+                          Icons.account_balance_wallet,
+                          color: Colors.white38,
+                          size: 18,
+                        ),
                         Text(
                           '  $totalCoinValue ${model.coinDataModel?.symbol}',
-
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Colors.white,
@@ -186,11 +183,6 @@ class FavoritesCoinCard extends StatelessWidget {
                         ),
                       ],
                     ),
-
-
-
-
-
                   ],
                 ),
                 const Expanded(
@@ -216,12 +208,8 @@ class FavoritesCoinCard extends StatelessWidget {
                     //   ),
                     // ),
 
-
-
-
                     Text(
                       '  $currentPriceOfAssets USD',
-
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
@@ -229,44 +217,32 @@ class FavoritesCoinCard extends StatelessWidget {
                         fontSize: 12,
                       ),
                     ),
-
                   ],
                 ),
               ],
             ),
-
-             Row(
+            Row(
               children: [
                 SizedBox(
                   height: 84,
-                  width: (screenWidth/100)*percentageChange.abs(),
-                  child: ColoredBox(color: percentageChange.isNegative
-                      ?  const Color(0xFFFA2D48).withOpacity(0.15)
-                      : const Color(0xFF76CD26).withOpacity(0.15),
-
-                 ),
+                  width: width(screenWidth, percentageChange),
+                  child: ColoredBox(
+                    color: percentageChange.isNegative
+                        ? const Color(0xFFFA2D48).withOpacity(0.15)
+                        : const Color(0xFF76CD26).withOpacity(0.15),
+                  ),
                 ),
-                const Expanded(child: SizedBox(),),
-
-
-
-
+                // const Expanded(child: SizedBox(),),
               ],
             ),
-
-
-
           ],
         ),
       ),
     );
   }
 
-
   pnlTextWidget(percentageChange, totalPriceChange) {
     bool isNegative = percentageChange.isNegative;
-
-
 
     return Row(
       children: [
@@ -276,55 +252,26 @@ class FavoritesCoinCard extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-
             Text(
               " ${convert(percentageChange)} %",
-
               overflow: TextOverflow.ellipsis,
-
               style: TextStyle(
                 color: isNegative
-                    ?  const Color(0xFFFA2D48)
+                    ? const Color(0xFFFA2D48)
                     : const Color(0xFF76CD26),
               ),
             ),
-
-
-
             Text(
               " ${convert(totalPriceChange)} USD",
-
               style: TextStyle(
                 color: isNegative
-                    ?  const Color(0xFFFA2D48)
+                    ? const Color(0xFFFA2D48)
                     : const Color(0xFF76CD26),
               ),
             ),
-
-
-
-
           ],
-
         ),
-
-
-
-
-
-
-
-
       ],
     );
-
-
-
-
   }
-
-
 }
-
-
-
