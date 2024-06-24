@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -64,11 +65,29 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
               child: CustomScrollView(
                 controller: scrollController,
                 slivers: [
-                  const SliverAppBar(
+                   SliverAppBar(
                     floating: true,
                     snap: false,
                     pinned: true,
-                    title: Text("Global coin list"),
+                    title: const Text("Global coin list"),
+                       actions: [
+                           Padding(
+                             padding: const EdgeInsets.symmetric(
+                                 horizontal: 8.0),
+                             child: IconButton(
+                               onPressed: () {
+                                 showModalBottomSheet(
+                                   backgroundColor: Colors.transparent,
+                                   isScrollControlled: true,
+                                   context: context,
+                                   builder: (BuildContext context) =>
+                                   const SearchPage(),
+                                 );
+                               },
+                               icon: const Icon(Icons.search),
+                             ),
+                           ),
+                         ],
                   ),
 
 
@@ -81,10 +100,10 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(right: 32),
-                                child: Text("Rate", style: style,),
+                                child: Text("   Ticker/Name", style: style,),
                               ),
 
-                              Text("Ticker/Name", style: style,),
+                              // Text("Ticker/Name", style: style,),
                               Expanded(
                                 child: SizedBox(),),
 
