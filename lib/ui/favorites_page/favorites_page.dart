@@ -25,7 +25,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
         ? Scaffold(
             appBar: AppBar(
               title: Text(
-                  ' Total: ${userRepository.favList.length}    Favorites '),
+                  'Favorites ${userRepository.favList.length}'),
               actions: [
                 IconButton(
                     onPressed: () {

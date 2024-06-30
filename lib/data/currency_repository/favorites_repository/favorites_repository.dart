@@ -23,6 +23,8 @@ class FavoritesRepository extends ChangeNotifier {
   final db = di<ApiClient>().database;
   Map<String, String> favoritesRepositoryError = {};
 
+  get clearFav => favoritesList.clear();
+
   FavoritesRepository() {
     debugPrint('init FavoritesRepository();');
 

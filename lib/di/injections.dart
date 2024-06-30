@@ -7,6 +7,7 @@ import 'package:watch_it/watch_it.dart';
 import '../data/currency_repository/favorites_repository/favorites_repository.dart';
 import '../data/currency_repository/global_repository/global_repository.dart';
 import '../services/appwrite_service.dart';
+import '../services/messaging_service.dart';
 
 @InjectableInit(
   initializerName: 'init', // default
@@ -21,6 +22,7 @@ void configureDependencies() {
   di.registerSingleton<FavoritesRepository>(FavoritesRepository());
   di.registerSingleton<GlobalListRepository>(GlobalListRepository());
   di.registerSingleton<Top100Repository>(Top100Repository());
+  di.registerSingleton<LocalNotification>(LocalNotification());
 
 
 

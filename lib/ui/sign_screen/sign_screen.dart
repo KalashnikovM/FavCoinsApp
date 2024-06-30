@@ -18,6 +18,7 @@ class _SignScreenState extends State<SignScreen> {
   bool hasError = false; // Add this variable to track error state
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  String get error => di<UserRepository>().error;
 
   @override
   void initState() {
@@ -89,7 +90,7 @@ class _SignScreenState extends State<SignScreen> {
         res ? Navigator.of(context).pop()
         :  setState(() {
           authorization = false;
-          alertDialog(context, di<UserRepository>().error);
+          alertDialog(context, error);
         });
       }
     }

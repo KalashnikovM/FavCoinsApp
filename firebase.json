@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"ios":{"default":{"projectId":"crypto-tracker-b6141","appId":"1:250370958751:ios:6fc23ab14717bd842a89aa","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"crypto-tracker-b6141","configurations":{"ios":"1:250370958751:ios:6fc23ab14717bd842a89aa"}}}}}}

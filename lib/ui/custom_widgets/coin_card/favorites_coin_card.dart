@@ -1,8 +1,5 @@
 import 'package:crypto_tracker/data/user_repository/user_repository.dart';
-import 'package:crypto_tracker/models/favorite_model.dart';
 import 'package:crypto_tracker/models/main_coin_model.dart';
-import 'package:crypto_tracker/router/router.dart';
-import 'package:crypto_tracker/router/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -20,9 +17,7 @@ class FavoritesCoinCard extends StatelessWidget {
   Map<String, dynamic> _parseData() {
     var userData = di<UserRepository>().favList;
     debugPrint(userData.toString());
-
     Map<String, dynamic> data = {};
-
     double transactionCount = 0;
     double avgPurchasePrice = 0;
     double totalPayed = 0;
@@ -43,9 +38,16 @@ class FavoritesCoinCard extends StatelessWidget {
         });
       }
     }
-    avgPurchasePrice = avgPurchasePrice / transactionCount;
-    double percentageChange =
-        ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
+    if (transactionCount > 0) {
+      avgPurchasePrice = avgPurchasePrice / transactionCount;
+    } else {
+      avgPurchasePrice = 0;
+    }
+    double percentageChange = 0;
+    if (avgPurchasePrice > 0) {
+      percentageChange = ((currentPrice - avgPurchasePrice) / avgPurchasePrice) * 100;
+    }
+
     currentPriceOfAssets = totalCoinValue * currentPrice;
     totalPriceChange = currentPriceOfAssets - totalPayed;
     data['avgPurchasePrice'] = avgPurchasePrice;
@@ -54,22 +56,6 @@ class FavoritesCoinCard extends StatelessWidget {
     data['totalCoinValue'] = totalCoinValue;
     data['currentPriceOfAssets'] = currentPriceOfAssets;
     data['totalPriceChange'] = totalPriceChange;
-
-    debugPrint("totalPayed");
-    debugPrint(totalPayed.toString());
-    debugPrint("totalCoinValue");
-    debugPrint(totalCoinValue.toString());
-    debugPrint("transactionCount");
-    debugPrint(transactionCount.toString());
-    debugPrint("avgPurchasePrice");
-    debugPrint(avgPurchasePrice.toString());
-    debugPrint("percentageChange");
-    debugPrint(percentageChange.toString());
-    debugPrint("currentPriceOfAssets");
-    debugPrint(currentPriceOfAssets.toString());
-    debugPrint("totalPriceChange");
-    debugPrint(totalPriceChange.toString());
-
     return data;
   }
 
@@ -199,15 +185,6 @@ class FavoritesCoinCard extends StatelessWidget {
                       ),
                     ),
                     pnlTextWidget(percentageChange, totalPriceChange),
-                    // Text(
-                    //   "PnL: ${convert(percentageChange)} % (${convert(totalPriceChange)} USD)",
-                    //   style: TextStyle(
-                    //     color: percentageChange.isNegative
-                    //         ?  const Color(0xFFFA2D48)
-                    //         : const Color(0xFF76CD26),
-                    //   ),
-                    // ),
-
                     Text(
                       '  $currentPriceOfAssets USD',
                       overflow: TextOverflow.ellipsis,
@@ -232,7 +209,6 @@ class FavoritesCoinCard extends StatelessWidget {
                         : const Color(0xFF76CD26).withOpacity(0.15),
                   ),
                 ),
-                // const Expanded(child: SizedBox(),),
               ],
             ),
           ],
@@ -246,9 +222,6 @@ class FavoritesCoinCard extends StatelessWidget {
 
     return Row(
       children: [
-        // const Text('PnL:', style: TextStyle(
-        //   fontSize: 24
-        // ),),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [

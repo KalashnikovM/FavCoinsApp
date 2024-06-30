@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:crypto_tracker/data/currency_repository/favorites_repository/favorites_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../constants.dart';
 import '../../models/favorite_model.dart';
 import '../../services/appwrite_service.dart';
+import '../../services/messaging_service.dart';
 
 
 enum UserStatus {
@@ -21,11 +23,12 @@ class UserRepository extends ChangeNotifier {
   UserStatus status = UserStatus.guest;
   final _account = di<ApiClient>().account;
   final _db = di<ApiClient>().database;
-  User? _user;
+  late User _user;
   late Session session;
-  late String error;
+  String error = '';
    List<FavoriteCoinModel> favList = [];
-  String? get userId  => _user?.$id;
+  String get userId  => _user.$id;
+  String get fcmToken => di<LocalNotification>().fcmToken;
 
 
   UserRepository() {
@@ -42,11 +45,11 @@ class UserRepository extends ChangeNotifier {
     try {
       _user = await _account.get(
       );
-      debugPrint('user.status ${_user?.status}');
-      debugPrint('user.name} ${_user?.name}');
-      debugPrint('user.email ${_user?.email}');
-      debugPrint('user.emailVerification ${_user?.emailVerification}');
-      getUserProfile();
+      debugPrint('user.status ${_user.status}');
+      debugPrint('user.name} ${_user.name}');
+      debugPrint('user.email ${_user.email}');
+      debugPrint('user.emailVerification ${_user.emailVerification}');
+      await _updateUserProfile();
       status = UserStatus.login;
       notifyListeners();
 
@@ -55,7 +58,7 @@ class UserRepository extends ChangeNotifier {
         {
           status = UserStatus.guest;
           debugPrint('checkUser(); UserStatus.guest');
-
+          notifyListeners();
         }
       debugPrint('Error checkUser: $e');
       status = UserStatus.guest;
@@ -78,28 +81,35 @@ class UserRepository extends ChangeNotifier {
 
   }) async {
     debugPrint('start registerUser()');
+    debugPrint('fcmToken: $fcmToken');
+
 
     try {
-       var account = await _account.create(
+      await _account.create(
         userId: 'unique()', // Automatically generate a unique ID
         email: email,
         password: password,
+
       );
 
+         await loginUser(
+          email: email,
+          password: password,
+        );
 
-       await loginUser(
-           email: email,
-           password: password);
 
-       await _db.createDocument(
-         databaseId: databaseId,
-         collectionId: userCollection,
-         documentId: account.$id,
-         data: {"favorites": []},
-       );
-
-       // status = UserStatus.login;
-       // notifyListeners();
+       //  await _db.createDocument(
+       //   databaseId: databaseId,
+       //   collectionId: userCollection,
+       //   documentId: userId,
+       //   data: {
+       //     "favorites": [],
+       //     "device": fcmToken,
+       //   },
+       // );
+        // _checkUser();
+       status = UserStatus.login;
+       notifyListeners();
        return true;
     } on AppwriteException catch (e) {
       status = UserStatus.error;
@@ -127,10 +137,9 @@ class UserRepository extends ChangeNotifier {
         email: email,
         password: password,
       );
-       // status = UserStatus.login;
-       await _checkUser();
+       debugPrint('session.userId: ${session.userId}');
 
-       // notifyListeners();
+       await _checkUser();
 
        return true;
     } on AppwriteException catch (e) {
@@ -148,46 +157,56 @@ class UserRepository extends ChangeNotifier {
 
 
 
-  Future getUserProfile() async {
-    debugPrint('Start getUserProfile();');
-    String? userId = _user?.$id;
-    Document? userDoc;
-    if(userId != null) {
-      try {
-        userDoc = await _db.getDocument(
-          databaseId: databaseId,
-          collectionId: userCollection,
-          documentId: userId,
-        );
-        debugPrint('userDoc.data[favorites]; ${userDoc.data['favorites']}');
-
-      } on AppwriteException catch (e) {
-        if(e.message == "Document with the requested ID could not be found.") {
-        try {
-          userDoc = await _db.createDocument(
-            databaseId: databaseId,
-            collectionId: userCollection,
-            documentId: userId,
-            data: {"favorites": []},
-          );
-        }
-        catch (e) {
-          debugPrint('Error createDocument e.toString(): ${e.toString()}');
-          debugPrint('Error createDocument e.runtimeType: ${e.runtimeType}');
-
-        }
-        }
-        debugPrint('Error fetching user profile: ${e.message}');
-      }
-
-
-
-    }
-
-    if(userDoc != null) {
-      parseData(userDoc);
-    }
-  }
+  // Future getUserProfile() async {
+  //   debugPrint('Start getUserProfile();');
+  //   Document? userDoc;
+  //   debugPrint('_user?.id: ${_user.$id}');
+  //
+  //
+  //
+  //
+  //   try {
+  //     userDoc = await _db.getDocument(
+  //       databaseId: databaseId,
+  //       collectionId: userCollection,
+  //       documentId: userId,
+  //     );
+  //     debugPrint('favorites: ${userDoc.data['favorites']}');
+  //     debugPrint('@@@@@@ getDocument');
+  //
+  //   } on AppwriteException catch (e) {
+  //     if(e.message == "Document with the requested ID could not be found.") {
+  //     try {
+  //       userDoc = await _db.createDocument(
+  //         databaseId: databaseId,
+  //         collectionId: userCollection,
+  //         documentId: userId,
+  //         data: {
+  //           "favorites": [],
+  //           "device": fcmToken,
+  //         },
+  //       );
+  //       debugPrint('@@@@@@ createDocument');
+  //
+  //     }
+  //     catch (e) {
+  //       debugPrint('Error createDocument e.toString(): ${e.toString()}');
+  //       debugPrint('Error createDocument e.runtimeType: ${e.runtimeType}');
+  //
+  //       }
+  //     }
+  //     debugPrint('Error fetching user profile: ${e.message}');
+  //     debugPrint('userId: $userId');
+  //
+  //   }
+  //
+  //
+  //
+  //
+  //   if(userDoc != null) {
+  //     parseData(userDoc);
+  //   }
+  // }
 
 
 
@@ -195,29 +214,46 @@ class UserRepository extends ChangeNotifier {
 
 
   Future<void> _updateUserProfile() async {
+     var u = await _account.get();
+    debugPrint('_user?.id: ${_user.$id}');
+    debugPrint('_user?.id: $userId');
+    var userDoc;
     debugPrint('Start _updateUserProfile();');
     List<String> favorites = [];
-    if(userId != null) {
-      for (var favModel in favList) {
-        favorites.add(json.encode({favModel.id: favModel.transactions}));
-      }
-      debugPrint(favorites.toString());
-      try {
-        var userDoc = await _db.updateDocument(
+    for (var favModel in favList) {
+      favorites.add(json.encode({favModel.id: favModel.transactions}));
+    }
+    debugPrint(favorites.toString());
+    try {
+      userDoc = await _db.updateDocument(
+        databaseId: databaseId,
+        collectionId: userCollection,
+        documentId: u.$id,
+        data: {
+          "favorites": favorites,
+          "device": fcmToken,
+        },
+      );
+
+    } on AppwriteException catch (e) {
+      if(e.message == "Document with the requested ID could not be found.") {
+        userDoc = await _db.createDocument(
           databaseId: databaseId,
           collectionId: userCollection,
-          documentId: userId ?? "",
-          data: {"favorites": favorites,
+          documentId: u.$id,
+          data: {
+            "favorites": [],
+            "device": fcmToken,
           },
         );
-        parseData(userDoc);
-
-      } on AppwriteException catch (e) {
+        debugPrint('@@@@@@ createDocument');
         debugPrint('Error updating user profile: ${e.message}');
         // rethrow;
-      }
 
+      }
     }
+    parseData(userDoc);
+
   }
 
 
@@ -260,10 +296,12 @@ class UserRepository extends ChangeNotifier {
 
 
   Future<void> logoutUser() async {
+    debugPrint('start logoutUser()');
+
     try {
       await _account.deleteSession(sessionId: 'current');
-      status = UserStatus.guest;
       favList.clear();
+      di<FavoritesRepository>().clearFav;
       _checkUser();
 
     } on AppwriteException catch (e) {
@@ -288,12 +326,8 @@ class UserRepository extends ChangeNotifier {
         Map<String, dynamic> decodedValue = jsonDecode(value);
           decodedValue.forEach((key, value) {
             value.forEach((k, v) {
-
               debugPrint('k: $k');
               debugPrint('v: $v');
-
-
-
             });
             favList.add(FavoriteCoinModel.fromJson(key, value));
             idsList.add(key);

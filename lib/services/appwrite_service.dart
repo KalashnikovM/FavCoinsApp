@@ -17,11 +17,12 @@ class ApiClient {
 
   Databases get database => Databases(_client);
 
-  // Storage get storage => Storage(_client);
-
   Realtime get realtime => Realtime(_client);
 
   Functions get functions => Functions(_client);
+
+
+
 
 
 }
