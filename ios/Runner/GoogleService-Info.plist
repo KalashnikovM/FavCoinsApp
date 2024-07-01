@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyAfDFW_gNGPASP5sipGz7TGjYdgfI1nB6w</string>
+	<string>AIzaSyBVeslkzmqox_0-ttYViovKYI3Phlb8gZQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>250370958751</string>
+	<string>98631669249</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.crypto.tracker</string>
+	<string>com.fav.coins</string>
 	<key>PROJECT_ID</key>
-	<string>crypto-tracker-b6141</string>
+	<string>favcoins-c2c60</string>
 	<key>STORAGE_BUCKET</key>
-	<string>crypto-tracker-b6141.appspot.com</string>
+	<string>favcoins-c2c60.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:250370958751:ios:6fc23ab14717bd842a89aa</string>
+	<string>1:98631669249:ios:1d6ec986f1aeb2c68d9200</string>
 </dict>
 </plist>

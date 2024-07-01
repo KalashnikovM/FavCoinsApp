@@ -24,10 +24,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -53,11 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAfDFW_gNGPASP5sipGz7TGjYdgfI1nB6w',
-    appId: '1:250370958751:ios:6fc23ab14717bd842a89aa',
-    messagingSenderId: '250370958751',
-    projectId: 'crypto-tracker-b6141',
-    storageBucket: 'crypto-tracker-b6141.appspot.com',
-    iosBundleId: 'com.crypto.tracker',
+    apiKey: 'AIzaSyBVeslkzmqox_0-ttYViovKYI3Phlb8gZQ',
+    appId: '1:98631669249:ios:1d6ec986f1aeb2c68d9200',
+    messagingSenderId: '98631669249',
+    projectId: 'favcoins-c2c60',
+    storageBucket: 'favcoins-c2c60.appspot.com',
+    iosBundleId: 'com.fav.coins',
   );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDIu7eNofloT0Fk1KNtZqg5dIf-sIsUMrs',
+    appId: '1:98631669249:android:7dd2772b8d31b2818d9200',
+    messagingSenderId: '98631669249',
+    projectId: 'favcoins-c2c60',
+    storageBucket: 'favcoins-c2c60.appspot.com',
+  );
+
 }
