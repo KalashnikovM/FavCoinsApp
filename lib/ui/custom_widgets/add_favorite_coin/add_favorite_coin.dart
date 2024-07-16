@@ -203,7 +203,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
                     borderSide: BorderSide(color: AppColors.mainRed,),
                   ),
                   labelStyle: TextStyle(
-                    color: AppColors.labelStyleGrey,
+                    color: AppColors.textFieldBorderColor,
                     fontSize: 16,
                   ),
                 ),
@@ -226,7 +226,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
                     borderSide: BorderSide(color: AppColors.mainRed,),
                   ),
                   labelStyle: TextStyle(
-                    color: AppColors.labelStyleGrey,
+                    color: AppColors.textFieldBorderColor,
                     fontSize: 16,
                   ),
                 ),
@@ -242,7 +242,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
 
                       alertField ? Icons.add_alert : Icons.add_alert_outlined,
                       size: 28,
-                      color:  AppColors.labelStyleGrey,
+                      color:  AppColors.mainRed,
                     ),
                   ),
                   onTap: () =>
@@ -285,7 +285,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
                         borderSide: BorderSide(color: AppColors.mainRed,),
                       ),
                       labelStyle: TextStyle(
-                        color: AppColors.labelStyleGrey,
+                        color: AppColors.textFieldBorderColor,
                         fontSize: 16,
                       ),
                     ),
@@ -308,7 +308,7 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
                         borderSide: BorderSide(color: AppColors.mainRed,),
                       ),
                       labelStyle: TextStyle(
-                        color: AppColors.labelStyleGrey,
+                        color: AppColors.textFieldBorderColor,
                         fontSize: 16,
                       ),
                     ),

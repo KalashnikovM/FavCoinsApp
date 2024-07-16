@@ -110,7 +110,7 @@ class _SignScreenState extends State<SignScreen> {
         height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: AppColors.boxDecorationGrey,
+          color: AppColors.blackColor,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -162,7 +162,7 @@ class _SignScreenState extends State<SignScreen> {
                     ),
                   ),
                   labelStyle: const TextStyle(
-                    color: AppColors.labelStyleGrey,
+                    color: AppColors.textFieldBorderColor,
                     fontSize: 16,
                   ),
                   suffix: InkWell(
@@ -179,7 +179,7 @@ class _SignScreenState extends State<SignScreen> {
                         _passwordVisible
                             ? CupertinoIcons.eye_fill
                             : CupertinoIcons.eye_slash_fill,
-                        color: AppColors.labelStyleGrey,
+                        color: AppColors.textFieldBorderColor,
                       ),
                     ),
                   ),
