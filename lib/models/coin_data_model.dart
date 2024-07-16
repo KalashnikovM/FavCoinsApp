@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 class CoinDataModel {
-  final int id;
+  final String id;
   final String? name;
   final String? symbol;
   final String? category;
@@ -27,7 +27,7 @@ class CoinDataModel {
     Uint8List logoData = Uint8List.fromList(intList);
 
     return CoinDataModel(
-      id: json['id'],
+      id: json['id'].toString(),
       name: json['name'],
       symbol: json['symbol'],
       category: json['category'],

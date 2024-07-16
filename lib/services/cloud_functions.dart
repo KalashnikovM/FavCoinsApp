@@ -40,7 +40,7 @@ class CloudFunctionsService extends ChangeNotifier {
               documentId: item["id"].toString(),
             );
             final Document doc = response;
-            MainCoinModel mainModel = await ParsingService().parseData(doc.data);
+            MainCoinModel mainModel = await ParsingService().parseDataToMainCoinModel(doc.data);
 
 
             foundElementsList.add(mainModel);

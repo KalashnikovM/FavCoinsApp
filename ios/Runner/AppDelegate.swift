@@ -24,15 +24,4 @@ import UserNotifications
     
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-
-  override func application(
-    _ application: UIApplication,
-    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-  ) {
-    // Register device
-    let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
-
-    // Save the token to be used later
-    UserDefaults.standard.set(token, forKey: "apnsToken")
-  }
 }

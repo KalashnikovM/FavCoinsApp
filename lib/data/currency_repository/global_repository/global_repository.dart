@@ -29,11 +29,11 @@ class GlobalListRepository extends ChangeNotifier {
   GlobalListRepositoryStatus globalListRepositoryStatus = GlobalListRepositoryStatus.init;
   Map<String, String> globalListError = {};
   Map<String, dynamic> coinMapList = {};
-  List<MainCoinModel> foundElementsList = [];
+  List<MainCoinModel> foundedElementsList = [];
   int current = 0;
 
 
-   get resList => foundElementsList.clear();
+   get resList => foundedElementsList.clear();
 
 
   final db = di<ApiClient>().database;
@@ -58,7 +58,7 @@ class GlobalListRepository extends ChangeNotifier {
       );
       debugPrint('docs.documents.length: ${docs.documents.length}');
       for (final Document document in docs.documents) {
-        MainCoinModel mainModel = await ParsingService().parseData(document.data);
+        MainCoinModel mainModel = await ParsingService().parseDataToMainCoinModel(document.data);
         mainCoinsList.add(mainModel);
       }
       globalListRepositoryStatus = GlobalListRepositoryStatus.updated;
@@ -89,9 +89,9 @@ class GlobalListRepository extends ChangeNotifier {
               collectionId: coinDataCollection,
               documentId: id,
             );
-            MainCoinModel foundedModel = await ParsingService().parseData(response.data);
+            MainCoinModel foundedModel = await ParsingService().parseDataToMainCoinModel(response.data);
 
-            foundElementsList.add(foundedModel);
+            foundedElementsList.add(foundedModel);
             debugPrint(foundedModel.id);
             found = true;
           } catch (e) {

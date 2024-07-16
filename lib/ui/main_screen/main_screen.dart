@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../app_colors.dart';
 import '../../router/router.gr.dart';
 
 
@@ -15,12 +16,12 @@ class MainScreen extends StatelessWidget {
     Icon activeIcon = const Icon(
       Icons.circle,
       size: 28,
-      color: Color(0xFF76CD26),
+      color: AppColors.mainGreen,
     );
         Icon inActiveIcon = const Icon(
           Icons.circle_outlined,
           size: 28,
-          color: Color(0xFFFA2D48),
+          color: AppColors.mainRed,
 
         );
 

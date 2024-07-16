@@ -19,7 +19,6 @@ class FavoriteCoinModel {
       transactions: transactions,
       totalCoinVal: 0,
       totalPayedVal: 0,
-
     );
   }
 

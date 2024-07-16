@@ -4,6 +4,8 @@ import 'package:crypto_tracker/router/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../../app_colors.dart';
+
 class CoinCard extends StatelessWidget {
   const CoinCard({super.key, required this.model, required this.index});
 
@@ -22,7 +24,7 @@ class CoinCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
         decoration: const BoxDecoration(
-          color: Color(0xFF000000),
+          color: AppColors.blackColor,
           borderRadius: BorderRadius.all(
             Radius.circular(8),
           ),
@@ -54,7 +56,7 @@ class CoinCard extends StatelessWidget {
                 Text(
                   model.coinDataModel?.symbol ?? 'N/A',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     fontWeight: FontWeight.w400,
                     fontSize: 17,
                   ),),
@@ -69,7 +71,7 @@ class CoinCard extends StatelessWidget {
 
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -87,15 +89,15 @@ class CoinCard extends StatelessWidget {
                   "${model.coinQuote?.price ?? "N/A"}\$",
                   style: const TextStyle(
                     fontSize: 18,
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                   ),
                 ),
                 Text(
                   "1h: ${model.coinQuote?.percentChange1h ?? 'N/A'} %",
                   style: TextStyle(
                     color: model.coinQuote?.percentChange1h.startsWith("-") ?? false
-                        ?  const Color(0xFFFA2D48)
-                        : const Color(0xFF76CD26),
+                        ? AppColors.mainRed
+                        : AppColors.mainGreen,
                   ),
                 ),
               ],

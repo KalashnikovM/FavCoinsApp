@@ -1,9 +1,8 @@
 import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-
+import '../../app_colors.dart';
 import '../../data/currency_repository/global_repository/global_repository.dart';
 import 'search_page.dart';
 
@@ -130,10 +129,10 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
                     SliverToBoxAdapter(
                       child: TextButton(
                         style: ElevatedButton.styleFrom(
-                          foregroundColor:const Color(0xFF9b5bf3),
+                          foregroundColor: AppColors.mainPurple,
                           elevation: 0,
                           //   backgroundColor: Colors.purple,
-                          disabledBackgroundColor:  const Color(0xFFFA2D48),
+                          disabledBackgroundColor:  AppColors.mainRed,
                           // shape: const CircleBorder(),
                           // fixedSize: const Size(44,44)
                         ),
@@ -154,7 +153,7 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
               child: const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Color(0xFFFA2D48),
+                  color:  AppColors.mainRed,
                 ),
               ),
             ),

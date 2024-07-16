@@ -3,6 +3,8 @@ import 'package:crypto_tracker/models/main_coin_model.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../../app_colors.dart';
+
 class FavoritesCoinCard extends StatelessWidget {
   const FavoritesCoinCard(
       {super.key,
@@ -120,7 +122,7 @@ class FavoritesCoinCard extends StatelessWidget {
                       text: TextSpan(
                         text: model.coinDataModel?.symbol ?? 'N/A',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.whiteColor,
                           fontWeight: FontWeight.w400,
                           fontSize: 17,
                         ),
@@ -128,7 +130,7 @@ class FavoritesCoinCard extends StatelessWidget {
                           TextSpan(
                             text: "/USD",
                             style: TextStyle(
-                              color: Colors.white54,
+                              color: AppColors.labelStyleGrey,
                               fontSize: 15,
                             ),
                           ),
@@ -144,7 +146,7 @@ class FavoritesCoinCard extends StatelessWidget {
                           : 'N/A',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.whiteColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -155,14 +157,14 @@ class FavoritesCoinCard extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.account_balance_wallet,
-                          color: Colors.white38,
+                          color: AppColors.labelStyleGrey,
                           size: 18,
                         ),
                         Text(
                           '  $totalCoinValue ${model.coinDataModel?.symbol}',
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.whiteColor,
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
@@ -181,7 +183,7 @@ class FavoritesCoinCard extends StatelessWidget {
                       "${model.coinQuote?.price ?? "N/A"} USD",
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Colors.white,
+                        color:AppColors.whiteColor,
                       ),
                     ),
                     pnlTextWidget(percentageChange, totalPriceChange),
@@ -189,7 +191,7 @@ class FavoritesCoinCard extends StatelessWidget {
                       '  $currentPriceOfAssets USD',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.whiteColor,
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
@@ -205,8 +207,8 @@ class FavoritesCoinCard extends StatelessWidget {
                   width: width(screenWidth, percentageChange),
                   child: ColoredBox(
                     color: percentageChange.isNegative
-                        ? const Color(0xFFFA2D48).withOpacity(0.15)
-                        : const Color(0xFF76CD26).withOpacity(0.15),
+                        ? AppColors.mainRed.withOpacity(0.15)
+                        : AppColors.mainGreen.withOpacity(0.15),
                   ),
                 ),
               ],
@@ -230,16 +232,16 @@ class FavoritesCoinCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: isNegative
-                    ? const Color(0xFFFA2D48)
-                    : const Color(0xFF76CD26),
+                    ? AppColors.mainRed
+                    : AppColors.mainGreen,
               ),
             ),
             Text(
               " ${convert(totalPriceChange)} USD",
               style: TextStyle(
                 color: isNegative
-                    ? const Color(0xFFFA2D48)
-                    : const Color(0xFF76CD26),
+                    ? AppColors.mainRed
+                    : AppColors.mainGreen,
               ),
             ),
           ],

@@ -41,7 +41,7 @@ class FavoritesRepository extends ChangeNotifier {
             databaseId: databaseId,
             collectionId: coinDataCollection,
             documentId: id);
-        MainCoinModel mainModel = await ParsingService().parseData(doc.data);
+        MainCoinModel mainModel = await ParsingService().parseDataToMainCoinModel(doc.data);
         temp.add(mainModel);
         debugPrint('Document added to favorites()doc.data; ${doc.data}');
       } catch (e) {

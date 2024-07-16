@@ -3,6 +3,7 @@ import 'package:crypto_tracker/data/user_repository/user_repository.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/favorites_coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
+import '../../app_colors.dart';
 import '../../data/currency_repository/favorites_repository/favorites_repository.dart';
 import '../sign_screen/sign_screen.dart';
 
@@ -33,7 +34,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                     },
                     icon: const Icon(
                       Icons.logout,
-                      color: Color(0xFFFA2D48),
+                      color:  AppColors.mainRed,
                     )),
               ],
             ),
@@ -64,7 +65,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
             ),
           )
         : ColoredBox(
-            color: Colors.black,
+            color:  AppColors.blackColor,
             child: Center(
               child: TextButton(
                 onPressed: () {
@@ -81,7 +82,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                       "Sign",
                       style: TextStyle(
                         fontSize: 24,
-                        color: Color(0xFF76CD26),
+                        color:  AppColors.mainGreen,
                       ),
                     ),
                     Padding(
@@ -89,7 +90,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                       child: Icon(
                         Icons.login,
                         size: 24,
-                        color: Color(0xFF76CD26),
+                        color: AppColors.mainGreen,
                       ),
                     ),
                   ],

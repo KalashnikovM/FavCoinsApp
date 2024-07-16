@@ -4,6 +4,7 @@ import 'package:crypto_tracker/ui/sign_screen/sign_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:watch_it/watch_it.dart';
+import '../../app_colors.dart';
 import '../../models/favorite_model.dart';
 import '../../models/main_coin_model.dart';
 import '../custom_widgets/add_favorite_coin/add_favorite_coin.dart';
@@ -47,7 +48,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
         title: Text('Updated: $updatedDate'),
         titleTextStyle: const TextStyle(
           fontSize: 16,
-          color: Colors.white,
+          color: AppColors.whiteColor,
         ),
 
         actions: [
@@ -75,7 +76,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
               isFavorited
               ? Icons.star
               : Icons.star_border,
-         color: const Color(0xFFFA2D48),),),
+         color: AppColors.mainRed,),),
         ],
       ),
       body: SafeArea(
@@ -93,12 +94,12 @@ class CoinPage extends StatelessWidget with WatchItMixin {
                       Text(
                         model.coinDataModel?.symbol ?? 'N/A',
                         style: const TextStyle(
-                            fontSize: 24, color: Colors.white),
+                            fontSize: 24, color: AppColors.whiteColor),
                       ),
                       Text(
                         model.coinDataModel?.name ?? 'N/A',
                         style: const TextStyle(
-                            fontSize: 16, color: Colors.white),
+                            fontSize: 16, color: AppColors.whiteColor),
                       ),
                       Text(
                           'Category: ${model.coinDataModel?.category ?? 'N/A'}'),
@@ -122,7 +123,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
                 'Price: ${model.coinQuote?.price ?? 'N/A'} USD',
                 style: const TextStyle(
                   fontSize: 20,
-                  color: Colors.white,
+                  color:AppColors.whiteColor,
                 ),
               ),
               Padding(
@@ -194,12 +195,12 @@ priceWidget(String text, String data) {
       data.startsWith("-")
           ? const Icon(
               Icons.arrow_drop_down,
-              color: Color(0xFFFA2D48),
+              color: AppColors.mainRed,
               size: 32,
             )
           : const Icon(
               Icons.arrow_drop_up,
-              color: Color(0xFF76CD26),
+              color: AppColors.mainGreen,
               size: 32,
             ),
     ],

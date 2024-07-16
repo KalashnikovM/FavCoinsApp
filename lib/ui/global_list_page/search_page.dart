@@ -1,6 +1,7 @@
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
+import '../../app_colors.dart';
 import '../../data/currency_repository/global_repository/global_repository.dart';
 
 
@@ -13,7 +14,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
-  static const Color color = Color(0xFF9b5bf3);
+  static const Color color = AppColors.mainPurple;
   late TextEditingController _searchController;
   bool searching = false;
 
@@ -21,8 +22,9 @@ class _SearchPageState extends State<SearchPage> {
     return Text("$text ${data.toStringAsFixed(2)}%",
       style: TextStyle(
         color: data.isNegative
-            ? Colors.red
-            : Colors.green,
+            ? AppColors.mainRed
+
+        : AppColors.mainGreen,
       ),);
   }
 
@@ -95,7 +97,7 @@ class _SearchPageState extends State<SearchPage> {
           //              color: Colors.purple,
           //             width: 0.5,
           //           ),
-          color: const Color(0xFF000000),
+          color: AppColors.blackColor,
         ),
 
         child: Column(
@@ -136,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
 
                   filled: true,
-                  fillColor: Colors.white12,
+                  fillColor: AppColors.labelStyleGrey,
                   labelText: "  Enter coin symbol or name.",
                    labelStyle: const TextStyle(
                      color: Color(0xFFcecece),
@@ -194,11 +196,11 @@ class _SearchPageState extends State<SearchPage> {
               height: MediaQuery.of(context).size.height * 0.7,
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                itemCount: repo.foundElementsList.length,
+                itemCount: repo.foundedElementsList.length,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   return CoinCard(
-                    model: repo.foundElementsList[index],
+                    model: repo.foundedElementsList[index],
                     index: index,);
                   },
               ),

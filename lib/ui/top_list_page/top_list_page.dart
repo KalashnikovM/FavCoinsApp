@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/coin_card.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
+import '../../app_colors.dart';
 import '../../data/currency_repository/top_repository/top_repository.dart';
 
 
@@ -126,7 +127,7 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
               child: const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Color(0xFF76CD26),
+                  color: AppColors.mainGreen,
                 ),
               ),
             ),

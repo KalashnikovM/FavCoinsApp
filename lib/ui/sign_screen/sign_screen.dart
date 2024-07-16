@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../app_colors.dart';
 import '../../data/user_repository/user_repository.dart';
 
 class SignScreen extends StatefulWidget {
@@ -47,7 +48,8 @@ class _SignScreenState extends State<SignScreen> {
           content: Text(errorString),
           actions: [
             CupertinoDialogAction(
-              child: const Text('OK', style: TextStyle(color: Colors.white),),
+              child: const Text('OK', style: TextStyle(color: AppColors.labelStyleGrey,
+              ),),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -108,7 +110,7 @@ class _SignScreenState extends State<SignScreen> {
         height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.white10,
+          color: AppColors.boxDecorationGrey,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -117,7 +119,7 @@ class _SignScreenState extends State<SignScreen> {
             Center(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white10,
+                  color: AppColors.boxDecorationGrey,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 width: 60,
@@ -135,10 +137,10 @@ class _SignScreenState extends State<SignScreen> {
                   labelText: 'Enter your email',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: Color(0xFFFA2D48)),
+                    borderSide: BorderSide(color: AppColors.mainRed),
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: AppColors.textFieldBorderColor,
                     fontSize: 16,
                   ),
                 ),
@@ -156,10 +158,11 @@ class _SignScreenState extends State<SignScreen> {
                   labelText: 'Enter your password',
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: Color(0xFFFA2D48)),
+                    borderSide: BorderSide(color: AppColors.mainRed,
+                    ),
                   ),
                   labelStyle: const TextStyle(
-                    color: Colors.grey,
+                    color: AppColors.labelStyleGrey,
                     fontSize: 16,
                   ),
                   suffix: InkWell(
@@ -176,7 +179,7 @@ class _SignScreenState extends State<SignScreen> {
                         _passwordVisible
                             ? CupertinoIcons.eye_fill
                             : CupertinoIcons.eye_slash_fill,
-                        color: CupertinoColors.systemGrey3,
+                        color: AppColors.labelStyleGrey,
                       ),
                     ),
                   ),
@@ -190,7 +193,7 @@ class _SignScreenState extends State<SignScreen> {
 
             authorization
                   ? const CircularProgressIndicator(
-                color: Color(0xFF76CD26),
+              color: AppColors.mainGreen,
               strokeWidth: 2,
               )
                   : TextButton(
@@ -199,7 +202,7 @@ class _SignScreenState extends State<SignScreen> {
                   style: const TextStyle(
                     fontSize: 24,
                     fontFamily: 'SF Pro Text',
-                    color: Color(0xFF76CD26),
+                    color: AppColors.mainGreen,
 
                     // fontWeight: FontWeight.w600,
                   ),
@@ -219,7 +222,7 @@ class _SignScreenState extends State<SignScreen> {
                   style: const TextStyle(
                     fontSize: 12,
                     fontFamily: 'SF Pro Text',
-                    color: Color(0xFF76CD26),
+                    color: AppColors.mainGreen,
                     // fontWeight: FontWeight.w600,
                   ),
                 )),
