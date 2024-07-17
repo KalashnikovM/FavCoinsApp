@@ -26,8 +26,9 @@ class UserRepository extends ChangeNotifier {
   late User _user;
   late Session session;
   String error = '';
+  List<String> ids = [];
    List<FavoriteCoinModel> favList = [];
-  Map<String, dynamic> alertsList = {};
+  List<dynamic> alertsList = [];
 
   String get userId  => _user.$id;
   String get fcmToken => di<LocalNotification>().fcmToken;
@@ -42,21 +43,6 @@ class UserRepository extends ChangeNotifier {
 
 
 
-  addAlert({required id, required upperTargetPrice, required lowerTargetPrice}) {
-    debugPrint('start addAlert()');
-    alertsList[id] = {'upperTargetPrice': upperTargetPrice, 'lowerTargetPrice': lowerTargetPrice};
-    _updateUserProfile();
-  }
-
-
-
-  removeAlert(String id) {
-    debugPrint('start removeAlert()');
-    alertsList.remove(id);
-    _updateUserProfile();
-
-  }
-
 
 
 
@@ -68,17 +54,17 @@ class UserRepository extends ChangeNotifier {
     try {
       _user = await _account.get();
       debugPrint('user.email ${_user.email}');
-      await _updateUserProfile();
       status = UserStatus.login;
+      await getUserProfile();
       notifyListeners();
 
     } on AppwriteException catch (e) {
-      if(e.code == 401)
-        {
-          status = UserStatus.guest;
-          debugPrint('checkUser(); UserStatus.guest');
-          notifyListeners();
-        }
+      // if(e.code == 401)
+      //   {
+      //     status = UserStatus.guest;
+      //     debugPrint('checkUser(); UserStatus.guest');
+      //     notifyListeners();
+      //   }
       debugPrint('Error checkUser: $e');
       status = UserStatus.guest;
       notifyListeners();
@@ -87,6 +73,111 @@ class UserRepository extends ChangeNotifier {
 
   }
 
+
+  Future getUserProfile() async {
+    debugPrint('Start getUserProfile();');
+    Document? userDoc;
+    debugPrint('_user?.id: ${_user.$id}');
+
+
+
+
+    try {
+      userDoc = await _db.getDocument(
+        databaseId: databaseId,
+        collectionId: userCollection,
+        documentId: userId,
+      );
+      debugPrint('favorites: ${userDoc.data['favorites']}');
+      debugPrint('Alerts: ${userDoc.data['Alerts']}');
+
+      debugPrint('@@@@@@ getDocument');
+
+    } on AppwriteException catch (e) {
+      if(e.message == "Document with the requested ID could not be found.") {
+        await _updateUserProfile();
+      }
+      debugPrint('Error fetching user profile: ${e.message}\nuserId: $userId');
+
+    }
+
+    if(userDoc != null) {
+      debugPrint('@@@@@@ parseData(userDoc)');
+      var res = await parseUserData(userDoc);
+      favList = res.favList;
+      alertsList = res.alertsList;
+      di<FavoritesRepository>().updateFavoritesList(res.ids);
+      debugPrint('@@@@@@ favList $favList');
+      debugPrint('@@@@@@ alertsList $alertsList');
+      notifyListeners();
+
+    }
+  }
+
+
+
+  Future<void> _updateUserProfile() async {
+    debugPrint('start _updateUserProfile()');
+
+    List<String> favorites = [];
+    List<String> alerts = [];
+    late Document userDoc;
+    String id = (await _account.get()).$id;
+
+    debugPrint('_user?.id: ${_user.$id}');
+    debugPrint('_user?.id: $userId');
+    debugPrint('Start _updateUserProfile();');
+
+    for (var favModel in favList) {
+      favorites.add(json.encode({favModel.id: favModel.transactions}));
+    }
+    debugPrint(favorites.toString());
+    try {
+      userDoc = await _db.updateDocument(
+        databaseId: databaseId,
+        collectionId: userCollection,
+        documentId: id,
+        data: {
+          "favorites": favorites,
+          "device": fcmToken,
+          "Alerts": alertsList,
+
+        },
+      );
+      var res = await parseUserData(userDoc);
+      favList = res.favList;
+      alertsList = res.alertsList;
+      di<FavoritesRepository>().updateFavoritesList(res.ids);
+      notifyListeners();
+      debugPrint('@@@@@@ favList $favList');
+      debugPrint('@@@@@@ alertsList $alertsList');
+
+    } on AppwriteException catch (e) {
+      debugPrint('Error updating user profile: ${e.message}');
+      if(e.message == "Document with the requested ID could not be found.") {
+        debugPrint('@@@@@@ create Document');
+
+        userDoc = await _db.createDocument(
+          databaseId: databaseId,
+          collectionId: userCollection,
+          documentId: id,
+          data: {
+            "Alerts": alerts,
+            "favorites": [],
+            "device": fcmToken,
+          },
+        );
+        var res = await parseUserData(userDoc);
+        favList = res.favList;
+        alertsList = res.alertsList;
+        di<FavoritesRepository>().updateFavoritesList(res.ids);
+        notifyListeners();
+        debugPrint('@@@@@@ favList $favList');
+        debugPrint('@@@@@@ alertsList $alertsList');
+      }
+    }
+
+  }
 
 
 
@@ -156,73 +247,22 @@ class UserRepository extends ChangeNotifier {
 
 
 
-  Future<void> _updateUserProfile() async {
-    debugPrint('start _updateUserProfile()');
+  Future<void> logoutUser() async {
+    debugPrint('start logoutUser()');
 
-    List<String> favorites = [];
-    List<String> alerts = [];
-    late Document userDoc;
-    String id = (await _account.get()).$id;
-
-    debugPrint('_user?.id: ${_user.$id}');
-    debugPrint('_user?.id: $userId');
-    debugPrint('Start _updateUserProfile();');
-
-
-      alertsList.forEach((key, value) {
-
-        alerts.add(json.encode({key: value}));
-
-
-      });
-
-
-
-
-
-
-
-
-
-     for (var favModel in favList) {
-      favorites.add(json.encode({favModel.id: favModel.transactions}));
-    }
-    debugPrint(favorites.toString());
     try {
-      userDoc = await _db.updateDocument(
-        databaseId: databaseId,
-        collectionId: userCollection,
-        documentId: id,
-        data: {
-          "favorites": favorites,
-          "device": fcmToken,
-          "Alerts": alerts,
-
-        },
-      );
-      var res = await parseUserData(userDoc);
-
+      await _account.deleteSession(sessionId: 'current');
+      favList.clear();
+      di<FavoritesRepository>().clearFav;
+      _checkUser();
 
     } on AppwriteException catch (e) {
-      if(e.message == "Document with the requested ID could not be found.") {
-        userDoc = await _db.createDocument(
-          databaseId: databaseId,
-          collectionId: userCollection,
-          documentId: id,
-          data: {
-            "Alerts": alerts,
-            "favorites": [],
-            "device": fcmToken,
-          },
-        );
-        debugPrint('@@@@@@ createDocument');
-        debugPrint('Error updating user profile: ${e.message}');
-        var res = await parseUserData(userDoc);
-
-      }
+      debugPrint('Error logging out user: ${e.message}');
+      // rethrow;
     }
 
   }
+
 
 
 
@@ -240,6 +280,9 @@ class UserRepository extends ChangeNotifier {
             id: id,
             transactions: {price: value}));
       await _updateUserProfile();
+    notifyListeners();
+
+
   }
 
 
@@ -258,26 +301,12 @@ class UserRepository extends ChangeNotifier {
     }
     favList.removeWhere( (e) => toRemove.contains(e));
     await _updateUserProfile();
+    notifyListeners();
+
 
   }
 
 
-
-  Future<void> logoutUser() async {
-    debugPrint('start logoutUser()');
-
-    try {
-      await _account.deleteSession(sessionId: 'current');
-      favList.clear();
-      di<FavoritesRepository>().clearFav;
-      _checkUser();
-
-    } on AppwriteException catch (e) {
-      debugPrint('Error logging out user: ${e.message}');
-      // rethrow;
-    }
-
-  }
 
 
 
@@ -302,59 +331,25 @@ class UserRepository extends ChangeNotifier {
 
 
 
+  addAlert({required id, required upperTargetPrice, required lowerTargetPrice}) {
+    debugPrint('start addAlert()');
+    alertsList[id] = {'upperTargetPrice': upperTargetPrice, 'lowerTargetPrice': lowerTargetPrice};
+    _updateUserProfile();
+  }
+
+
+
+  removeAlert(String id) {
+    debugPrint('start removeAlert()');
+    alertsList.remove(id);
+    _updateUserProfile();
+
+  }
+
+
+
 
 }
 
 
 
-
-// Future getUserProfile() async {
-//   debugPrint('Start getUserProfile();');
-//   Document? userDoc;
-//   debugPrint('_user?.id: ${_user.$id}');
-//
-//
-//
-//
-//   try {
-//     userDoc = await _db.getDocument(
-//       databaseId: databaseId,
-//       collectionId: userCollection,
-//       documentId: userId,
-//     );
-//     debugPrint('favorites: ${userDoc.data['favorites']}');
-//     debugPrint('@@@@@@ getDocument');
-//
-//   } on AppwriteException catch (e) {
-//     if(e.message == "Document with the requested ID could not be found.") {
-//     try {
-//       userDoc = await _db.createDocument(
-//         databaseId: databaseId,
-//         collectionId: userCollection,
-//         documentId: userId,
-//         data: {
-//           "favorites": [],
-//           "device": fcmToken,
-//         },
-//       );
-//       debugPrint('@@@@@@ createDocument');
-//
-//     }
-//     catch (e) {
-//       debugPrint('Error createDocument e.toString(): ${e.toString()}');
-//       debugPrint('Error createDocument e.runtimeType: ${e.runtimeType}');
-//
-//       }
-//     }
-//     debugPrint('Error fetching user profile: ${e.message}');
-//     debugPrint('userId: $userId');
-//
-//   }
-//
-//
-//
-//
-//   if(userDoc != null) {
-//     parseData(userDoc);
-//   }
-// }

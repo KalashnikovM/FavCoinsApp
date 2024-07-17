@@ -157,7 +157,7 @@ class FavoritesCoinCard extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.account_balance_wallet,
-                          color: AppColors.labelStyleGrey,
+                          color: AppColors.whiteColor,
                           size: 18,
                         ),
                         Text(
@@ -207,8 +207,8 @@ class FavoritesCoinCard extends StatelessWidget {
                   width: width(screenWidth, percentageChange),
                   child: ColoredBox(
                     color: percentageChange.isNegative
-                        ? AppColors.mainRed.withOpacity(0.15)
-                        : AppColors.mainGreen.withOpacity(0.15),
+                        ? AppColors.mainRed
+                        : AppColors.mainGreen,
                   ),
                 ),
               ],
