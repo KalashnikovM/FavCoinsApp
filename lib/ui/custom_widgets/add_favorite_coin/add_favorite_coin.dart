@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../app_colors.dart';
+import '../../../data/currency_repository/favorites_repository/favorites_repository.dart';
 import '../../../data/user_repository/user_repository.dart';
 
 class AddFavoriteCoin extends StatefulWidget {
@@ -113,13 +114,13 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
     }
 
     try {
-      await di<UserRepository>().addToFavorites(
+      await di<FavoritesRepository>().addToFavorites(
         id: widget.id,
         value: _valueController.text,
         price: _priceController.text,
       );
       if(alertField){
-        await di<UserRepository>().addAlert(
+         di<FavoritesRepository>().addAlert(
           id: widget.id,
           upperTargetPrice: _upperTargetPrice.text,
           lowerTargetPrice: _lowerTargetPrice.text,
@@ -321,14 +322,14 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
               child: SizedBox(),
             ),
 
-            SizedBox(
+            updatingData
+                ? const CircularProgressIndicator(
+                    color: AppColors.mainGreen,
+                    strokeWidth: 2,
+                  )
+                : SizedBox(
               height: 52,
-              child: updatingData
-                  ? const CircularProgressIndicator(
-                      color: AppColors.mainGreen,
-                      strokeWidth: 2,
-                    )
-                  : ElevatedButton(
+              child: ElevatedButton(
                       onPressed: () {
                         addToFavorites(context);
                       },
@@ -346,10 +347,10 @@ class _AddFavoriteCoin extends State<AddFavoriteCoin> {
                       child: const Text('ADD'),
                       //  const Icon(Icons.add),
                     ),
-            ),
+                ),
 
-            const Expanded(
-              child: SizedBox(),
+            const SizedBox(
+              height: 65,
             ),
           ],
         ),

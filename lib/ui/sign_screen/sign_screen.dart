@@ -48,8 +48,7 @@ class _SignScreenState extends State<SignScreen> {
           content: Text(errorString),
           actions: [
             CupertinoDialogAction(
-              child: const Text('OK', style: TextStyle(color: AppColors.labelStyleGrey,
-              ),),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -107,7 +106,7 @@ class _SignScreenState extends State<SignScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.of(context).size.height * 0.75,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: AppColors.blackColor,
@@ -184,9 +183,7 @@ class _SignScreenState extends State<SignScreen> {
                     ),
                   ),
                 ),
-                // validator: (value) => value!.isValidPassword
-                //     ? null
-                //     : (S.of(context).password_error),
+
               ),
             ),
             const Expanded(child: SizedBox(),),
@@ -196,21 +193,48 @@ class _SignScreenState extends State<SignScreen> {
               color: AppColors.mainGreen,
               strokeWidth: 2,
               )
-                  : TextButton(
-                child: Text(
-                  isLogin ? 'Sign In' : 'Sign Up',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'SF Pro Text',
-                    color: AppColors.mainGreen,
+                  : Expanded(
+                    child: Column(
+                      children: [
 
-                    // fontWeight: FontWeight.w600,
+
+                       ElevatedButton(
+                           onPressed: () { sign(context); },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: AppColors.mainGreen,
+                              //  backgroundColor: Colors.green, // Text color
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  side: const BorderSide(
+                                    color: AppColors.mainGreen,
+                                  )),
+                              // padding: const EdgeInsets.symmetric(
+                              //     horizontal: 16.0, vertical: 16.0),
+                            ),
+                            child: Text(
+                              isLogin ? 'Sign In' : 'Sign Up',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'SF Pro Text',
+                                color: AppColors.mainGreen,
+                                // fontWeight: FontWeight.w600,
+                              ),
+                            )
+                          //  const Icon(Icons.add),
+                        ),
+
+
+                        const Expanded(child: SizedBox(),),
+
+
+
+                      ],
+                    ),
                   ),
-                ),
-                onPressed: () { sign(context); },
-              ),
 
-            const Expanded(child: SizedBox(),),
+
+
+
             TextButton(
                 onPressed: () {
                   setState(() {

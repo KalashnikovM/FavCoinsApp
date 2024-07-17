@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:crypto_tracker/data/currency_repository/favorites_repository/favorites_repository.dart';
 import 'package:crypto_tracker/data/user_repository/user_repository.dart';
 import 'package:crypto_tracker/ui/sign_screen/sign_screen.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
 
    bool isFavorites(String id) {
      bool res = false;
-     res = di<UserRepository>().isFavorites(model.id);
+     res = di<FavoritesRepository>().isFavorites(model.id);
 
      return res;
    }
@@ -27,7 +28,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    UserRepository repo = watchIt<UserRepository>();
+    FavoritesRepository repo = watchIt<FavoritesRepository>();
 
     DateTime? utcDateTime;
     DateTime? dateTime;
@@ -56,12 +57,12 @@ class CoinPage extends StatelessWidget with WatchItMixin {
               onPressed: () {
 
                 isFavorited
-                ? di<UserRepository>().removeFromFavorites(model.id)
+                ? repo.removeFromFavorites(model.id)
                 : showModalBottomSheet(
                   isScrollControlled: true,
                   context: context,
                   builder: (BuildContext context) {
-                    return repo.status != UserStatus.login
+                    return di<UserRepository>().status != UserStatus.login
                       ? const SignScreen()
                       : AddFavoriteCoin(
                     id: model.id,

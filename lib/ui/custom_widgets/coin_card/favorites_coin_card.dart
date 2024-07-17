@@ -1,3 +1,4 @@
+import 'package:crypto_tracker/data/currency_repository/favorites_repository/favorites_repository.dart';
 import 'package:crypto_tracker/data/user_repository/user_repository.dart';
 import 'package:crypto_tracker/models/main_coin_model.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class FavoritesCoinCard extends StatelessWidget {
   final double screenWidth;
 
   Map<String, dynamic> _parseData() {
-    var userData = di<UserRepository>().favList;
+    var userData = di<FavoritesRepository>().favList;
     debugPrint(userData.toString());
     Map<String, dynamic> data = {};
     double transactionCount = 0;
@@ -207,8 +208,8 @@ class FavoritesCoinCard extends StatelessWidget {
                   width: width(screenWidth, percentageChange),
                   child: ColoredBox(
                     color: percentageChange.isNegative
-                        ? AppColors.mainRed
-                        : AppColors.mainGreen,
+                        ? AppColors.mainRed.withOpacity(0.15)
+                        : AppColors.mainGreen.withOpacity(0.15),
                   ),
                 ),
               ],
