@@ -161,18 +161,18 @@ class _SearchPageState extends State<SearchPage> {
               child: Row(
                 children: [
                   const Expanded(
-                     flex: 3,
+                     flex: 2,
                      child: SizedBox(),),
 
                   const Center(
                     child: Text("Search history"),
                   ),
                   const Expanded(
-                    flex: 2,
+                    flex: 1,
                     child: SizedBox(),),
 
 
-                  IconButton(
+                  TextButton(
                     onPressed: () {
 
 
@@ -185,7 +185,8 @@ class _SearchPageState extends State<SearchPage> {
                       });
 
                     },
-                    icon: const Icon(Icons.clear),
+                  //  icon: const Icon(Icons.clear),
+                    child: const Text('Clear'),
                     // child:  const Text("Clear search history"),
                   ),
                 ],

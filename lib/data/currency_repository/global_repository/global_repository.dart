@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../constants.dart';
-import '../../../models/coin_data_model.dart';
-import '../../../models/coin_quote.dart';
 import '../../../models/main_coin_model.dart';
 import '../../../services/appwrite_service.dart';
 import '../../../services/parse_data_service.dart';
@@ -43,6 +41,7 @@ class GlobalListRepository extends ChangeNotifier {
 
     globalListError[DateTime.now().toLocal().toString()] = "MainCoinsListRepository.init";
     updateMainList();
+    _updateCoinMapList();
   }
 
   Future<void> updateMainList() async {
