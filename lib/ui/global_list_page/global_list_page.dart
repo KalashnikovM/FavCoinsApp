@@ -76,7 +76,6 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
                              child: IconButton(
                                onPressed: () {
                                  showModalBottomSheet(
-                                   backgroundColor: Colors.transparent,
                                    isScrollControlled: true,
                                    context: context,
                                    builder: (BuildContext context) =>

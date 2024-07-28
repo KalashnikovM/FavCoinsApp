@@ -97,7 +97,7 @@ class _SearchPageState extends State<SearchPage> {
           //              color: Colors.purple,
           //             width: 0.5,
           //           ),
-          color: AppColors.blackColor,
+          color: AppColors.modalBackgroundColor,
         ),
 
         child: Column(

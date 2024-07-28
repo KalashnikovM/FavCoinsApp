@@ -26,7 +26,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
         ? Scaffold(
             appBar: AppBar(
               title: Text(
-                  'Favorites ${repo.favList.length}'),
+                  'Favorites ${repo.favoritesList.length}'),
               actions: [
                 IconButton(
                     onPressed: () {
@@ -66,35 +66,33 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
           )
         : ColoredBox(
             color:  AppColors.blackColor,
-            child: Center(
-              child: TextButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) => const SignScreen(),
-                  );
-                },
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Sign",
-                      style: TextStyle(
-                        fontSize: 24,
-                        color:  AppColors.mainGreen,
-                      ),
+            child: TextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) => const SignScreen(),
+                );
+              },
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sign",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color:  AppColors.mainGreen,
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.login,
-                        size: 24,
-                        color: AppColors.mainGreen,
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.login,
+                      size: 24,
+                      color: AppColors.mainGreen,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

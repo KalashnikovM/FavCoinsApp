@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../../constants.dart';
@@ -17,150 +16,139 @@ enum FavoritesRepositoryStatus {
   error,
 }
 
-
-
-
-
-
 class FavoritesRepository extends ChangeNotifier {
   List<MainCoinModel> favoritesList = [];
-  List<String> ids = [];
-  List<FavoriteCoinModel> favList = [];
+  List<FavoriteCoinModel> favUserDataList = [];
   List<dynamic> alertsList = [];
 
   final _db = di<ApiClient>().database;
-  UserRepository userRepository = di<UserRepository>();
-
-  Map<String, String> favoritesRepositoryError = {};
-
-  get clearFav => favoritesList.clear();
+  String get userId => di<UserRepository>().userId;
+  String get fcmToken => di<UserRepository>().fcmToken;
 
   FavoritesRepository() {
-    debugPrint('init FavoritesRepository();');
+    di<UserRepository>().addListener(onUserChanged);
+    debugPrint('FavoritesRepository initialized.');
   }
 
+  // Clear state when the user changes
+  void onUserChanged() {
+    clearState();
+    getUserProfile();
+  }
+
+  // Fetch user profile data
   Future<void> getUserProfile() async {
-    debugPrint('Start getUserProfile();');
-    Document? userDoc;
-    debugPrint('_user?.id: ${userRepository.userId}');
+    debugPrint('Fetching user profile...');
+    if (userId.isEmpty) return;
 
     try {
-      userDoc = await _db.getDocument(
+      var userDoc = await _db.getDocument(
         databaseId: databaseId,
         collectionId: userCollection,
-        documentId: userRepository.userId,
+        documentId: userId,
       );
-      debugPrint('favorites: ${userDoc.data['favorites']}');
-      debugPrint('Alerts: ${userDoc.data['Alerts']}');
-      debugPrint('@@@@@@ getDocument');
-    } on AppwriteException catch (e) {
+
+      var res = await parseUserData(userDoc);
+      favUserDataList = res.favList;
+      alertsList = res.alertsList;
+      updateFavoritesList(res.ids);
+      notifyListeners();
+        } on AppwriteException catch (e) {
       if (e.message == "Document with the requested ID could not be found.") {
         await _updateUserProfile();
       }
-      debugPrint('Error fetching user profile: ${e.message}\nuserId: ${userRepository.userId}');
-    }
-
-    if (userDoc != null) {
-      debugPrint('@@@@@@ parseData(userDoc)');
-      var res = await parseUserData(userDoc);
-      favList = res.favList;
-      alertsList = res.alertsList;
-      updateFavoritesList(res.ids);
-      debugPrint('@@@@@@ favList $favList');
-      debugPrint('@@@@@@ alertsList $alertsList');
-      notifyListeners();
+      debugPrint('Error fetching user profile: ${e.message}');
     }
   }
 
+  // Update or create user profile
   Future<void> _updateUserProfile() async {
-    debugPrint('start _updateUserProfile()');
+    debugPrint('Updating user profile...');
+
+    if (userId.isEmpty) return;
 
     List<String> favorites = [];
-    List<String> alerts = [];
-    late Document userDoc;
-    debugPrint('_user?.id: ${userRepository.userId}');
-    debugPrint('Start _updateUserProfile();');
-
-    for (var favModel in favList) {
+    for (var favModel in favUserDataList) {
       favorites.add(json.encode({favModel.id: favModel.transactions}));
     }
-    debugPrint(favorites.toString());
+
     try {
-      userDoc = await _db.updateDocument(
+      var userDoc = await _db.updateDocument(
         databaseId: databaseId,
         collectionId: userCollection,
-        documentId: userRepository.userId,
+        documentId: userId,
         data: {
           "favorites": favorites,
-          "device": userRepository.fcmToken,
+          "device": fcmToken,
           "Alerts": alertsList,
         },
       );
+
       var res = await parseUserData(userDoc);
-      favList = res.favList;
+      favUserDataList = res.favList;
       alertsList = res.alertsList;
       updateFavoritesList(res.ids);
       notifyListeners();
-      debugPrint('@@@@@@ favList $favList');
-      debugPrint('@@@@@@ alertsList $alertsList');
     } on AppwriteException catch (e) {
       debugPrint('Error updating user profile: ${e.message}');
       if (e.message == "Document with the requested ID could not be found.") {
-        debugPrint('@@@@@@ create Document');
-
-        userDoc = await _db.createDocument(
+        var userDoc = await _db.createDocument(
           databaseId: databaseId,
           collectionId: userCollection,
-          documentId: userRepository.userId,
+          documentId: userId,
           data: {
-            "Alerts": alerts,
+            "Alerts": [],
             "favorites": [],
-            "device": userRepository.fcmToken,
+            "device": fcmToken,
           },
         );
+
         var res = await parseUserData(userDoc);
-        favList = res.favList;
+        favUserDataList = res.favList;
         alertsList = res.alertsList;
         updateFavoritesList(res.ids);
         notifyListeners();
-        debugPrint('@@@@@@ favList $favList');
-        debugPrint('@@@@@@ alertsList $alertsList');
       }
     }
   }
 
+  // Clear all state
+  void clearState() {
+    favoritesList.clear();
+    favUserDataList.clear();
+    alertsList.clear();
+    notifyListeners();
+  }
+
+  // Update the favorites list
   Future<void> updateFavoritesList(List<String> ids) async {
-    debugPrint('Start updateFavoritesList();');
+    debugPrint('Updating favorites list...');
     List<MainCoinModel> temp = [];
     for (String id in ids) {
       try {
-        Document doc = await _db.getDocument(
+        var doc = await _db.getDocument(
           databaseId: databaseId,
           collectionId: coinDataCollection,
           documentId: id,
         );
-        MainCoinModel mainModel = await ParsingService().parseDataToMainCoinModel(doc.data);
+        var mainModel = await ParsingService().parseDataToMainCoinModel(doc.data);
         temp.add(mainModel);
-        debugPrint('Document added to favorites()doc.data; ${doc.data}');
       } catch (e) {
-        debugPrint('Error updateFavoritesList: $e');
-        favoritesRepositoryError[DateTime.now().toLocal().toString()] = e.toString();
+        debugPrint('Error updating favorites list: $e');
       }
     }
-    if (temp.isNotEmpty) {
-      favoritesList = temp;
-    }
+    favoritesList = temp;
     notifyListeners();
   }
 
+  // Add to favorites
   Future<void> addToFavorites({
     required String value,
     required String price,
     required String id,
   }) async {
-    debugPrint('start addToFavorites(); id $id');
-
-    favList.add(
+    debugPrint('Adding to favorites...');
+    favUserDataList.add(
       FavoriteCoinModel(
         id: id,
         transactions: {price: value},
@@ -170,51 +158,46 @@ class FavoritesRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Remove from favorites
   Future<void> removeFromFavorites(String id) async {
-    debugPrint('start removeFromFavorites(); id $id');
-
-    List<FavoriteCoinModel> toRemove = [];
-
-    for (var v in favList) {
-      debugPrint('value: $v}');
-      if (v.id == id) {
-        toRemove.add(v);
-      }
-    }
-    favList.removeWhere((e) => toRemove.contains(e));
+    debugPrint('Removing from favorites...');
+    favUserDataList.removeWhere((fav) => fav.id == id);
     await _updateUserProfile();
     notifyListeners();
   }
 
+  // Check if a coin is in favorites
   bool isFavorites(String id) {
-    bool res = false;
-    for (FavoriteCoinModel model in favList) {
-      if (model.id == id) {
-        res = true;
-        break;
-      }
-    }
-
-    return res;
+    return favUserDataList.any((model) => model.id == id);
   }
 
+  // Add an alert
   void addAlert({
     required String id,
     required String upperTargetPrice,
     required String lowerTargetPrice,
   }) {
-    debugPrint('start addAlert()');
-      var a = {id: {
+    debugPrint('Adding alert...');
+    var alert = {
+      id: {
         'upperTargetPrice': upperTargetPrice,
         'lowerTargetPrice': lowerTargetPrice,
-      }};
-    alertsList.add(jsonEncode(a));
+      }
+    };
+    alertsList.add(jsonEncode(alert));
     _updateUserProfile();
   }
 
+  // Remove an alert
   void removeAlert(String id) {
-    debugPrint('start removeAlert()');
-    alertsList.remove(id);
+    debugPrint('Removing alert...');
+    alertsList.removeWhere((alert) => jsonDecode(alert)[id] != null);
     _updateUserProfile();
+  }
+
+  @override
+  void dispose() {
+    di<UserRepository>().removeListener(onUserChanged);
+    super.dispose();
   }
 }

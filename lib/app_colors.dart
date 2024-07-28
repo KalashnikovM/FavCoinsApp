@@ -16,6 +16,7 @@ class AppColors {
 
   static const Color textFieldBorderColor = Colors.grey;
   static const Color blackColor = Colors.black;
+  static const Color modalBackgroundColor = Color.fromARGB(1,73,73,73);
   static const Color boxDecorationGrey = Colors.white10;
   static const Color labelStyleGrey = Colors.white10;
   static const Color whiteColor = Colors.white;

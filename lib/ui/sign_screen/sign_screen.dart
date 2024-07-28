@@ -109,7 +109,7 @@ class _SignScreenState extends State<SignScreen> {
         height: MediaQuery.of(context).size.height * 0.75,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: AppColors.blackColor,
+          color: AppColors.modalBackgroundColor,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -188,17 +188,18 @@ class _SignScreenState extends State<SignScreen> {
             ),
             const Expanded(child: SizedBox(),),
 
-            authorization
-                  ? const CircularProgressIndicator(
-              color: AppColors.mainGreen,
-              strokeWidth: 2,
-              )
-                  : Expanded(
+            Expanded(
                     child: Column(
                       children: [
 
+                        authorization
+                            ? const CircularProgressIndicator(
 
-                       ElevatedButton(
+                          color: AppColors.mainGreen,
+                          strokeWidth: 2,
+                        )
+                            :
+                        ElevatedButton(
                            onPressed: () { sign(context); },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: AppColors.mainGreen,
@@ -208,8 +209,6 @@ class _SignScreenState extends State<SignScreen> {
                                   side: const BorderSide(
                                     color: AppColors.mainGreen,
                                   )),
-                              // padding: const EdgeInsets.symmetric(
-                              //     horizontal: 16.0, vertical: 16.0),
                             ),
                             child: Text(
                               isLogin ? 'Sign In' : 'Sign Up',

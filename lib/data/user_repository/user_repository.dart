@@ -1,10 +1,9 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:crypto_tracker/data/currency_repository/favorites_repository/favorites_repository.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../services/appwrite_service.dart';
 import '../../services/messaging_service.dart';
+import '../currency_repository/favorites_repository/favorites_repository.dart';
 
 enum UserStatus {
   guest,
@@ -16,105 +15,85 @@ enum UserStatus {
 class UserRepository extends ChangeNotifier {
   UserStatus status = UserStatus.guest;
   final _account = di<ApiClient>().account;
-  late User _user;
-  late Session _session;
-  String error = '';
+  String _userId = '';
 
-  String get userId => _user.$id;
+  String error = '';
+  String get userId => _userId;
   String get fcmToken => di<LocalNotification>().fcmToken;
 
   UserRepository() {
     _checkUser();
   }
 
-
-
-
-
-
-
-  Future<void> _checkUser() async {
-    debugPrint('start checkUser()');
-
-    try {
-      _user = await _account.get();
-      debugPrint('user.email ${_user.email}');
-      status = UserStatus.login;
-      di<FavoritesRepository>().getUserProfile();
-      notifyListeners();
-    } on AppwriteException catch (e) {
-      debugPrint('Error checkUser: $e');
-      status = UserStatus.guest;
-      notifyListeners();
-    }
-    debugPrint('status(); $status');
+  // Update the user ID
+  void updateUser(String newUserId) {
+    _userId = newUserId;
+    notifyListeners();
   }
 
+  // Check if the user is logged in
+  Future<void> _checkUser() async {
+    debugPrint('Checking user...');
+    try {
+      var user = await _account.get();
+      await _account.getSession(sessionId: 'current');
+      updateUser(user.$id);
+      status = UserStatus.login;
+      di<FavoritesRepository>().onUserChanged();
+    } on AppwriteException catch (e) {
+      error = e.message.toString();
+      updateUser('');
+      status = UserStatus.guest;
+    }
+    notifyListeners();
+  }
 
-
-
-
-
+  // Register a new user
   Future<bool> registerUser({
     required String email,
     required String password,
   }) async {
-    debugPrint('start registerUser()');
-    debugPrint('fcmToken: $fcmToken');
+    debugPrint('Registering user...');
     try {
       await _account.create(
         userId: 'unique()', // Automatically generate a unique ID
         email: email,
         password: password,
       );
-      await loginUser(
-        email: email,
-        password: password,
-      );
+      await loginUser(email: email, password: password);
       status = UserStatus.login;
       notifyListeners();
       return true;
     } on AppwriteException catch (e) {
       status = UserStatus.error;
-      debugPrint('Error registering user: ${e.message}');
+      error = e.message.toString();
       notifyListeners();
       return false;
     }
   }
 
+  // Login a user
   Future<bool> loginUser({
     required String email,
     required String password,
   }) async {
-    debugPrint('start loginUser()');
-
+    debugPrint('Logging in user...');
     try {
-      _session = await _account.createEmailSession(
-        email: email,
-        password: password,
-      );
-      debugPrint('session.userId: ${_session.userId}');
-
+      await _account.createEmailSession(email: email, password: password);
       await _checkUser();
-
       return true;
     } on AppwriteException catch (e) {
-      debugPrint('Error logging in user: ${e.message}');
+      error = e.message.toString();
       status = UserStatus.error;
-      error = e.message ?? 'Login error. Check fields';
       return false;
     }
   }
 
+  // Logout a user
   Future<void> logoutUser() async {
-    debugPrint('start logoutUser()');
-
-    try {
-      await _account.deleteSession(sessionId: 'current');
-      di<FavoritesRepository>().clearFav;
-      _checkUser();
-    } on AppwriteException catch (e) {
-      debugPrint('Error logging out user: ${e.message}');
-    }
+    debugPrint('Logging out user...');
+    await _account.deleteSession(sessionId: 'current');
+    di<FavoritesRepository>().clearState();
+    _checkUser();
   }
 }
