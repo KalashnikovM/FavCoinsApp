@@ -51,115 +51,105 @@ class GlobalListPage extends StatelessWidget with WatchItMixin{
 
     GlobalListRepository repo = watchIt<GlobalListRepository>();
 
-    return RefreshIndicator.adaptive(
-      color: Colors.transparent,
-
-      onRefresh: () async {
-        await repo.updateMainList();
-      },
-      child: Stack(
-        children: [
-          Scaffold(
-            body: SafeArea(
-              child: CustomScrollView(
-                controller: scrollController,
-                slivers: [
-                   SliverAppBar(
-                    floating: true,
-                    snap: false,
-                    pinned: true,
-                    title: const Text("Global coin list"),
-                       actions: [
-                           Padding(
-                             padding: const EdgeInsets.symmetric(
-                                 horizontal: 8.0),
-                             child: IconButton(
-                               onPressed: () {
-                                 showModalBottomSheet(
-                                   isScrollControlled: true,
-                                   context: context,
-                                   builder: (BuildContext context) =>
-                                   const SearchPage(),
-                                 );
-                               },
-                               icon: const Icon(Icons.search),
-                             ),
+    return Stack(
+      children: [
+        Scaffold(
+          body: SafeArea(
+            child: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                 SliverAppBar(
+                  floating: true,
+                  snap: false,
+                  pinned: true,
+                  title: const Text("Global coin list"),
+                     actions: [
+                         Padding(
+                           padding: const EdgeInsets.symmetric(
+                               horizontal: 8.0),
+                           child: IconButton(
+                             onPressed: () {
+                               showModalBottomSheet(
+                                 isScrollControlled: true,
+                                 context: context,
+                                 builder: (BuildContext context) =>
+                                 const SearchPage(),
+                               );
+                             },
+                             icon: const Icon(Icons.search),
                            ),
-                         ],
-                  ),
+                         ),
+                       ],
+                ),
 
 
-                  const SliverToBoxAdapter(
-                    child: SizedBox(
-                        height: 20,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 32),
-                                child: Text("   Ticker/Name", style: style,),
-                              ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                      height: 20,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 32),
+                              child: Text("   Ticker/Name", style: style,),
+                            ),
 
-                              // Text("Ticker/Name", style: style,),
-                              Expanded(
-                                child: SizedBox(),),
+                            // Text("Ticker/Name", style: style,),
+                            Expanded(
+                              child: SizedBox(),),
 
 
-                              Text("Price  USD", style: style,),
+                            Text("Price  USD", style: style,),
 
-                            ],
-                          ),
-                        )
-                    ),
-                  ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                        return CoinCard(
-                          model: repo.mainCoinsList[index],
-                          index: index,);
-                      },
-                      childCount: repo.mainCoinsList.length,
-                    ),
-                  ),
-
-                  if(repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updated)
-                    SliverToBoxAdapter(
-                      child: TextButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: AppColors.mainPurple,
-                          elevation: 0,
-                          //   backgroundColor: Colors.purple,
-                          disabledBackgroundColor:  AppColors.mainRed,
-                          // shape: const CircleBorder(),
-                          // fixedSize: const Size(44,44)
+                          ],
                         ),
-                        onPressed: () => repo.updateMainList(),
-                        child: const Text("Load more"),
-                      ),
-                    ),
+                      )
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                      return CoinCard(
+                        model: repo.mainCoinsList[index],
+                        index: index,);
+                    },
+                    childCount: repo.mainCoinsList.length,
+                  ),
+                ),
 
-                ],
+                if(repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updated)
+                  SliverToBoxAdapter(
+                    child: TextButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: AppColors.mainGreen,
+                        elevation: 0,
+                        disabledBackgroundColor:  AppColors.mainRed,
+                      ),
+                      onPressed: () => repo.updateMainList(),
+                      child: const Text("Load more"),
+                    ),
+                  ),
+
+              ],
+            ),
+          ),
+        ),
+
+
+        if (repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updating)
+          Container(
+            color: const Color(0xFF3e3e3e).withOpacity(0.2),
+            child: const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color:  AppColors.mainRed,
               ),
             ),
           ),
 
 
-          if (repo.globalListRepositoryStatus == GlobalListRepositoryStatus.updating)
-            Container(
-              color: const Color(0xFF3e3e3e).withOpacity(0.2),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color:  AppColors.mainRed,
-                ),
-              ),
-            ),
-
-
-        ],
-      ),
+      ],
     );
   }
 }

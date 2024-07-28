@@ -14,7 +14,7 @@ enum UserStatus {
 
 class UserRepository extends ChangeNotifier {
   UserStatus status = UserStatus.guest;
-  final _account = di<ApiClient>().account;
+   Account get _account  => di<ApiClient>().account;
   String _userId = '';
 
   String error = '';

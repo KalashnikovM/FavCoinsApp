@@ -205,7 +205,7 @@ class _SignScreenState extends State<SignScreen> {
                               foregroundColor: AppColors.mainGreen,
                               //  backgroundColor: Colors.green, // Text color
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   side: const BorderSide(
                                     color: AppColors.mainGreen,
                                   )),

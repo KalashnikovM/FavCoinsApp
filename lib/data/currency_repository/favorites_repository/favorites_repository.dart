@@ -21,7 +21,7 @@ class FavoritesRepository extends ChangeNotifier {
   List<FavoriteCoinModel> favUserDataList = [];
   List<dynamic> alertsList = [];
 
-  final _db = di<ApiClient>().database;
+  Databases get _db => di<ApiClient>().database;
   String get userId => di<UserRepository>().userId;
   String get fcmToken => di<UserRepository>().fcmToken;
 

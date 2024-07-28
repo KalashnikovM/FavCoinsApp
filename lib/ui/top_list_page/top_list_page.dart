@@ -58,81 +58,74 @@ class Top100ListPage extends StatelessWidget with WatchItMixin {
 
     Top100Repository repo = watchIt<Top100Repository>();
 
-    return RefreshIndicator.adaptive(
-      color: Colors.transparent,
+    return Stack(
+      children: [
+        Scaffold(
+          body: SafeArea(
+            child: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                const SliverAppBar(
+                  floating: true,
+                   snap: false,
+                  pinned: true,
+                  title: Text("Top 100 market cap."),
+                ),
 
-      onRefresh: () async {
-        repo.getLastCurrencyRateList();
-      },
-      child: Stack(
-        children: [
-          Scaffold(
-            body: SafeArea(
-              child: CustomScrollView(
-                controller: scrollController,
-                slivers: [
-                  const SliverAppBar(
-                    floating: true,
-                     snap: false,
-                    pinned: true,
-                    title: Text("Top 100 market cap."),
+
+                 const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 32),
+                            child: Text("Rate", style: style,),
+                          ),
+
+                          Text("Ticker/Name", style: style,),
+                          Expanded(
+                            child: SizedBox(),),
+
+
+                          Text("Price  USD", style: style,),
+
+                        ],
+                      ),
+                    )
                   ),
+                ),
 
 
-                   const SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 20,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: 32),
-                              child: Text("Rate", style: style,),
-                            ),
-
-                            Text("Ticker/Name", style: style,),
-                            Expanded(
-                              child: SizedBox(),),
 
 
-                            Text("Price  USD", style: style,),
-
-                          ],
-                        ),
-                      )
-                    ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                      return CoinCard(
+                        model: repo.top100ModelsList[index],
+                        index: index,);
+                    },
+                    childCount: repo.top100ModelsList.length,
                   ),
-
-
-
-
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                        return CoinCard(
-                          model: repo.top100ModelsList[index],
-                          index: index,);
-                      },
-                      childCount: repo.top100ModelsList.length,
-                    ),
-                  ),
-                ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (repo.top100RepositoryStatus == Top100RepositoryStatus.updating)
+          Container(
+            color: const Color(0xFF3e3e3e).withOpacity(0.2),
+            child: const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.mainGreen,
               ),
             ),
           ),
-          if (repo.top100RepositoryStatus == Top100RepositoryStatus.updating)
-            Container(
-              color: const Color(0xFF3e3e3e).withOpacity(0.2),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.mainGreen,
-                ),
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

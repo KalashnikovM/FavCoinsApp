@@ -1,16 +1,12 @@
 import 'package:auto_route/annotations.dart';
 import 'package:crypto_tracker/data/user_repository/user_repository.dart';
 import 'package:crypto_tracker/ui/custom_widgets/coin_card/favorites_coin_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../app_colors.dart';
 import '../../data/currency_repository/favorites_repository/favorites_repository.dart';
 import '../sign_screen/sign_screen.dart';
-
-
-
-
-
 
 @RoutePage(name: 'FavoritesPage')
 class FavoritesPage extends StatelessWidget with WatchItMixin {
@@ -25,16 +21,45 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
     return userRepository.status == UserStatus.login
         ? Scaffold(
             appBar: AppBar(
-              title: Text(
-                  'Favorites ${repo.favoritesList.length}'),
+              title: Text('Favorites ${repo.favoritesList.length}'),
               actions: [
                 IconButton(
-                    onPressed: () {
-                      di<UserRepository>().logoutUser();
-                    },
+                    onPressed: () => showCupertinoModalPopup<void>(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              CupertinoActionSheet(
+                            cancelButton: CupertinoActionSheetAction(
+                              isDefaultAction: true,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "Cancel",
+                              ),
+                            ),
+                            actions: <CupertinoActionSheetAction>[
+                              CupertinoActionSheetAction(
+                                isDestructiveAction: true,
+                                onPressed: () async {
+                                  await di<UserRepository>().logoutUser();
+                                  Navigator.pop(context);
+
+                                  // di<AppRouter>().replace(const SplashRoute());
+                                },
+                                child: const Text(
+                                  'Logout',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    // {
+                    //
+                    //                   di<UserRepository>().logoutUser();
+                    //                 },
                     icon: const Icon(
                       Icons.logout,
-                      color:  AppColors.mainRed,
+                      color: AppColors.mainRed,
                     )),
               ],
             ),
@@ -49,7 +74,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      itemCount:repo.favoritesList.length,
+                      itemCount: repo.favoritesList.length,
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         return FavoritesCoinCard(
@@ -64,8 +89,8 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
               ),
             ),
           )
-        : ColoredBox(
-            color:  AppColors.blackColor,
+        : Scaffold(
+          body: Center(
             child: TextButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -81,7 +106,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                     "Sign",
                     style: TextStyle(
                       fontSize: 24,
-                      color:  AppColors.mainGreen,
+                      color: AppColors.mainGreen,
                     ),
                   ),
                   Padding(
@@ -95,7 +120,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                 ],
               ),
             ),
-          );
+          ),
+        );
   }
-
 }
