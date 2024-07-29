@@ -46,7 +46,7 @@ class CoinPage extends StatelessWidget with WatchItMixin {
     debugPrint(model.coinQuote?.percentChange1h);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Updated: $updatedDate'),
+        title: Text(model.coinDataModel?.name ?? ""),
         titleTextStyle: const TextStyle(
           fontSize: 16,
           color: AppColors.whiteColor,
@@ -136,37 +136,35 @@ class CoinPage extends StatelessWidget with WatchItMixin {
               ),
               if (model.coinQuote != null) ...[
                 priceWidget(
-                    "Percent change 1h", model.coinQuote!.percentChange1h),
+                    "Percent change 1h", model.coinQuote?.percentChange1h ?? ''),
                 const SizedBox(height: 4),
                 priceWidget(
-                    "Percent change 24h", model.coinQuote!.percentChange24h),
+                    "Percent change 24h", model.coinQuote?.percentChange24h ?? ''),
                 const SizedBox(height: 4),
                 priceWidget(
-                    "Percent change 7d", model.coinQuote!.percentChange7d),
+                    "Percent change 7d", model.coinQuote?.percentChange7d  ?? ''),
                 const SizedBox(height: 4),
                 priceWidget(
-                    "Percent change 30d", model.coinQuote!.percentChange30d),
+                    "Percent change 30d", model.coinQuote?.percentChange30d ?? ''),
                 const SizedBox(height: 4),
                 priceWidget(
-                    "Percent change 60d", model.coinQuote!.percentChange60d),
+                    "Percent change 60d", model.coinQuote?.percentChange60d  ?? ''),
                 const SizedBox(height: 4),
                 priceWidget(
-                    "Percent change 90d", model.coinQuote!.percentChange90d),
+                    "Percent change 90d", model.coinQuote?.percentChange90d  ?? ''),
                 const SizedBox(height: 4),
                 priceWidget(
-                    "Volume change 24h", model.coinQuote!.volumeChange24h),
+                    "Volume change 24h", model.coinQuote?.volumeChange24h  ?? ''),
                 const SizedBox(height: 4),
                 Text(
-                    'Market Cap dominance: ${model.coinQuote!.marketCapDominance} %'),
+                    'Market Cap dominance: ${model.coinQuote?.marketCapDominance} %'),
                 const SizedBox(height: 4),
                 Text(
-                    'Fully diluted market Cap: ${model.coinQuote!.fullyDilutedMarketCap}'),
+                    'Fully diluted market Cap: ${model.coinQuote?.fullyDilutedMarketCap} ${model.coinDataModel?.symbol}'),
+                const SizedBox(height: 4),
 
-
-
-
-
-
+                Text('Last update: $updatedDate'),
+                const SizedBox(height: 4),
 
               ]
             ],

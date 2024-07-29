@@ -13,8 +13,8 @@ class App extends StatelessWidget {
 
     return
       MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.from(
-
           useMaterial3: true,
           colorScheme: const ColorScheme(
           primary:  Color(0xFFcecece),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../../app_colors.dart';
 import '../../data/currency_repository/favorites_repository/favorites_repository.dart';
+import '../../router/router.dart';
 import '../sign_screen/sign_screen.dart';
 
 @RoutePage(name: 'FavoritesPage')
@@ -37,12 +38,12 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                                 "Cancel",
                               ),
                             ),
-                            actions: <CupertinoActionSheetAction>[
+                              actions: <CupertinoActionSheetAction>[
                               CupertinoActionSheetAction(
                                 isDestructiveAction: true,
                                 onPressed: () async {
                                   await di<UserRepository>().logoutUser();
-                                  Navigator.pop(context);
+                                  di<AppRouter>().maybePop();
 
                                   // di<AppRouter>().replace(const SplashRoute());
                                 },
@@ -53,10 +54,6 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                             ],
                           ),
                         ),
-                    // {
-                    //
-                    //                   di<UserRepository>().logoutUser();
-                    //                 },
                     icon: const Icon(
                       Icons.logout,
                       color: AppColors.mainRed,
@@ -66,11 +63,6 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
             body: SafeArea(
               child: Column(
                 children: [
-                  // const Padding(
-                  //   padding: EdgeInsets.all(8.0),
-                  //   child: BarChartSample4(),
-                  // ),
-
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
