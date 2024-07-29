@@ -47,7 +47,6 @@ class MainScreen extends StatelessWidget {
             ),
             unselectedIconTheme: const IconThemeData(
                 size: 23,
-                // color: AppColor.kDefaultSystemGraySecondaryLight
             ),
             currentIndex: itemsRouter.activeIndex,
             onTap: (value) {

@@ -30,19 +30,17 @@ class App extends StatelessWidget {
             onSurface: Color(0xFFcecece),
 
         ),),
+
         localizationsDelegates: const [
-          // S.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        // locale: locale,
         supportedLocales: const [
           Locale('en'), // English
           Locale('vi'), // Vietnam
         ],
         routerConfig: di<AppRouter>().config(),
-        // theme: lightTheme,
       );
   }
 }
