@@ -7,6 +7,7 @@ import 'package:watch_it/watch_it.dart';
 import '../../app_colors.dart';
 import '../../data/currency_repository/favorites_repository/favorites_repository.dart';
 import '../../router/router.dart';
+import '../profile_screen/profile_screen.dart';
 import '../sign_screen/sign_screen.dart';
 
 @RoutePage(name: 'FavoritesPage')
@@ -24,6 +25,21 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
             appBar: AppBar(
               title: Text('Favorites ${repo.favoritesList.length}'),
               actions: [
+                IconButton(onPressed: () {
+
+
+
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) => const ProfileScreen(),
+                  );
+
+
+
+
+                },
+                  icon: const Icon(Icons.account_circle_outlined)),
                 IconButton(
                     onPressed: () => showCupertinoModalPopup<void>(
                           context: context,
@@ -42,7 +58,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
                               CupertinoActionSheetAction(
                                 isDestructiveAction: true,
                                 onPressed: () async {
-                                  await di<UserRepository>().logoutUser();
+                                  di<UserRepository>().logoutUser();
                                   di<AppRouter>().maybePop();
 
                                   // di<AppRouter>().replace(const SplashRoute());

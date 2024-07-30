@@ -92,7 +92,8 @@ class FavoritesRepository extends ChangeNotifier {
     } on AppwriteException catch (e) {
       debugPrint('Error updating user profile: ${e.message}');
       if (e.message == "Document with the requested ID could not be found.") {
-        var userDoc = await _db.createDocument(
+        try{
+          var userDoc = await _db.createDocument(
           databaseId: databaseId,
           collectionId: userCollection,
           documentId: userId,
@@ -102,12 +103,17 @@ class FavoritesRepository extends ChangeNotifier {
             "device": fcmToken,
           },
         );
-
         var res = await parseUserData(userDoc);
         favUserDataList = res.favList;
         alertsList = res.alertsList;
         updateFavoritesList(res.ids);
         notifyListeners();
+        }
+        catch (e) {
+          debugPrint('Error createDocument user profile: $e');
+
+
+        }
       }
     }
   }
