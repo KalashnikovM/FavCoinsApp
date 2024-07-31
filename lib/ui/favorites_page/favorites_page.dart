@@ -24,22 +24,22 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
         ? Scaffold(
             appBar: AppBar(
               title:  Text('Favorites ${repo.favoritesList.length}'),
-              actions: [
-                IconButton(onPressed: () {
+              leading:  IconButton(
+                  onPressed: () {
 
 
 
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) => const ProfileScreen(),
-                  );
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) => const ProfileScreen(),
+                    );
 
 
-
-
-                },
+                  },
                   icon: const Icon(Icons.account_circle_outlined)),
+              actions: [
+
 
 
                 IconButton(
