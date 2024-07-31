@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../app_colors.dart';
+import '../../../router/router.dart';
+import '../../../router/router.gr.dart';
 
 class FavoritesCoinCard extends StatelessWidget {
   const FavoritesCoinCard(
@@ -98,10 +100,10 @@ class FavoritesCoinCard extends StatelessWidget {
     double totalPriceChange = data['totalPriceChange'];
 
     return GestureDetector(
-      onTap: () => _parseData(),
-      //   di<AppRouter>().push(
-      // CoinPage(model: model),
-      //),
+      onTap: () =>
+        di<AppRouter>().push(
+      CoinPage(model: model),
+      ),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
