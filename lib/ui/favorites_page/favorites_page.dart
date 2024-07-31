@@ -23,7 +23,7 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
     return userRepository.status == UserStatus.login
         ? Scaffold(
             appBar: AppBar(
-              title: Text('Favorites ${repo.favoritesList.length}'),
+              title:  Text('Favorites ${repo.favoritesList.length}'),
               actions: [
                 IconButton(onPressed: () {
 
@@ -40,6 +40,8 @@ class FavoritesPage extends StatelessWidget with WatchItMixin {
 
                 },
                   icon: const Icon(Icons.account_circle_outlined)),
+
+
                 IconButton(
                     onPressed: () => showCupertinoModalPopup<void>(
                           context: context,

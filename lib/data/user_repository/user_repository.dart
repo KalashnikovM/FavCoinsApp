@@ -113,24 +113,35 @@ class UserRepository extends ChangeNotifier {
   // Logout a user
   Future<void> logoutUser() async {
     debugPrint('Logging out user...');
-    try {await _account.deleteSession(sessionId: 'current');}
-    catch (e) { debugPrint('Logging out user...error: $e');
+    try {
+      await _account.deleteSession(sessionId: 'current');
+    }
+    catch (e) {
+      debugPrint('Logging out user...error: $e');
     }
     di<FavoritesRepository>().clearState();
     await _checkUser();
   }
 
-  updateUserProfile({required String email, required String password}) async {
+  Future<bool> updateUserProfile({
+    required String email,
+    required String newPassword,
+    required String oldPassword
+  }) async {
     debugPrint('UpdateUserProfile data...');
 
     try {
-      await _account.updatePassword(password: password);
+      await _account.updateEmail(email: email, password: oldPassword);
+      await _account.updatePassword(password: newPassword, oldPassword: oldPassword);
 
-      await _account.updateEmail(email: email, password: password);
 
       debugPrint('UpdateUserProfile data...updated');
-    } catch (e) {
+      return true;
+    } on AppwriteException catch (e) {
       debugPrint('UpdateUserProfile data...error: $e');
+      error = e.message.toString();
+
+      return false;
     }
   }
 }

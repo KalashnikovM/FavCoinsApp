@@ -4,6 +4,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../app_colors.dart';
 import '../../data/user_repository/user_repository.dart';
+import '../../router/router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,8 +15,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _emailController;
-  late TextEditingController _passwordController;
-  late TextEditingController _confirmPasswordController;
+  late TextEditingController _currentPasswordController;
+  late TextEditingController _newPasswordController;
+  late TextEditingController _confirmNewPasswordController;
   String get error => di<UserRepository>().error;
   bool _passwordVisible = false;
   bool updating = false;
@@ -24,12 +26,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     _emailController = TextEditingController();
-    _passwordController = TextEditingController();
-    _confirmPasswordController = TextEditingController();
+    _newPasswordController = TextEditingController();
+    _confirmNewPasswordController = TextEditingController();
+    _currentPasswordController = TextEditingController();
 
     _emailController.addListener(_checkForChanges);
-    _passwordController.addListener(_checkForChanges);
-    _confirmPasswordController.addListener(_checkForChanges);
+    _newPasswordController.addListener(_checkForChanges);
+    _confirmNewPasswordController.addListener(_checkForChanges);
+    _currentPasswordController.addListener(_checkForChanges);
 
     super.initState();
   }
@@ -37,25 +41,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
+    _currentPasswordController.dispose();
+
     super.dispose();
   }
 
   void _checkForChanges() {
     setState(() {
-      _saveButtonEnabled = _emailController.text.isNotEmpty || _passwordController.text.isNotEmpty;
+      _saveButtonEnabled = _emailController.text.isNotEmpty ||
+          _newPasswordController.text.isNotEmpty || _currentPasswordController.text.isNotEmpty;
     });
   }
 
   void _validateAndSave() {
-    if (_passwordController.text != _confirmPasswordController.text) {
+    if (_newPasswordController.text != _confirmNewPasswordController.text) {
       alertDialog(context, 'Passwords do not match');
       return;
     }
 
     if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
       alertDialog(context, 'Please enter a valid email');
+      return;
+    }
+
+    if (_currentPasswordController.text.isEmpty) {
+      alertDialog(context, 'Please enter current password');
       return;
     }
 
@@ -71,7 +83,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     bool res = await di<UserRepository>().updateUserProfile(
       email: _emailController.text,
-      password: _passwordController.text,
+      newPassword: _newPasswordController.text,
+      oldPassword: _currentPasswordController.text
     );
 
     if (res) {
@@ -89,11 +102,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       updating = true;
       FocusScope.of(context).unfocus();
     });
+    AppRouter().maybePop();
 
     bool res = await di<UserRepository>().deleteUserProfile();
 
     if (res) {
       Navigator.of(context).pop();
+      AppRouter().maybePop();
     } else {
       setState(() {
         updating = false;
@@ -124,7 +139,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
@@ -148,7 +162,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 8,
               ),
             ),
-            const Expanded(child: SizedBox(),),
+            const Expanded(
+              child: SizedBox(),
+            ),
             SizedBox(
               height: 52,
               child: TextFormField(
@@ -156,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(16),
-                  labelText: 'Enter your email',
+                  labelText: 'Enter your new email',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     borderSide: BorderSide(color: AppColors.mainRed),
@@ -168,11 +184,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             SizedBox(
               height: 52,
               child: TextFormField(
-                controller: _passwordController,
+                controller: _currentPasswordController,
+                obscureText: !_passwordVisible,
+                keyboardType: TextInputType.visiblePassword,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(16),
+                  labelText: 'Enter your current password',
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(color: AppColors.mainRed),
+                  ),
+                  labelStyle: const TextStyle(
+                    color: AppColors.textFieldBorderColor,
+                    fontSize: 16,
+                  ),
+                  suffix: InkWell(
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    onTap: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Icon(
+                        _passwordVisible
+                            ? CupertinoIcons.eye_fill
+                            : CupertinoIcons.eye_slash_fill,
+                        color: AppColors.textFieldBorderColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              height: 52,
+              child: TextFormField(
+                controller: _newPasswordController,
                 obscureText: !_passwordVisible,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
@@ -207,11 +262,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             SizedBox(
               height: 52,
               child: TextFormField(
-                controller: _confirmPasswordController,
+                controller: _confirmNewPasswordController,
                 obscureText: !_passwordVisible,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
@@ -246,7 +301,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const Expanded(
+              flex: 3,
+              child: SizedBox(),
+            ),
             if (updating)
               const CircularProgressIndicator(
                 color: AppColors.mainGreen,
@@ -273,9 +331,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-            const SizedBox(height: 16),
+            const Expanded(
+              child: SizedBox(),
+            ),
             ElevatedButton(
-              onPressed: deleteUserProfile,
+              onPressed: () => showCupertinoModalPopup<void>(
+                context: context,
+                builder: (BuildContext context) => CupertinoActionSheet(
+                  cancelButton: CupertinoActionSheetAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      "Cancel",
+                    ),
+                  ),
+                  actions: <CupertinoActionSheetAction>[
+                    CupertinoActionSheetAction(
+                      isDestructiveAction: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      deleteUserProfile();
+                      },
+                      child: const Text(
+                        'Delete',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 foregroundColor: AppColors.mainRed,
                 shape: RoundedRectangleBorder(
@@ -295,7 +380,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const Expanded(
-              child: SizedBox(),),
+              child: SizedBox(),
+            ),
           ],
         ),
       ),
