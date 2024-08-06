@@ -10,9 +10,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class LocalNotification {
   static final FlutterLocalNotificationsPlugin _notificationPlugin =
   FlutterLocalNotificationsPlugin();
-  String fcmToken = "";
+  String? fcmToken = "";
 
 
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   LocalNotification() {
     debugPrint('init LocalNotification');
@@ -22,7 +23,7 @@ class LocalNotification {
 
   Future<void> initialize() async {
 
-   fcmToken = (await FirebaseMessaging.instance.getToken())!;
+   fcmToken = await messaging.getToken();
     debugPrint('fcmToken: $fcmToken');
 
    if(Platform.isIOS) {FirebaseMessaging.onBackgroundMessage((message) async {
@@ -56,7 +57,6 @@ class LocalNotification {
         });
 
 
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
     NotificationSettings settings = await messaging.requestPermission(
 
       alert: true,

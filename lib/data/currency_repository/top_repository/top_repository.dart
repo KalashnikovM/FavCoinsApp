@@ -44,6 +44,10 @@ class Top100Repository extends ChangeNotifier {
     initTop100Stream();
   }
 
+
+
+
+  // Function to fetch the last currency rate list
   Future<void> getLastCurrencyRateList() async {
     debugPrint('getLastCurrencyRateList');
     top100RepositoryStatus = Top100RepositoryStatus.updating;
@@ -71,6 +75,10 @@ class Top100Repository extends ChangeNotifier {
     }
   }
 
+
+
+
+  // Function to initialize the real-time stream for top 100 coins
   Future<void> initTop100Stream() async {
     top100RepositoryError[DateTime.now().toLocal().toString()] = "Ok";
     debugPrint('initTop100Stream');
@@ -113,6 +121,10 @@ class Top100Repository extends ChangeNotifier {
     });
   }
 
+
+
+
+  // Function to parse data into a MainCoinModel
   Future<MainCoinModel> parseData(Map<String, dynamic> data) async {
     final CoinDataModel coinData = CoinDataModel.fromJson(json.decode(data['Data']), data["Logo"]);
     final Map<String, dynamic> lastData = json.decode(data['Quote']);

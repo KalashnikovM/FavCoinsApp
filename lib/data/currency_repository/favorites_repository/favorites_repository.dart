@@ -23,7 +23,7 @@ class FavoritesRepository extends ChangeNotifier {
 
   Databases get _db => di<ApiClient>().database;
   String get userId => di<UserRepository>().userId;
-  String get fcmToken => di<UserRepository>().fcmToken;
+  String? get fcmToken => di<UserRepository>().fcmToken;
 
   FavoritesRepository() {
     di<UserRepository>().addListener(onUserChanged);

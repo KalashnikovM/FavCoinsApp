@@ -24,17 +24,23 @@ class UserRepository extends ChangeNotifier {
 
   String get userId => _userId;
 
-  String get fcmToken => di<LocalNotification>().fcmToken;
+  String? get fcmToken => di<LocalNotification>().fcmToken;
 
   UserRepository() {
     _checkUser();
   }
+
+
+
 
   // Update the user ID
   void updateUserId(String newUserId) {
     _userId = newUserId;
     notifyListeners();
   }
+
+
+
 
   // Check if the user is logged in
   Future<void> _checkUser() async {
@@ -53,6 +59,9 @@ class UserRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
+
   // Delete a user
   Future<bool> deleteUserProfile() async {
     try {
@@ -67,6 +76,9 @@ class UserRepository extends ChangeNotifier {
       return false;
     }
   }
+
+
+
 
   // Register a new user
   Future<bool> registerUser({
@@ -92,6 +104,9 @@ class UserRepository extends ChangeNotifier {
       return false;
     }
   }
+
+
+
 
   // Login a user
   Future<bool> loginUser({
@@ -123,6 +138,10 @@ class UserRepository extends ChangeNotifier {
     await _checkUser();
   }
 
+
+
+
+  // Update a user
   Future<bool> updateUserProfile({
     required String email,
     required String newPassword,

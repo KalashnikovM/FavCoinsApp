@@ -10,8 +10,6 @@ import '../../../models/main_coin_model.dart';
 import '../../../services/appwrite_service.dart';
 import '../../../services/parse_data_service.dart';
 
-
-
 enum GlobalListRepositoryStatus {
   init,
   updated,
@@ -19,31 +17,30 @@ enum GlobalListRepositoryStatus {
   error,
 }
 
-
-
-
 class GlobalListRepository extends ChangeNotifier {
   List<MainCoinModel> mainCoinsList = [];
-  GlobalListRepositoryStatus globalListRepositoryStatus = GlobalListRepositoryStatus.init;
+  GlobalListRepositoryStatus globalListRepositoryStatus =
+      GlobalListRepositoryStatus.init;
   Map<String, String> globalListError = {};
   Map<String, dynamic> coinMapList = {};
   List<MainCoinModel> foundedElementsList = [];
   int current = 0;
 
-
-   get resList => foundedElementsList.clear();
-
+  get resList => foundedElementsList.clear();
 
   final db = di<ApiClient>().database;
 
   GlobalListRepository() {
     debugPrint('init GlobalListRepository();');
 
-    globalListError[DateTime.now().toLocal().toString()] = "MainCoinsListRepository.init";
+    globalListError[DateTime.now().toLocal().toString()] =
+        "MainCoinsListRepository.init";
     updateMainList();
     _updateCoinMapList();
   }
 
+
+  // Function to update the main list of coins
   Future<void> updateMainList() async {
     debugPrint('updateMainList');
 
@@ -57,22 +54,26 @@ class GlobalListRepository extends ChangeNotifier {
       );
       debugPrint('docs.documents.length: ${docs.documents.length}');
       for (final Document document in docs.documents) {
-        MainCoinModel mainModel = await ParsingService().parseDataToMainCoinModel(document.data);
+        MainCoinModel mainModel =
+            await ParsingService().parseDataToMainCoinModel(document.data);
         mainCoinsList.add(mainModel);
       }
       globalListRepositoryStatus = GlobalListRepositoryStatus.updated;
       notifyListeners();
     } catch (e) {
       globalListRepositoryStatus = GlobalListRepositoryStatus.error;
-      globalListError[DateTime.now().toLocal().toString()] = "updateMainList Error: $e";
+      globalListError[DateTime.now().toLocal().toString()] =
+          "updateMainList Error: $e";
       debugPrint('Error fetching main coins list: $e');
       notifyListeners();
     }
   }
 
 
+  // Function to search for coins by name or symbol
   Future<bool> searchByPartialNameAndSymbol(String searchString) async {
-    debugPrint("start searchByPartialNameAndSymbol().searchString# $searchString");
+    debugPrint(
+        "start searchByPartialNameAndSymbol().searchString# $searchString");
     bool found = false;
 
     for (var id in coinMapList.keys) {
@@ -88,13 +89,15 @@ class GlobalListRepository extends ChangeNotifier {
               collectionId: coinDataCollection,
               documentId: id,
             );
-            MainCoinModel foundedModel = await ParsingService().parseDataToMainCoinModel(response.data);
+            MainCoinModel foundedModel =
+                await ParsingService().parseDataToMainCoinModel(response.data);
 
             foundedElementsList.add(foundedModel);
             debugPrint(foundedModel.id);
             found = true;
           } catch (e) {
-            globalListError[DateTime.now().toLocal().toString()] = "getTestList Error: $e";
+            globalListError[DateTime.now().toLocal().toString()] =
+                "getTestList Error: $e";
             debugPrint('Error fetching last currency rate list: $e');
           }
         }
@@ -106,7 +109,9 @@ class GlobalListRepository extends ChangeNotifier {
   }
 
 
-  _updateCoinMapList () async {
+
+  // Function to update the coin map list
+  _updateCoinMapList() async {
     debugPrint("start _updateCoinMapList()");
     current += 2000;
     try {
@@ -117,29 +122,20 @@ class GlobalListRepository extends ChangeNotifier {
           Query.limit(current),
           Query.offset(0 + coinMapList.length),
         ],
-
       );
       for (var document in docs.documents) {
         Map<String, dynamic> data = document.data;
-        coinMapList[document.$id] = {
-          data["Name"]: data["Symbol"]};
+        coinMapList[document.$id] = {data["Name"]: data["Symbol"]};
       }
 
       if (current < docs.total) {
         _updateCoinMapList();
       }
-    }
-    catch (e) {
-
+    } catch (e) {
       debugPrint("error _updateCoinMapList(): $e");
-
     }
 
     debugPrint("coinMapList length : ${coinMapList.length}");
     notifyListeners();
-
   }
-
-
-
 }
