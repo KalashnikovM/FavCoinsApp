@@ -109,23 +109,30 @@ class GlobalListRepository extends ChangeNotifier {
   _updateCoinMapList () async {
     debugPrint("start _updateCoinMapList()");
     current += 2000;
-    final DocumentList docs = await db.listDocuments(
-      databaseId: databaseId,
-      collectionId: coinMapCollection,
-      queries: [
-        Query.limit(current),
-        Query.offset(0+coinMapList.length),
-      ],
+    try {
+      final DocumentList docs = await db.listDocuments(
+        databaseId: databaseId,
+        collectionId: coinMapCollection,
+        queries: [
+          Query.limit(current),
+          Query.offset(0 + coinMapList.length),
+        ],
 
-    );
-    for (var document in docs.documents) {
-      Map<String, dynamic> data = document.data;
-      coinMapList[document.$id] = {
-        data["Name"]: data["Symbol"]};
+      );
+      for (var document in docs.documents) {
+        Map<String, dynamic> data = document.data;
+        coinMapList[document.$id] = {
+          data["Name"]: data["Symbol"]};
+      }
+
+      if (current < docs.total) {
+        _updateCoinMapList();
+      }
     }
+    catch (e) {
 
-    if(current < docs.total){
-      _updateCoinMapList();
+      debugPrint("error _updateCoinMapList(): $e");
+
     }
 
     debugPrint("coinMapList length : ${coinMapList.length}");

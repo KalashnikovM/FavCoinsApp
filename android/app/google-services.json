@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "98631669249",
+    "project_id": "favcoins-c2c60",
+    "storage_bucket": "favcoins-c2c60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98631669249:android:7dd2772b8d31b2818d9200",
+        "android_client_info": {
+          "package_name": "com.example.crypto_tracker.crypto_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIu7eNofloT0Fk1KNtZqg5dIf-sIsUMrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

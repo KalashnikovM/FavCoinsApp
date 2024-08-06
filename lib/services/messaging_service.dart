@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -23,7 +25,10 @@ class LocalNotification {
    fcmToken = (await FirebaseMessaging.instance.getToken())!;
     debugPrint('fcmToken: $fcmToken');
 
+   if(Platform.isIOS) {FirebaseMessaging.onBackgroundMessage((message) async {
 
+     showNotification(message);
+   });}
     var initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -78,10 +83,6 @@ class LocalNotification {
     }
 
 
-    FirebaseMessaging.onBackgroundMessage((message) async {
-
-      showNotification(message);
-    });
 
   }
 
@@ -102,8 +103,8 @@ class LocalNotification {
     );
     _notificationPlugin.show(
       DateTime.now().microsecond,
-      message.notification!.title,
-      message.notification!.body,
+      message.notification?.title,
+      message.notification?.body,
       details,
       payload: message.data.toString(),
     );
