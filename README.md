@@ -46,8 +46,11 @@ FavCoins offers everything you need to keep track of your favorite digital asset
 <table>
 <tr>
     <td>**Profile Screen**: Allows users to update their information and delete their account.</td>
+    <td>**</td>
+
 </tr>
   <tr>
     <td><img src="/assets/screens/profile_screen.png" width="300"></td>
+    <td></td>
   </tr>
  </table>
