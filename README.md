@@ -46,11 +46,11 @@ FavCoins offers everything you need to keep track of your favorite digital asset
 <table>
 <tr>
     <td>**Profile Screen**: Allows users to update their information and delete their account.</td>
-    <td>**</td>
-
+    <td>**Sign Screen**: Simple registration and login form. Only email and password.</td>
 </tr>
   <tr>
     <td><img src="/assets/screens/profile_screen.png" width="300"></td>
-    <td></td>
+    <td><img src="/assets/screens/sign_screen.png" width="300"></td>
+
   </tr>
  </table>
