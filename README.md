@@ -7,7 +7,8 @@ the app designed to simplify your crypto tracking experience.
 Whether you're a crypto enthusiast or just getting started, 
 FavCoins offers everything you need to keep track of your favorite digital assets.
 
+<img src="/assets/screens/top_100_screen.png" width="642">
+<img src="/assets/screens/favorites_screen.png" width="642">
+<img src="//assets/screens/coin_page.png" width="642">
 
-![Top 100 Screen](/assets/screens/top_100_screen.png)
-![Favorites Screen](/assets/screens/favorites_screen.png)
-![Top 100 Screen](/assets/screens/coin_page.png)
+
