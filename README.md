@@ -10,7 +10,6 @@ FavCoins offers everything you need to keep track of your favorite digital asset
 
 #### FavCoins App Screenshots
 
-<table>
 <tr>
     <td>**Top 100 Screen**: Displays a list of the top 100 cryptocurrencies with prices updated every 15 minutes.</td>
     <td>**Global Coin List**: Shows all available cryptocurrencies with prices updated every hour.</td>
@@ -30,4 +29,3 @@ FavCoins offers everything you need to keep track of your favorite digital asset
     <td><img src="/assets/screens/profile_screen.png" width="200"></td>
 
   </tr>
- </table>
