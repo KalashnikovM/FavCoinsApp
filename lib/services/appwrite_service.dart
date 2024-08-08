@@ -1,13 +1,15 @@
 import 'package:appwrite/appwrite.dart';
-import '../constants.dart';
+
+import '../app_env.dart';
+
 
 class ApiClient {
   Client get _client {
     Client client = Client();
 
     client
-        .setEndpoint(endpoint)
-        .setProject(project)
+        .setEndpoint(AppEnv.endpoint)
+        .setProject(AppEnv.project)
         .setSelfSigned(status: true);
 
     return client;

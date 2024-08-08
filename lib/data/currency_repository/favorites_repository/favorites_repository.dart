@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-import '../../../constants.dart';
+import '../../../app_env.dart';
 import '../../../models/favorite_model.dart';
 import '../../../models/main_coin_model.dart';
 import '../../../services/appwrite_service.dart';
 import '../../../services/parse_data_service.dart';
 import '../../user_repository/user_repository.dart';
+
 
 enum FavoritesRepositoryStatus {
   init,
@@ -43,8 +44,8 @@ class FavoritesRepository extends ChangeNotifier {
 
     try {
       var userDoc = await _db.getDocument(
-        databaseId: databaseId,
-        collectionId: userCollection,
+        databaseId: AppEnv.databaseId,
+        collectionId: AppEnv.userCollection,
         documentId: userId,
       );
 
@@ -74,8 +75,8 @@ class FavoritesRepository extends ChangeNotifier {
 
     try {
       var userDoc = await _db.updateDocument(
-        databaseId: databaseId,
-        collectionId: userCollection,
+        databaseId: AppEnv.databaseId,
+        collectionId: AppEnv.userCollection,
         documentId: userId,
         data: {
           "favorites": favorites,
@@ -94,8 +95,8 @@ class FavoritesRepository extends ChangeNotifier {
       if (e.message == "Document with the requested ID could not be found.") {
         try{
           var userDoc = await _db.createDocument(
-          databaseId: databaseId,
-          collectionId: userCollection,
+          databaseId: AppEnv.databaseId,
+          collectionId: AppEnv.userCollection,
           documentId: userId,
           data: {
             "Alerts": [],
@@ -133,8 +134,8 @@ class FavoritesRepository extends ChangeNotifier {
     for (String id in ids) {
       try {
         var doc = await _db.getDocument(
-          databaseId: databaseId,
-          collectionId: coinDataCollection,
+          databaseId: AppEnv.databaseId,
+          collectionId: AppEnv.mainCollection,
           documentId: id,
         );
         var mainModel = await ParsingService().parseDataToMainCoinModel(doc.data);

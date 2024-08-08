@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../constants.dart';
+import '../../../app_env.dart';
 import '../../../models/main_coin_model.dart';
 import '../../../services/appwrite_service.dart';
 import '../../../services/parse_data_service.dart';
@@ -48,8 +46,8 @@ class GlobalListRepository extends ChangeNotifier {
       globalListRepositoryStatus = GlobalListRepositoryStatus.updating;
       notifyListeners();
       final DocumentList docs = await db.listDocuments(
-        databaseId: databaseId,
-        collectionId: coinDataCollection,
+        databaseId: AppEnv.databaseId,
+        collectionId: AppEnv.mainCollection,
         queries: [Query.limit(100), Query.offset(0 + mainCoinsList.length)],
       );
       debugPrint('docs.documents.length: ${docs.documents.length}');
@@ -85,8 +83,8 @@ class GlobalListRepository extends ChangeNotifier {
         if (name == searchString || symbol == searchString) {
           try {
             Document response = await db.getDocument(
-              databaseId: databaseId,
-              collectionId: coinDataCollection,
+              databaseId: AppEnv.databaseId,
+              collectionId: AppEnv.mainCollection,
               documentId: id,
             );
             MainCoinModel foundedModel =
@@ -116,8 +114,8 @@ class GlobalListRepository extends ChangeNotifier {
     current += 2000;
     try {
       final DocumentList docs = await db.listDocuments(
-        databaseId: databaseId,
-        collectionId: coinMapCollection,
+        databaseId: AppEnv.databaseId,
+        collectionId: AppEnv.coinMapCollection,
         queries: [
           Query.limit(current),
           Query.offset(0 + coinMapList.length),

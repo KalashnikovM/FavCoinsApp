@@ -6,7 +6,7 @@ import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../constants.dart';
+import '../../../app_env.dart';
 import '../../../models/coin_data_model.dart';
 import '../../../models/coin_quote.dart';
 import '../../../models/main_coin_model.dart';
@@ -55,8 +55,8 @@ class Top100Repository extends ChangeNotifier {
 
     try {
       final response = await db.listDocuments(
-        databaseId: databaseId,
-        collectionId: top100coinDataCollection,
+        databaseId: AppEnv.databaseId,
+        collectionId: AppEnv.top100Collection,
         queries: [Query.limit(100)],
       );
       final DocumentList docs = response;
@@ -85,7 +85,7 @@ class Top100Repository extends ChangeNotifier {
     top100StreamSubscription?.cancel();
 
     top100Subscription = realtime.subscribe([
-      'databases.$databaseId.collections.$top100coinDataCollection.documents'
+      'databases.${AppEnv.databaseId}.collections.${AppEnv.top100Collection}.documents'
     ]);
 
     top100StreamSubscription = top100Subscription.stream.listen((response) async {

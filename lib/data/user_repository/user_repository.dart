@@ -1,7 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
-import '../../constants.dart';
+import '../../app_env.dart';
 import '../../services/appwrite_service.dart';
 import '../../services/messaging_service.dart';
 import '../currency_repository/favorites_repository/favorites_repository.dart';
@@ -67,7 +67,7 @@ class UserRepository extends ChangeNotifier {
     try {
       final response = await di<ApiClient>()
           .functions
-          .createExecution(functionId: deleteUserFunctionId, body: userId);
+          .createExecution(functionId: AppEnv.deleteUserFunctionId, body: userId);
       debugPrint('Function executed: ${response.$id}');
       await _checkUser();
       return true;
