@@ -7,6 +7,9 @@ the app designed to simplify your crypto tracking experience.
 Whether you're a crypto enthusiast or just getting started, 
 FavCoins offers everything you need to keep track of your favorite digital assets.
 
+## Download the App
+
+[![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg)](https://apps.apple.com/ua/app/favcoins/id6505048833)
 
 #### FavCoins App Screenshots
 
@@ -16,8 +19,8 @@ FavCoins offers everything you need to keep track of your favorite digital asset
     <td>**Global Coin List**: Shows all available cryptocurrencies with prices updated every hour.</td>
    </tr>
   <tr>
-    <td><img src="/assets/screens/top_100_screen.png" width="200"></td>
-    <td><img src="/assets/screens/global_coin_list.png" width="200"></td>
+    <td><img src="/assets/screens/top_100_screen.png" width="250"></td>
+    <td><img src="/assets/screens/global_coin_list.png" width="250"></td>
   </tr>
  </table>
 
@@ -27,8 +30,8 @@ FavCoins offers everything you need to keep track of your favorite digital asset
     <td>**Coin Page**: Provides detailed information about a specific cryptocurrency.</td>
    </tr>
   <tr>
-    <td><img src="/assets/screens/search_screen.png" width="200"></td>
-    <td><img src="/assets/screens/coin_page.png" width="200"></td>
+    <td><img src="/assets/screens/search_screen.png" width="250"></td>
+    <td><img src="/assets/screens/coin_page.png" width="250"></td>
   </tr>
  </table>
 
@@ -39,8 +42,8 @@ FavCoins offers everything you need to keep track of your favorite digital asset
     <td>**Favorites Screen**: Displays a list of favorite cryptocurrencies and shows the change in value from the purchase price in USD.</td>
 </tr>
   <tr>
-    <td><img src="/assets/screens/add_coin_to_faavorites.png" width="200"></td>
-    <td><img src="/assets/screens/favorites_screen.png" width="200"></td>
+    <td><img src="/assets/screens/add_coin_to_faavorites.png" width="250"></td>
+    <td><img src="/assets/screens/favorites_screen.png" width="250"></td>
   </tr>
  </table>
 <table>
@@ -49,8 +52,8 @@ FavCoins offers everything you need to keep track of your favorite digital asset
     <td>**Sign Screen**: Simple registration and login form. Only email and password.</td>
 </tr>
   <tr>
-    <td><img src="/assets/screens/profile_screen.png" width="200"></td>
-    <td><img src="/assets/screens/sign_screen.png" width="200"></td>
+    <td><img src="/assets/screens/profile_screen.png" width="250"></td>
+    <td><img src="/assets/screens/sign_screen.png" width="250"></td>
 
   </tr>
  </table>
