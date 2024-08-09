@@ -35,9 +35,9 @@ FavCoins offers everything you need to keep track of your favorite digital asset
     <td>**Sign Screen**: Simple registration and login form. Only email and password.</td>
 </tr>
   <tr>
-    <td><img src="/assets/screens/add_coin_to_faavorites.png" width="300"></td>
-    <td><img src="/assets/screens/favorites_screen.png" width="300"></td>
-    <td><img src="/assets/screens/profile_screen.png" width="300"></td>
-    <td><img src="/assets/screens/sign_screen.png" width="300"></td>
+    <td><img src="/assets/screens/add_coin_to_faavorites.png" width="200"></td>
+    <td><img src="/assets/screens/favorites_screen.png" width="200"></td>
+    <td><img src="/assets/screens/profile_screen.png" width="200"></td>
+    <td><img src="/assets/screens/sign_screen.png" width="200"></td>
   </tr>
  </table>
