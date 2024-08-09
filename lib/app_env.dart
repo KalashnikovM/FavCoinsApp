@@ -1,9 +1,6 @@
 import 'dart:core';
 
 
-
-
-
 class AppEnv {
   static const String endpoint = String.fromEnvironment('ENDPOINT');
   static const String project = String.fromEnvironment('PROJECT_ID');

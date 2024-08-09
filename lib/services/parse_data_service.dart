@@ -40,10 +40,8 @@ Future<ParsedUserData> parseUserData(Document userDoc) async {
       });
     }
     debugPrint('favList: $favList');
-    debugPrint('userDoc.data[Alerts]: ${userDoc.data['Alerts']}');
     List<dynamic> alerts = userDoc.data['Alerts'];
     alertsList.addAll(alerts);
-    debugPrint('alerts: $alerts \nalerts.runtimeType: ${alerts.runtimeType}');
     debugPrint('alertsList: $alertsList');
   } catch (e) {
     debugPrint('Error parsing data: $e');
